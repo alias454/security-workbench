@@ -1,0 +1,6 @@
+HTTP/1.1 302 Found
+Location: https://example.com/next
+Set-Cookie: session=example; HttpOnly
+set-cookie: preference=example; SameSite=Lax
+Cache-Control: no-store
+CACHE-CONTROL: max-age=0

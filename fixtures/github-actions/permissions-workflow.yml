@@ -1,0 +1,24 @@
+name: Permission Shapes
+
+on:
+  schedule:
+    - cron: "0 12 * * 1"
+  workflow_dispatch:
+
+permissions: read-all
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    env:
+      PACKAGE_NAME: example-package
+    steps:
+      - uses: actions/checkout@v4
+      - name: Publish
+        env:
+          REGISTRY_TOKEN: ${{ secrets.PACKAGE_TOKEN }}
+        run: |
+          echo "publishing ${{ github.sha }}"

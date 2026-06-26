@@ -1,0 +1,11 @@
+name: Malformed Shapes
+on: 7
+permissions:
+  contents:
+    nested: value
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      not-an-array: true
+  malformed: 7

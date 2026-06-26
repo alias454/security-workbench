@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Fixture Unknown Manifest Keys",
+  "version": "1.0.0",
+  "permissions": [
+    "storage"
+  ],
+  "x_vendor_specific": true,
+  "experimental_extension_surface": {
+    "enabled": true
+  }
+}

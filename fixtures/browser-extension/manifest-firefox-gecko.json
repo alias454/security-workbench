@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "Fixture Firefox WebExtension",
+  "version": "1.0.0",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "fixture@example.com",
+      "strict_min_version": "109.0",
+      "strict_max_version": "120.*"
+    }
+  },
+  "sidebar_action": {
+    "default_panel": "sidebar.html",
+    "default_title": "Fixture Sidebar"
+  },
+  "chrome_settings_overrides": {
+    "homepage": "https://example.com/"
+  },
+  "permissions": [
+    "storage"
+  ]
+}

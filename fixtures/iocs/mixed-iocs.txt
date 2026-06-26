@@ -1,0 +1,8 @@
+https://evil.example.com/path?campaign=fixture
+hxxps://already[.]defanged[.]example/login
+admin@example.com
+security-team@example.net
+192.0.2.10
+198.51.100.20
+203.0.113.25
+2cf24dba5fb0a30e26e83b2ac5b9e29e1b161e5c1fa7425e73043362938b9824

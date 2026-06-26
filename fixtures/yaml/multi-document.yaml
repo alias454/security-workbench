@@ -1,0 +1,15 @@
+---
+kind: ConfigMap
+metadata:
+  name: fixture-config
+  namespace: security-workbench
+spec:
+  enabled: true
+---
+kind: Deployment
+metadata:
+  name: fixture-worker
+  namespace: security-workbench
+spec:
+  replicas: 2
+  image: example.invalid/security-workbench/worker:0.1.0

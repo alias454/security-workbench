@@ -1,0 +1,27 @@
+{
+  "name": "@security-workbench/cli",
+  "version": "0.1.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "security-workbench": "dist/main.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js",
+    "test": "vitest run --config vitest.config.ts",
+    "clean": "rm -rf dist",
+    "typecheck:test": "tsc -p tsconfig.test.json"
+  },
+  "dependencies": {
+    "@security-workbench/core": "workspace:*",
+    "@security-workbench/core-utilities": "workspace:*",
+    "@security-workbench/schemas": "workspace:*",
+    "@security-workbench/core-parsers": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.1"
+  }
+}

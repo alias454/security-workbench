@@ -1,0 +1,19 @@
+{
+  "name": "fixture-workspace-root",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@11.9.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "plugins/*"
+  ],
+  "scripts": {
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "typecheck:test": "pnpm -r --if-present typecheck:test"
+  },
+  "devDependencies": {
+    "vitest": "^2.1.9"
+  }
+}

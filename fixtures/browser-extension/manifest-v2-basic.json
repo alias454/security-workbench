@@ -1,0 +1,26 @@
+{
+  "manifest_version": 2,
+  "name": "Fixture Browser Extension MV2",
+  "version": "2.0.0",
+  "description": "Synthetic Manifest V2 fixture for Security Workbench examples.",
+  "permissions": [
+    "storage",
+    "tabs",
+    "https://*.example.org/*"
+  ],
+  "background": {
+    "scripts": [
+      "background-a.js",
+      "background-b.js"
+    ],
+    "persistent": false
+  },
+  "browser_action": {
+    "default_title": "MV2 Fixture"
+  },
+  "web_accessible_resources": [
+    "panel.html",
+    "icon.png"
+  ],
+  "content_security_policy": "script-src 'self'; object-src 'self'"
+}

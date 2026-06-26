@@ -1,0 +1,40 @@
+{
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": { "driver": { "name": "Semgrep", "version": "1.2.3" } },
+      "results": [
+        {
+          "ruleId": "ts.example.rule",
+          "level": "note",
+          "message": { "text": "Example Semgrep result." },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": { "uri": "src/routes.ts" },
+                "region": { "startLine": 12 }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tool": { "driver": { "name": "Bandit", "semanticVersion": "1.7.9" } },
+      "results": [
+        {
+          "ruleId": "B101",
+          "message": { "text": "Example Python assertion finding." },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": { "uri": "tests/test_app.py" },
+                "region": { "startLine": 20 }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

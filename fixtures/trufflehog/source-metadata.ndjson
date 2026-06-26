@@ -1,0 +1,1 @@
+{"SourceMetadata":{"Data":{"S3":{"bucket":"example-fixtures","key":"configs/app.env","link":"https://s3.example.com/example-fixtures/configs/app.env"}}},"SourceID":"s3-source","SourceType":"s3","SourceName":"s3 bucket","DetectorName":"PrivateKey","Verified":null,"Redacted":"-----BEGIN ******** KEY-----","StructuredData":{"algorithm":"rsa","block_type":"private key"}}

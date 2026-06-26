@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  "name": "Fixture Browser Extension MV2 Broad Hosts",
+  "version": "2.1.0",
+  "permissions": [
+    "storage",
+    "tabs",
+    "<all_urls>",
+    "*://*.example.com/*"
+  ],
+  "optional_permissions": [
+    "notifications",
+    "https://api.example.net/*"
+  ],
+  "background": {
+    "page": "background.html",
+    "persistent": true
+  },
+  "page_action": {
+    "default_title": "MV2 Page Fixture"
+  }
+}

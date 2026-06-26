@@ -1,0 +1,5 @@
+{"DetectorName":"AWS","Verified":true,"Raw":"fixture-one"}
+{bad json}
+["array"]
+
+{"DetectorName":"Slack","Verified":false,"Raw":"fixture-two","CustomField":"custom value"}

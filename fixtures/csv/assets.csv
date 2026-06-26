@@ -1,0 +1,5 @@
+hostname,ip,owner,environment,criticality
+web-01.example.com,192.0.2.10,platform,production,high
+api-01.example.com,192.0.2.11,platform,production,high
+jump-01.example.net,198.51.100.10,security,admin,medium
+lab-01.example.org,203.0.113.25,research,lab,low

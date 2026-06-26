@@ -1,0 +1,8 @@
+From: Security Alerts <alerts@example.com>
+To: Analyst <analyst@example.net>
+Subject: Authentication results fixture
+Date: Wed, 25 Jun 2026 09:15:00 -0500
+Message-ID: <auth-results-fixture@example.com>
+Authentication-Results: mx.example.net; spf=pass smtp.mailfrom=example.com; dkim=pass header.d=example.com; dmarc=pass header.from=example.com
+Received-SPF: pass (example.net: domain of alerts@example.com designates 192.0.2.25 as permitted sender) client-ip=192.0.2.25;
+Received: from outbound.example.com (outbound.example.com [192.0.2.25]) by mx.example.net with ESMTPS id authfixture001

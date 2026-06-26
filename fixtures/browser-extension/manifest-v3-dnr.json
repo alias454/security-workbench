@@ -1,0 +1,34 @@
+{
+  "manifest_version": 3,
+  "name": "Fixture Browser Extension MV3 DNR",
+  "version": "3.0.0",
+  "minimum_chrome_version": "120",
+  "offline_enabled": true,
+  "permissions": [
+    "declarativeNetRequest",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://*.example.com/*"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "id": "ruleset_1",
+        "enabled": true,
+        "path": "rules/ruleset_1.json"
+      }
+    ]
+  },
+  "commands": {
+    "toggle-rules": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Y"
+      },
+      "description": "Toggle rules"
+    }
+  },
+  "action": {
+    "default_title": "MV3 DNR Fixture"
+  }
+}

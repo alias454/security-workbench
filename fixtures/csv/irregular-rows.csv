@@ -1,0 +1,4 @@
+hostname,ip,owner
+web-01.example.com,192.0.2.10,platform
+api-01.example.com,192.0.2.11
+lab-01.example.org,203.0.113.25,research,extra-field

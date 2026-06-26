@@ -1,0 +1,29 @@
+{
+  "version": "2.1.0",
+  "vendorRoot": true,
+  "runs": [
+    {
+      "vendorRun": "example",
+      "tool": {
+        "driver": {
+          "name": "ShapeScanner",
+          "rules": [
+            { "id": "OK" },
+            "bad-rule"
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "OK",
+          "level": "error",
+          "locations": "not-array",
+          "suppressions": ["bad-suppression"],
+          "fixes": "not-array",
+          "vendorResult": 7
+        },
+        "bad-result"
+      ]
+    }
+  ]
+}

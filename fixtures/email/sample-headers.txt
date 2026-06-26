@@ -1,0 +1,9 @@
+From: Alice Example <alice@example.com>
+To: Bob Example <bob@example.net>
+Subject: Fixture message
+Date: Tue, 24 Jun 2026 12:34:56 -0500
+Message-ID: <fixture-message-001@example.com>
+Received: from laptop.example.com (laptop.example.com [192.0.2.10]) by mail.example.net with ESMTPS id fixture001
+Received: from mail.example.net (mail.example.net [198.51.100.20]) by mx.example.org with ESMTPS id fixture002
+X-Custom-Fixture: one folded
+ value

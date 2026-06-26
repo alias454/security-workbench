@@ -1,0 +1,17 @@
+{
+  "manifest_version": 2,
+  "name": "Fixture Firefox Legacy Applications",
+  "version": "1.1.0",
+  "applications": {
+    "gecko": {
+      "id": "legacy@example.com"
+    }
+  },
+  "permissions": [
+    "storage",
+    "https://*.example.net/*"
+  ],
+  "browser_action": {
+    "default_title": "Legacy Applications Fixture"
+  }
+}

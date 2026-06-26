@@ -1,0 +1,4 @@
+https://example.com/login
+https://user:password@example.net/private?debug=true
+hxxps://defanged[.]example[.]org/path
+not a url

@@ -1,0 +1,12 @@
+name: Reusable Workflow Caller
+
+on:
+  workflow_dispatch:
+
+jobs:
+  call-build:
+    uses: example-org/example-repo/.github/workflows/build.yml@v1
+    permissions: read-all
+    with:
+      target: staging
+    secrets: inherit

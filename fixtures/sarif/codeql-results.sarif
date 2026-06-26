@@ -1,0 +1,93 @@
+{
+  "version": "2.1.0",
+  "$schema": "https://json.schemastore.org/sarif-2.1.0.json",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "CodeQL",
+          "semanticVersion": "2.17.0",
+          "informationUri": "https://codeql.example.com/docs",
+          "rules": [
+            {
+              "id": "js/sql-injection",
+              "name": "SQL query built from user input",
+              "shortDescription": { "text": "SQL injection pattern" },
+              "defaultConfiguration": { "level": "error" },
+              "properties": {
+                "tags": ["security", "external/cwe/cwe-089"],
+                "precision": "high"
+              }
+            },
+            {
+              "id": "js/hardcoded-credential",
+              "name": "Hardcoded credential-like value",
+              "shortDescription": { "text": "Credential-like value" },
+              "defaultConfiguration": { "level": "warning" },
+              "properties": {
+                "tags": ["security", "external/cwe/cwe-798"]
+              }
+            }
+          ]
+        }
+      },
+      "automationDetails": { "id": "codeql-ci" },
+      "invocations": [{ "commandLine": "codeql database analyze --format=sarif" }],
+      "originalUriBaseIds": {
+        "SRCROOT": { "uri": "file:///repo/" }
+      },
+      "artifacts": [
+        { "location": { "uri": "src/app.ts" } },
+        { "location": { "uri": "src/config.ts" } }
+      ],
+      "taxonomies": [
+        {
+          "name": "CWE",
+          "taxa": [{ "id": "CWE-89" }, { "id": "CWE-798" }]
+        }
+      ],
+      "results": [
+        {
+          "ruleId": "js/sql-injection",
+          "ruleIndex": 0,
+          "kind": "fail",
+          "level": "error",
+          "baselineState": "new",
+          "message": { "text": "Query depends on request input." },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": { "uri": "src/app.ts", "uriBaseId": "SRCROOT" },
+                "region": { "startLine": 42, "startColumn": 7, "endLine": 42, "endColumn": 24 }
+              },
+              "logicalLocations": [{ "fullyQualifiedName": "handler.login" }]
+            }
+          ],
+          "relatedLocations": [{ "id": 1, "message": { "text": "request parameter" } }],
+          "fingerprints": { "primaryLocationLineHash": "abc123" },
+          "partialFingerprints": { "primaryLocationStartColumnFingerprint": "def456" },
+          "suppressions": [{ "kind": "external" }],
+          "fixes": [{ "description": { "text": "Use parameterized queries." } }],
+          "taxa": [{ "id": "CWE-89" }],
+          "properties": { "precision": "high" }
+        },
+        {
+          "ruleId": "js/hardcoded-credential",
+          "ruleIndex": 1,
+          "level": "warning",
+          "baselineState": "unchanged",
+          "message": { "markdown": "Credential-like value observed." },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": { "uri": "src/config.ts" },
+                "region": { "startLine": 8 }
+              }
+            }
+          ]
+        }
+      ],
+      "properties": { "category": "sast" }
+    }
+  ]
+}

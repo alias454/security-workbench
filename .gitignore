@@ -1,0 +1,43 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build output
+dist/
+build/
+coverage/
+
+# package/tool caches
+.turbo/
+.next/
+.vite/
+.cache/
+*.tsbuildinfo
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# smoke/test output
+smoke-results-*.txt
+
+# local patch/scratch scripts
+apply-transforms.sh
+apply-*.sh
+finish-*.sh
+*.patch
+
+# OS/editor
+.DS_Store
+.idea/
+.vscode/
+
+# local env/config
+.env
+.env.*
+!.env.example
+
+# Local scratch / throwaway work
+*scratch*

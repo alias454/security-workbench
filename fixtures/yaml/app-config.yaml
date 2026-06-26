@@ -1,0 +1,18 @@
+name: fixture-app
+enabled: true
+environment: lab
+owners:
+  - security
+  - platform
+network:
+  hostname: app.example.com
+  allowed_ips:
+    - 192.0.2.10
+    - 198.51.100.20
+features:
+  login: true
+  audit_logging: true
+  external_enrichment: false
+limits:
+  max_artifact_size_mb: 10
+  max_rows: 1000

@@ -1,0 +1,6 @@
+HTTP/1.1 204 No Content
+not a header
+Bad Name: ignored because the field name contains a space
+X-Valid: first value
+ folded continuation
+X-Another: second value
