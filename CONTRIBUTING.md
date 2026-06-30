@@ -321,6 +321,21 @@ stable schemas
 
 ## Documentation expectations
 
+Documentation should stay small and engineering-focused. Prefer updating the canonical document instead of adding a new topic-specific file.
+
+Core docs:
+
+```text
+README.md                       project front door
+docs/ENGINEERING.md             runtime, repo layout, implementation rules
+docs/ROADMAP.md                 current status, backlog, and next work
+docs/SECURITY_MODEL.md          threats, privacy, exposure, output safety, release gates
+docs/FIXTURES.md                fixture policy and inventory
+docs/plugins/README.md          plugin and skill inventory
+docs/plugins/<plugin>.md        per-plugin behavior and limits
+fixtures/README.md              short fixture-folder pointer
+```
+
 Every plugin should document:
 
 ```text
@@ -344,43 +359,23 @@ expected outputs
 example finding
 ```
 
-Keep docs layered:
-
-```text
-docs/plugins/README.md        plugin and skill inventory
-docs/plugins/<plugin>.md      per-plugin behavior
-docs/ROADMAP.md               current status and next work
-docs/ARCHITECTURE.md          runtime and component model
-docs/THREAT_MODEL.md          risks and controls
-docs/PRIVACY_MODEL.md         data handling
-docs/EXPOSURE_POLICY.md       API/Web/MCP exposure rules
-docs/FIXTURES.md              fixture inventory and policy
-```
-
 Avoid duplicating full skill inventories outside plugin docs.
 
 ---
 
 ## Documentation maintenance
 
-Security Workbench documentation is layered. Not every PR should update every document.
+Security Workbench documentation is intentionally consolidated. Not every PR should update every document.
 
 | Document | Update cadence | Purpose |
 |---|---|---|
 | `README.md` | When install, quickstart, or headline status changes | Project front door |
+| `docs/ENGINEERING.md` | When runtime, adapter, policy, or repo-layout behavior changes | Stable engineering handoff |
 | `docs/ROADMAP.md` | When milestones, next work, completed work, or deferred work changes | Canonical implementation status |
+| `docs/SECURITY_MODEL.md` | When trust boundaries, privacy, exposure, output safety, or release gates change | Stable security model |
+| `docs/FIXTURES.md` | When top-level fixtures are added, removed, or renamed | Fixture policy and inventory |
 | `docs/plugins/README.md` | When plugin packages or skill counts change | Plugin index and inventory overview |
 | `docs/plugins/<plugin>.md` | When that plugin gains, removes, or materially changes skills | Per-plugin behavior and examples |
-| `docs/FIXTURES.md` | When top-level fixtures are added, removed, or renamed | Fixture policy and inventory |
-| `docs/ARCHITECTURE.md` | Only when component boundaries or execution model changes | Stable design anchor |
-| `docs/THREAT_MODEL.md` | Only when trust boundaries, threats, or controls change | Stable security model |
-| `docs/PRIVACY_MODEL.md` | Only when data handling, network, persistence, or redaction posture changes | Stable privacy model |
-| `docs/EXPOSURE_POLICY.md` | When exposure metadata semantics or reviewed exposure posture changes | API/web/MCP exposure control |
-| `docs/security/pre-api-mcp-plugin-gate.md` | Only when release-blocking security criteria change | External-surface security gate |
-| `docs/plugins/README.md` | When skill contract expectations change | Skill specification |
-| `docs/pipelines/README.md` | When pipeline contract expectations change | Pipeline specification |
-
-Avoid duplicating full skill inventories outside the plugin docs. Link to the plugin index instead.
 
 Use two fixture locations deliberately:
 
@@ -391,20 +386,16 @@ testdata/   package-specific golden/unit test inputs and expected outputs
 
 ## Documentation ownership
 
-Documentation should avoid duplicating current-state facts across many files.
-
 | Fact | Canonical home |
 |---|---|
+| Repo layout, runtime flow, CLI behavior | `docs/ENGINEERING.md` |
 | Plugin package index and skill inventory | `docs/plugins/README.md` |
 | Per-plugin behavior and examples | `docs/plugins/<plugin>.md` |
-| Current roadmap and completed milestones | `docs/ROADMAP.md` |
-| Runtime and adapter architecture | `docs/ARCHITECTURE.md` |
-| Security threats and controls | `docs/THREAT_MODEL.md` |
-| Privacy and data-handling posture | `docs/PRIVACY_MODEL.md` |
-| API/web/MCP exposure rules | `docs/EXPOSURE_POLICY.md` |
+| Current roadmap and backlog | `docs/ROADMAP.md` |
+| Security, privacy, exposure, and output-safety rules | `docs/SECURITY_MODEL.md` |
 | Fixture policy and inventory | `docs/FIXTURES.md` |
 
-Architecture, threat model, and privacy model docs should change only when boundaries, controls, or data-handling posture change. Plugin-only changes usually update the owning plugin doc, `docs/plugins/README.md`, fixtures, and the roadmap.
+Plugin-only changes usually update the owning plugin doc, `docs/plugins/README.md`, fixtures, and the roadmap.
 
 ## Pull request checklist
 
