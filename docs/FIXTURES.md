@@ -28,7 +28,7 @@ name malformed samples clearly
 ## Inventory
 
 ```text
-fixtures/browser-extension/   parse_browser_extension_manifest
+fixtures/browser-extension/   parse_browser_extension_manifest, review_browser_extension_permissions
 fixtures/csv/                 parse_csv
 fixtures/dockerfile/          parse_dockerfile
 fixtures/email/               parse_email_headers

@@ -8,7 +8,7 @@ The current build is intentionally local and deterministic. Routine artifacts su
 artifact or text blob
   → parse / transform
   → extract useful structure
-  → review supported signals later
+  → review supported signals
   → export structured output later
 ```
 
@@ -23,6 +23,7 @@ packages/schemas
 packages/core
 plugins/core-utilities
 plugins/core-parsers
+plugins/core-reviewers
 apps/cli
 single-skill registry and runner
 runtime policy enforcement
@@ -43,7 +44,7 @@ Not implemented yet:
 plugin manifest loader
 plugin install commands
 workflow runner
-review/scoring/output plugins
+scoring/output plugins
 external enrichment
 REST API
 web UI
@@ -62,7 +63,7 @@ pnpm install
 ```bash
 pnpm --filter @security-workbench/cli start skills list
 pnpm --filter @security-workbench/cli start skills describe parse_sarif
-pnpm --filter @security-workbench/cli start skills run parse_json --input '{"ok":true}'
+pnpm --filter @security-workbench/cli start skills run json_parse --input '{"ok":true}'
 ```
 
 Fixture examples use `$PWD` from the repo root:

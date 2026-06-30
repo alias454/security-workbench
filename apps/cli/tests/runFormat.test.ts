@@ -276,4 +276,68 @@ describe("formatSkillRunResult", () => {
   });
 
 
+  it("renders browser extension permission review signals in pretty output", () => {
+    const output = formatSkillRunResult(
+      result({
+        skill: { name: "review_browser_extension_permissions", version: "0.1.0" },
+        output: {
+          artifact: {
+            id: "artifact_browser_extension_permission_review",
+            type: "browser_extension_permission_review",
+            source_artifact_id: "artifact_browser_extension_manifest",
+            source_artifact_type: "browser_extension_manifest",
+            name: "Fixture Extension",
+            version: "1.0.0",
+            manifest_version: 3,
+          },
+          observed: {
+            source_parser: "parse_browser_extension_manifest",
+            source_warning_count: 0,
+            manifest_generation: "mv3",
+            evidence_count: 2,
+            signal_count: 2,
+            broad_host_permissions: ["<all_urls>"],
+            broad_optional_host_permissions: [],
+            wildcard_host_permissions: ["<all_urls>"],
+            notable_api_permissions: ["tabs"],
+            notable_optional_api_permissions: [],
+            broad_content_script_matches: ["<all_urls>"],
+            background_present: true,
+            background_type: "service_worker",
+            externally_connectable_present: false,
+            externally_connectable_matches: [],
+            web_accessible_resources_present: false,
+            web_accessible_resource_count: 0,
+            web_accessible_resource_matches: [],
+            update_url_present: false,
+            oauth2_present: false,
+            content_security_policy_present: true,
+          },
+          evidence: [
+            { id: "evidence_browser_extension_001", type: "browser_extension_broad_host_permissions" },
+            { id: "evidence_browser_extension_002", type: "browser_extension_notable_api_permissions" },
+          ],
+          signals: [
+            {
+              id: "signal_browser_extension_001",
+              type: "browser_extension.broad_host_permissions_present",
+              summary: "Browser extension manifest declares broad required host permissions.",
+              confidence: "confirmed",
+              evidence_refs: ["evidence_browser_extension_001"],
+            },
+          ],
+          warnings: [],
+        },
+      }),
+      { format: "pretty" }
+    );
+
+    expect(output).toContain("Browser Extension Permission Review");
+    expect(output).toContain("Signals: 2");
+    expect(output).toContain("Broad host permissions (1)");
+    expect(output).toContain("<all_urls>");
+    expect(output).toContain("Notable API permissions (1)");
+    expect(output).toContain("browser_extension.broad_host_permissions_present");
+  });
+
 });
