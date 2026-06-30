@@ -654,12 +654,37 @@ run_ok "fixture review_browser_extension_permissions v2 broad hosts" "$BROWSER_E
 run_ok_require_output_pattern "review_browser_extension_permissions pretty output includes broad host signal" 'Broad host permissions \(1\)' "$BROWSER_EXT_REVIEW_SCRIPT"
 run_ok_require_output_pattern "review_browser_extension_permissions pretty output includes signal type" 'browser_extension\.broad_host_permissions_present' "$BROWSER_EXT_REVIEW_SCRIPT"
 
+run_ok "skills describe score_browser_extension_risk --format table" \
+  pnpm --filter @security-workbench/cli start skills describe score_browser_extension_risk --format table
+
+run_ok_require_output_pattern "scoring list includes score_browser_extension_risk" '^score_browser_extension_risk[[:space:]]' \
+  pnpm --filter @security-workbench/cli start skills list --category scoring --format tsv
+
+run_expect_fail "score_browser_extension_risk rejects raw manifest" \
+  pnpm --filter @security-workbench/cli start skills run score_browser_extension_risk --input '{"manifest_version":3,"name":"Raw"}'
+
+BROWSER_EXT_SCORE_INPUT="$TMP_ROOT/browser-extension-v2-broad-hosts.review.json"
+BROWSER_EXT_SCORE_SCRIPT="$TMP_ROOT/score-browser-extension-risk.sh"
+cat >"$BROWSER_EXT_SCORE_SCRIPT" <<SCRIPT
+#!/usr/bin/env bash
+set -euo pipefail
+pnpm --filter @security-workbench/cli start skills run parse_browser_extension_manifest --input-file "$FIXTURES_ROOT/browser-extension/manifest-v2-broad-hosts.json" > "$BROWSER_EXT_REVIEW_INPUT"
+pnpm --filter @security-workbench/cli start skills run review_browser_extension_permissions --input-file "$BROWSER_EXT_REVIEW_INPUT" > "$BROWSER_EXT_SCORE_INPUT"
+pnpm --filter @security-workbench/cli start skills run score_browser_extension_risk --input-file "$BROWSER_EXT_SCORE_INPUT" --format pretty
+SCRIPT
+chmod +x "$BROWSER_EXT_SCORE_SCRIPT"
+
+run_ok "fixture score_browser_extension_risk v2 broad hosts" "$BROWSER_EXT_SCORE_SCRIPT"
+run_ok_require_output_pattern "score_browser_extension_risk pretty output includes score" 'Browser Extension Risk Score' "$BROWSER_EXT_SCORE_SCRIPT"
+run_ok_require_output_pattern "score_browser_extension_risk pretty output includes attention" 'Review attention: ' "$BROWSER_EXT_SCORE_SCRIPT"
+run_ok_require_output_pattern "score_browser_extension_risk pretty output includes contribution" 'browser_extension\.all_urls_permission_present' "$BROWSER_EXT_SCORE_SCRIPT"
+
 run_ok "fixture parse_jwt alg none" "${CLI[@]}" skills run parse_jwt --input-file "$FIXTURES_ROOT/jwt/alg-none.jwt" --format pretty
 
 log_section "SOURCE AUDIT: suspicious API scan"
 log "Expected hits: bounded readFile/stat in apps/cli/src/args.ts and filesystem helpers in CLI tests."
 log "Expected benign text hit: unicode_escape_decode description contains 'without eval'."
-log "Unexpected hits: fetch, child_process, exec, spawn, process.env, network modules, or filesystem use inside runtime/plugin packages, including core-parsers."
+log "Unexpected hits: fetch, child_process, exec, spawn, process.env, network modules, or filesystem use inside runtime/plugin packages."
 
 AUDIT_RAW="$TMP_ROOT/source-audit-raw.txt"
 AUDIT_UNEXPECTED="$TMP_ROOT/source-audit-unexpected.txt"

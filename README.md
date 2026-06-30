@@ -24,6 +24,7 @@ packages/core
 plugins/core-utilities
 plugins/core-parsers
 plugins/core-reviewers
+plugins/core-scoring
 apps/cli
 single-skill registry and runner
 runtime policy enforcement
@@ -44,7 +45,7 @@ Not implemented yet:
 plugin manifest loader
 plugin install commands
 workflow runner
-scoring/output plugins
+output plugins
 external enrichment
 REST API
 web UI

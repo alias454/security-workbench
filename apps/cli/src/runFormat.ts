@@ -317,6 +317,58 @@ function renderBrowserExtensionPermissionReview(
   ]);
 }
 
+function renderBrowserExtensionRiskScore(
+  record: Record<string, unknown>,
+  options: DisplayOptions
+): string[] | undefined {
+  const artifact = recordValue(record, "artifact");
+  const observed = recordValue(record, "observed");
+  const risk = recordValue(record, "risk");
+  if (!observed) {
+    return undefined;
+  }
+
+  const categoryScores = recordValue(observed, "category_scores");
+  const categoryLines = categoryScores
+    ? Object.entries(categoryScores)
+        .filter(([, value]) => typeof value === "number")
+        .sort(([left], [right]) => left.localeCompare(right))
+        .map(([key, value]) => `- ${key}: ${String(value)}`)
+    : ["- none"];
+
+  const contributions = recordArray(record, "contributions");
+  const contributionLines = contributions.slice(0, 20).map((contribution) => {
+    const points = typeof contribution.points === "number" ? contribution.points : "unknown";
+    const signalType = String(contribution.signal_type ?? "unknown");
+    const category = String(contribution.category ?? "unknown");
+    const evidenceRefs = Array.isArray(contribution.evidence_refs) ? contribution.evidence_refs.length : 0;
+    return `${signalType}: +${String(points)} (${category}) evidence_refs=${evidenceRefs}`;
+  });
+
+  return section("Browser Extension Risk Score", [
+    `Name: ${displayString(String(artifact?.name ?? "unknown"), options)}`,
+    `Version: ${String(artifact?.version ?? "unknown")}`,
+    `Manifest version: ${String(artifact?.manifest_version ?? "unknown")}`,
+    `Score: ${String(observed.score ?? "unknown")}/${String(observed.max_score ?? "unknown")}`,
+    `Raw score: ${String(observed.raw_score ?? "unknown")}`,
+    `Capped: ${booleanText(observed.capped)}`,
+    `Review attention: ${String(observed.review_attention_level ?? "unknown")}`,
+    `Risk level: ${String(observed.risk_level ?? risk?.level ?? "unknown")}`,
+    `Confidence: ${String(observed.confidence ?? risk?.confidence ?? "unknown")}`,
+    `Score model: ${String(observed.score_model ?? "unknown")}`,
+    `Review signals: ${numberValue(observed, "review_signal_count") ?? "unknown"}`,
+    `Contributing signals: ${numberValue(observed, "contributing_signal_count") ?? contributions.length}`,
+    `Source warnings: ${numberValue(observed, "source_warning_count") ?? 0}`,
+    "",
+    "Category scores",
+    ...categoryLines,
+    ...namedList("Contributing signal types", stringArray(observed, "contributing_signal_types"), options),
+    ...namedList("Unmatched signal types", stringArray(observed, "unmatched_signal_types"), options),
+    ...namedList("Contributions", contributionLines, options),
+    ...namedList("Limitations", stringArray(record, "limitations"), options),
+  ]);
+}
+
 function renderBrowserExtensionManifest(
   record: Record<string, unknown>,
   options: DisplayOptions
@@ -671,6 +723,8 @@ function renderSkillAwareOutput(
       return renderBrowserExtensionManifest(record, options);
     case "review_browser_extension_permissions":
       return renderBrowserExtensionPermissionReview(record, options);
+    case "score_browser_extension_risk":
+      return renderBrowserExtensionRiskScore(record, options);
     case "parse_dockerfile":
       return renderDockerfile(record, options);
     case "parse_github_actions_workflow":
