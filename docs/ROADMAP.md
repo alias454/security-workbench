@@ -73,27 +73,40 @@ Core scoring:
 score_browser_extension_risk
 ```
 
-## Next work
+## Current output baseline
 
-### PR 7C — First browser extension finding/export path
+Core output:
 
-Completed through PR 7B:
+```text
+generate_browser_extension_finding
+```
+
+## Current browser extension chain
+
+Completed through PR 7C:
 
 ```text
 parse_browser_extension_manifest
 → review_browser_extension_permissions
 → score_browser_extension_risk
+→ generate_browser_extension_finding
 ```
 
-Candidate next skills:
+## Next work
+
+Recommended next parser:
 
 ```text
-generate_finding
-export_markdown
-export_json
+parse_ip_prefix_list
 ```
 
-Finding/export work should preserve evidence links, score context, confidence, and open limitations.
+Generic output/export candidates remain future work:
+
+```text
+export_markdown
+export_json
+generate_finding
+```
 
 ## Near-term parser backlog
 

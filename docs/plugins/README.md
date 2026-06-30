@@ -11,6 +11,7 @@ plugins/core-utilities
 plugins/core-parsers
 plugins/core-reviewers
 plugins/core-scoring
+plugins/core-output
 apps/cli
 ```
 
@@ -23,12 +24,13 @@ CLI only
 Current registered skills:
 
 ```text
-50 total
+51 total
 39 core-utilities
 9 core-parsers
 1 core-reviewers
 1 core-scoring
-transform, parser, reviewer, and scoring categories
+1 core-output
+transform, parser, reviewer, scoring, and output categories
 ```
 
 ## Implemented plugin packages
@@ -39,6 +41,7 @@ transform, parser, reviewer, and scoring categories
 | `plugins/core-parsers` | 9 | richer local artifact/document parsers |
 | `plugins/core-reviewers` | 1 | deterministic local evidence-backed reviewer skills |
 | `plugins/core-scoring` | 1 | deterministic local evidence-linked prioritization skills |
+| `plugins/core-output` | 1 | deterministic local finding and export output skills |
 
 ## core-utilities inventory
 
@@ -108,6 +111,12 @@ review_browser_extension_permissions
 
 ```text
 score_browser_extension_risk
+```
+
+## core-output inventory
+
+```text
+generate_browser_extension_finding
 ```
 
 ## Ownership rules

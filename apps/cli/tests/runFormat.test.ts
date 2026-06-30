@@ -413,4 +413,66 @@ describe("formatSkillRunResult", () => {
     expect(output).toContain("browser_extension.all_urls_permission_present");
   });
 
+
+  it("renders browser extension finding output in pretty output", () => {
+    const output = formatSkillRunResult(
+      result({
+        skill: { name: "generate_browser_extension_finding", version: "0.1.0" },
+        output: {
+          artifact: {
+            id: "artifact_browser_extension_finding",
+            type: "browser_extension_finding",
+            source_score_artifact_id: "artifact_browser_extension_risk_score",
+            source_review_artifact_id: "artifact_browser_extension_permission_review",
+            source_artifact_id: "artifact_browser_extension_manifest",
+            source_artifact_type: "browser_extension_manifest",
+            name: "Fixture Extension",
+            version: "1.0.0",
+            manifest_version: 3,
+          },
+          observed: {
+            source_scorer: "score_browser_extension_risk",
+            source_score_model: "browser_extension_review_attention_v1",
+            finding_template: "browser_extension_permission_review_v1",
+            score: 56,
+            max_score: 100,
+            review_attention_level: "high",
+            risk_level: "high",
+            confidence: "high",
+            contribution_count: 1,
+            evidence_ref_count: 1,
+            signal_ref_count: 1,
+            limitation_count: 1,
+            markdown_line_count: 42,
+          },
+          finding: {
+            id: "finding_browser_extension_permission_review",
+            title: "Browser extension permission review: Fixture Extension",
+            summary: "Browser extension manifest review produced a high review-attention level with score 56/100.",
+            status: "draft",
+            artifact_refs: ["artifact_browser_extension_manifest"],
+            evidence_refs: ["evidence_browser_extension_001"],
+            signal_refs: ["signal_browser_extension_001"],
+            confidence: "high",
+            observed_behavior: ["Reviewer produced 4 permission or exposure signal(s)."],
+            inferred_risk: ["Deterministic review-attention level is high."],
+            mitigations: ["Validate that declared permissions are required."],
+            open_questions: ["Is each declared permission required?"],
+          },
+          markdown: "# Browser extension permission review: Fixture Extension",
+          limitations: ["Finding is generated from scored review output only."],
+          warnings: [],
+        },
+      }),
+      { format: "pretty" }
+    );
+
+    expect(output).toContain("Browser Extension Finding");
+    expect(output).toContain("Finding ID: finding_browser_extension_permission_review");
+    expect(output).toContain("Score: 56/100");
+    expect(output).toContain("Review attention: high");
+    expect(output).toContain("Observed behavior (1)");
+    expect(output).toContain("Recommended review actions (1)");
+  });
+
 });

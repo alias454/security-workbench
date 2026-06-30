@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@security-workbench/core": "workspace:*",
+    "@security-workbench/core-output": "workspace:*",
     "@security-workbench/core-utilities": "workspace:*",
     "@security-workbench/schemas": "workspace:*",
     "@security-workbench/core-parsers": "workspace:*",
