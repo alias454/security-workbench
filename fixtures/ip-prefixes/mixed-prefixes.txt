@@ -1,0 +1,6 @@
+# Example vendor allowlist using documentation ranges.
+203.0.113.0/24
+198.51.100.10
+2001:db8::/32
+2001:db8::1 # host entry
+203.0.113.0/24 # duplicate

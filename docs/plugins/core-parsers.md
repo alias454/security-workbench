@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 9
+Implemented skills: 10
 ```
 
 ## Purpose
@@ -43,6 +43,7 @@ no findings
 | `parse_csv` | CSV text | rows, records, headers, delimiter, line endings, irregular rows |
 | `parse_yaml` | YAML text | JSON-compatible documents, summaries, warnings |
 | `parse_browser_extension_manifest` | extension manifest JSON | permissions, host permissions, content scripts, background, web resources |
+| `parse_ip_prefix_list` | newline-oriented IP/prefix list | IPv4/IPv6 hosts and CIDR prefixes, comments, duplicates, malformed lines, prefix lengths |
 
 ## Planned parser candidates
 
@@ -56,7 +57,6 @@ parse_cyclonedx_sbom
 parse_spdx_sbom
 parse_csp
 parse_set_cookie_headers
-parse_ip_prefix_list
 parse_asn_list
 parse_asn_allow_deny_list
 parse_asn_observations
@@ -133,6 +133,7 @@ plugins/core-parsers/src/
   parseHttpHeaders.ts
   parsePackageJson.ts
   parseSarif.ts
+  parseIpPrefixList.ts
   parseTrufflehogNdjson.ts
   parseYaml.ts
 plugins/core-parsers/tests/
@@ -150,6 +151,7 @@ pnpm --filter @security-workbench/cli start skills run parse_github_actions_work
 pnpm --filter @security-workbench/cli start skills run parse_dockerfile --input-file "$PWD/fixtures/dockerfile/multi-stage.Dockerfile" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_http_headers --input-file "$PWD/fixtures/http-headers/security-headers.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_browser_extension_manifest --input-file "$PWD/fixtures/browser-extension/manifest-v3-basic.json" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_ip_prefix_list --input-file "$PWD/fixtures/ip-prefixes/mixed-prefixes.txt" --format pretty
 ```
 
 ## Test themes
@@ -176,4 +178,5 @@ parse_dockerfile                → container_build_review
 parse_github_actions_workflow   → ci_workflow_review
 parse_trufflehog_ndjson         → secret-scanner normalization
 parse_sarif                     → scanner normalization/code scanning review
+parse_ip_prefix_list            → infrastructure/local-registry/prefix-membership workflows
 ```

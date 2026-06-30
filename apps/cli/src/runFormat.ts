@@ -268,6 +268,59 @@ function renderPackageJson(record: Record<string, unknown>, options: DisplayOpti
 }
 
 
+
+function renderIpPrefixList(record: Record<string, unknown>, options: DisplayOptions): string[] | undefined {
+  const observed = recordValue(record, "observed");
+  if (!observed) {
+    return undefined;
+  }
+
+  const entries = recordArray(observed, "entries");
+  const invalidLines = recordArray(observed, "invalid_lines");
+  const duplicateEntries = recordArray(observed, "duplicate_entries");
+  const prefixLengths = recordValue(observed, "prefix_lengths");
+  const prefixLengthLines = prefixLengths
+    ? Object.entries(prefixLengths)
+        .filter(([, value]) => typeof value === "number")
+        .sort(([left], [right]) => Number(left) - Number(right))
+        .map(([length, count]) => `/${length}: ${String(count)}`)
+    : [];
+  const entryLines = entries.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const normalizedValue = String(entry.normalized_value ?? entry.value ?? "unknown");
+    const kind = String(entry.kind ?? "unknown");
+    const version = String(entry.ip_version ?? "unknown");
+    return `line ${line}: ${displayString(normalizedValue, options)} (${version} ${kind})`;
+  });
+  const invalidLineSummaries = invalidLines.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const value = String(entry.value ?? "unknown");
+    const reason = String(entry.reason ?? "invalid");
+    return `line ${line}: ${displayString(value, options)} - ${reason}`;
+  });
+  const duplicateLineSummaries = duplicateEntries.slice(0, 20).map((entry) => {
+    const value = String(entry.normalized_value ?? "unknown");
+    return `${displayString(value, options)} first_line=${String(entry.first_line ?? "?")} duplicate_line=${String(entry.duplicate_line ?? "?")} occurrences=${String(entry.occurrences ?? "?")}`;
+  });
+
+  return section("IP Prefix List", [
+    `Physical lines: ${numberValue(observed, "physical_line_count") ?? "unknown"}`,
+    `Line ending: ${typeof observed.line_ending === "string" ? observed.line_ending : "unknown"}`,
+    `Valid entries: ${numberValue(observed, "valid_entry_count") ?? entries.length}`,
+    `Host addresses: ${numberValue(observed, "host_address_count") ?? "unknown"}`,
+    `CIDR prefixes: ${numberValue(observed, "cidr_prefix_count") ?? "unknown"}`,
+    `IPv4 entries: ${numberValue(observed, "ipv4_entry_count") ?? "unknown"}`,
+    `IPv6 entries: ${numberValue(observed, "ipv6_entry_count") ?? "unknown"}`,
+    `Malformed lines: ${numberValue(observed, "malformed_line_count") ?? invalidLines.length}`,
+    `Duplicate entries: ${numberValue(observed, "duplicate_entry_count") ?? duplicateEntries.length}`,
+    `Blank/comment/inline-comment lines: ${String(numberValue(observed, "blank_line_count") ?? "unknown")}/${String(numberValue(observed, "comment_line_count") ?? "unknown")}/${String(numberValue(observed, "inline_comment_count") ?? "unknown")}`,
+    ...namedList("Prefix lengths", prefixLengthLines, options),
+    ...namedList("Entries", entryLines, options),
+    ...namedList("Duplicates", duplicateLineSummaries, options),
+    ...namedList("Invalid lines", invalidLineSummaries, options),
+  ]);
+}
+
 function renderBrowserExtensionPermissionReview(
   record: Record<string, unknown>,
   options: DisplayOptions
@@ -777,6 +830,8 @@ function renderSkillAwareOutput(
       return renderTrufflehogNdjson(record, options);
     case "parse_sarif":
       return renderSarif(record, options);
+    case "parse_ip_prefix_list":
+      return renderIpPrefixList(record, options);
     case "parse_http_headers":
       return renderHttpHeaders(record, options);
     default:

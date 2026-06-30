@@ -570,6 +570,7 @@ run_expect_fail "parse_package_json rejects arrays" "${CLI[@]}" skills run parse
 run_expect_fail "parse_package_json rejects null" "${CLI[@]}" skills run parse_package_json --input 'null'
 run_expect_fail "parse_csv rejects malformed quoted field" "${CLI[@]}" skills run parse_csv --input $'name,note\nAlice,"unterminated'
 run_expect_fail "parse_yaml rejects malformed YAML" "${CLI[@]}" skills run parse_yaml --input $'name: [unterminated'
+run_expect_fail "parse_ip_prefix_list rejects no valid entries" "${CLI[@]}" skills run parse_ip_prefix_list --input-file "$FIXTURES_ROOT/ip-prefixes/no-valid-prefixes.txt"
 run_expect_fail "parse_url rejects invalid URL" "${CLI[@]}" skills run parse_url --input "not a url"
 
 
@@ -603,6 +604,10 @@ run_ok "fixture parse_csv irregular rows" "${CLI[@]}" skills run parse_csv --inp
 run_ok "fixture parse_yaml app config" "${CLI[@]}" skills run parse_yaml --input-file "$FIXTURES_ROOT/yaml/app-config.yaml" --format pretty
 run_ok "fixture parse_yaml multi-document" "${CLI[@]}" skills run parse_yaml --input-file "$FIXTURES_ROOT/yaml/multi-document.yaml" --format pretty
 run_ok "fixture parse_package_json basic" "${CLI[@]}" skills run parse_package_json --input-file "$FIXTURES_ROOT/package-json/basic-package.json" --format pretty
+run_ok "fixture parse_ip_prefix_list mixed prefixes" "${CLI[@]}" skills run parse_ip_prefix_list --input-file "$FIXTURES_ROOT/ip-prefixes/mixed-prefixes.txt" --format pretty
+run_ok "fixture parse_ip_prefix_list malformed prefixes" "${CLI[@]}" skills run parse_ip_prefix_list --input-file "$FIXTURES_ROOT/ip-prefixes/malformed-prefixes.txt" --format pretty
+run_ok_require_output_pattern "parse_ip_prefix_list pretty output includes IPv6 count" 'IPv6 entries: 2' "${CLI[@]}" skills run parse_ip_prefix_list --input-file "$FIXTURES_ROOT/ip-prefixes/mixed-prefixes.txt" --format pretty
+run_ok_require_output_pattern "parse_ip_prefix_list pretty output includes duplicate summary" 'Duplicate entries: 1' "${CLI[@]}" skills run parse_ip_prefix_list --input-file "$FIXTURES_ROOT/ip-prefixes/mixed-prefixes.txt" --format pretty
 run_ok "fixture extract_iocs mixed" "${CLI[@]}" skills run extract_iocs --input-file "$FIXTURES_ROOT/iocs/mixed-iocs.txt" --format pretty
 
 run_ok_require_output_pattern "extract_iocs pretty output defangs URLs" 'hxxps://evil\[.\]example\[.\]com/path' "${CLI[@]}" skills run extract_iocs --input-file "$FIXTURES_ROOT/iocs/mixed-iocs.txt" --format pretty
@@ -612,6 +617,12 @@ run_expect_fail "skills run rejects unsafe with json format" "${CLI[@]}" skills 
 
 run_ok "skills describe parse_browser_extension_manifest --format table" \
   pnpm --filter @security-workbench/cli start skills describe parse_browser_extension_manifest --format table
+
+run_ok "skills describe parse_ip_prefix_list --format table" \
+  pnpm --filter @security-workbench/cli start skills describe parse_ip_prefix_list --format table
+
+run_ok_require_output_pattern "parser list includes parse_ip_prefix_list" '^parse_ip_prefix_list[[:space:]]' \
+  pnpm --filter @security-workbench/cli start skills list --category parser --format tsv
 
 run_ok_require_output_pattern "parser list includes parse_browser_extension_manifest" '^parse_browser_extension_manifest[[:space:]]' \
   pnpm --filter @security-workbench/cli start skills list --category parser --format tsv

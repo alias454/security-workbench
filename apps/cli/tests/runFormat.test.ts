@@ -475,4 +475,50 @@ describe("formatSkillRunResult", () => {
     expect(output).toContain("Recommended review actions (1)");
   });
 
+
+  it("renders IP prefix list observations in pretty output", () => {
+    const output = formatSkillRunResult(
+      result({
+        skill: { name: "parse_ip_prefix_list", version: "0.1.0" },
+        output: {
+          artifact: { id: "artifact_ip_prefix_list", type: "ip_prefix_list" },
+          observed: {
+            line_ending: "lf",
+            physical_line_count: 4,
+            blank_line_count: 0,
+            comment_line_count: 1,
+            nonempty_line_count: 4,
+            inline_comment_count: 1,
+            valid_entry_count: 3,
+            host_address_count: 1,
+            cidr_prefix_count: 2,
+            ipv4_entry_count: 2,
+            ipv6_entry_count: 1,
+            malformed_line_count: 1,
+            duplicate_entry_count: 1,
+            duplicate_entries: [
+              { normalized_value: "203.0.113.0/24", first_line: 2, duplicate_line: 4, occurrences: 2 },
+            ],
+            prefix_lengths: { "24": 2, "32": 1 },
+            entries: [
+              { line: 2, kind: "cidr", ip_version: "ipv4", normalized_value: "203.0.113.0/24" },
+              { line: 3, kind: "host", ip_version: "ipv4", normalized_value: "198.51.100.10" },
+              { line: 4, kind: "cidr", ip_version: "ipv6", normalized_value: "2001:db8::/32" },
+            ],
+            invalid_lines: [{ line: 5, value: "999.1.1.1", reason: "invalid IP address" }],
+          },
+          warnings: [],
+        },
+      }),
+      { format: "pretty" }
+    );
+
+    expect(output).toContain("IP Prefix List");
+    expect(output).toContain("Valid entries: 3");
+    expect(output).toContain("CIDR prefixes: 2");
+    expect(output).toContain("IPv6 entries: 1");
+    expect(output).toContain("203[.]0[.]113[.]0/24");
+    expect(output).toContain("999[.]1[.]1[.]1 - invalid IP address");
+  });
+
 });

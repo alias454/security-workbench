@@ -7,6 +7,7 @@ import { parseDockerfileSkill } from "./parseDockerfile.js";
 import { parseGithubActionsWorkflowSkill } from "./parseGithubActionsWorkflow.js";
 import { parseTrufflehogNdjsonSkill } from "./parseTrufflehogNdjson.js";
 import { parseSarifSkill } from "./parseSarif.js";
+import { parseIpPrefixListSkill } from "./parseIpPrefixList.js";
 
 export { parsePackageJson, parsePackageJsonSkill } from "./parsePackageJson.js";
 export { parseHttpHeaders, parseHttpHeadersSkill } from "./parseHttpHeaders.js";
@@ -14,6 +15,7 @@ export { parseDockerfile, parseDockerfileSkill } from "./parseDockerfile.js";
 export { parseGithubActionsWorkflow, parseGithubActionsWorkflowSkill } from "./parseGithubActionsWorkflow.js";
 export { parseTrufflehogNdjson, parseTrufflehogNdjsonSkill } from "./parseTrufflehogNdjson.js";
 export { parseSarif, parseSarifSkill } from "./parseSarif.js";
+export { parseIpPrefixList, parseIpPrefixListSkill } from "./parseIpPrefixList.js";
 export type { ParsedHttpHeaderField, ParseHttpHeadersOutput } from "./parseHttpHeaders.js";
 export type {
   ParseSarifOutput,
@@ -22,6 +24,15 @@ export type {
   SarifRuleObservation,
   SarifRunObservation,
 } from "./parseSarif.js";
+export type {
+  IpAddressVersion,
+  IpPrefixEntryKind,
+  IpPrefixListDuplicateEntry,
+  IpPrefixListEntry,
+  IpPrefixListInvalidLine,
+  IpPrefixListLineEnding,
+  ParseIpPrefixListOutput,
+} from "./parseIpPrefixList.js";
 export type {
   ParseTrufflehogNdjsonOutput,
   TrufflehogResultObservation,
@@ -63,6 +74,7 @@ export const skills = [
   parseHttpHeadersSkill,
   parseTrufflehogNdjsonSkill,
   parseSarifSkill,
+  parseIpPrefixListSkill,
   parsePackageJsonSkill,
   parseCsvSkill,
   parseYamlSkill,

@@ -22,6 +22,7 @@ dockerfile/          parse_dockerfile
 email/               parse_email_headers
 github-actions/      parse_github_actions_workflow
 http-headers/        parse_http_headers
+ip-prefixes/         parse_ip_prefix_list
 identifiers/         extract_cves, extract_uuids
 iocs/                extract_iocs and fang/refang helpers
 jwt/                 parse_jwt
@@ -39,4 +40,5 @@ pnpm --filter @security-workbench/cli start skills run parse_sarif --input-file 
 pnpm --filter @security-workbench/cli start skills run parse_trufflehog_ndjson --input-file "$PWD/fixtures/trufflehog/git-results.ndjson" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_browser_extension_manifest --input-file "$PWD/fixtures/browser-extension/manifest-v3-basic.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run extract_iocs --input-file "$PWD/fixtures/iocs/mixed-iocs.txt" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_ip_prefix_list --input-file "$PWD/fixtures/ip-prefixes/mixed-prefixes.txt" --format pretty
 ```

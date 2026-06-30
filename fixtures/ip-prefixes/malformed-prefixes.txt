@@ -1,0 +1,6 @@
+# Mixed valid and malformed list.
+203.0.113.0/33
+999.1.1.1
+2001:db8::/129
+not-an-ip
+198.51.100.1/32
