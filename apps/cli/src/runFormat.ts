@@ -267,6 +267,56 @@ function renderPackageJson(record: Record<string, unknown>, options: DisplayOpti
   ]);
 }
 
+
+function renderBrowserExtensionPermissionReview(
+  record: Record<string, unknown>,
+  options: DisplayOptions
+): string[] | undefined {
+  const artifact = recordValue(record, "artifact");
+  const observed = recordValue(record, "observed");
+  if (!observed) {
+    return undefined;
+  }
+
+  const signals = recordArray(record, "signals");
+  const evidence = recordArray(record, "evidence");
+  const signalLines = signals.slice(0, 20).map((signal) => {
+    const type = String(signal.type ?? "unknown");
+    const summary = String(signal.summary ?? "");
+    const refs = Array.isArray(signal.evidence_refs) ? signal.evidence_refs.length : 0;
+    return `${type}: ${summary} evidence_refs=${refs}`;
+  });
+
+  return section("Browser Extension Permission Review", [
+    `Name: ${displayString(String(artifact?.name ?? "unknown"), options)}`,
+    `Version: ${String(artifact?.version ?? "unknown")}`,
+    `Manifest version: ${String(artifact?.manifest_version ?? "unknown")}`,
+    `Manifest generation: ${String(observed.manifest_generation ?? "unknown")}`,
+    `Signals: ${numberValue(observed, "signal_count") ?? signals.length}`,
+    `Evidence records: ${numberValue(observed, "evidence_count") ?? evidence.length}`,
+    `Source warnings: ${numberValue(observed, "source_warning_count") ?? 0}`,
+    ...namedList("Broad host permissions", stringArray(observed, "broad_host_permissions"), options),
+    ...namedList("Broad optional host permissions", stringArray(observed, "broad_optional_host_permissions"), options),
+    ...namedList("Wildcard host permissions", stringArray(observed, "wildcard_host_permissions"), options),
+    ...namedList("Notable API permissions", stringArray(observed, "notable_api_permissions"), options),
+    ...namedList("Notable optional API permissions", stringArray(observed, "notable_optional_api_permissions"), options),
+    ...namedList("Broad content script matches", stringArray(observed, "broad_content_script_matches"), options),
+    "",
+    "Surfaces",
+    `- background present: ${booleanText(observed.background_present)}`,
+    `- background type: ${String(observed.background_type ?? "unknown")}`,
+    `- externally_connectable present: ${booleanText(observed.externally_connectable_present)}`,
+    `- web accessible resources present: ${booleanText(observed.web_accessible_resources_present)}`,
+    `- web accessible resource count: ${numberValue(observed, "web_accessible_resource_count") ?? 0}`,
+    `- update_url present: ${booleanText(observed.update_url_present)}`,
+    `- oauth2 present: ${booleanText(observed.oauth2_present)}`,
+    `- content_security_policy present: ${booleanText(observed.content_security_policy_present)}`,
+    ...namedList("Externally connectable matches", stringArray(observed, "externally_connectable_matches"), options),
+    ...namedList("Web accessible resource matches", stringArray(observed, "web_accessible_resource_matches"), options),
+    ...namedList("Signals", signalLines, options),
+  ]);
+}
+
 function renderBrowserExtensionManifest(
   record: Record<string, unknown>,
   options: DisplayOptions
@@ -619,6 +669,8 @@ function renderSkillAwareOutput(
       return renderPackageJson(record, options);
     case "parse_browser_extension_manifest":
       return renderBrowserExtensionManifest(record, options);
+    case "review_browser_extension_permissions":
+      return renderBrowserExtensionPermissionReview(record, options);
     case "parse_dockerfile":
       return renderDockerfile(record, options);
     case "parse_github_actions_workflow":

@@ -9,6 +9,7 @@ packages/core
 packages/schemas
 plugins/core-utilities
 plugins/core-parsers
+plugins/core-reviewers
 apps/cli
 ```
 
@@ -21,10 +22,11 @@ CLI only
 Current registered skills:
 
 ```text
-48 total
+49 total
 39 core-utilities
 9 core-parsers
-transform and parser categories only
+1 core-reviewers
+transform, parser, and reviewer categories
 ```
 
 ## Implemented plugin packages
@@ -33,6 +35,7 @@ transform and parser categories only
 |---|---:|---|
 | `plugins/core-utilities` | 39 | deterministic transforms and lightweight parser-category utilities |
 | `plugins/core-parsers` | 9 | richer local artifact/document parsers |
+| `plugins/core-reviewers` | 1 | deterministic local evidence-backed reviewer skills |
 
 ## core-utilities inventory
 
@@ -90,6 +93,12 @@ parse_package_json
 parse_csv
 parse_yaml
 parse_browser_extension_manifest
+```
+
+## core-reviewers inventory
+
+```text
+review_browser_extension_permissions
 ```
 
 ## Ownership rules

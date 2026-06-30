@@ -57,48 +57,26 @@ parse_jwt
 parse_email_headers
 ```
 
+## Current reviewer baseline
+
+Core reviewers:
+
+```text
+review_browser_extension_permissions
+```
+
 ## Next work
 
-### PR 7A — Browser extension permission reviewer
+### PR 7B — First browser extension scoring/export path
 
-Goal:
+Completed in PR 7A:
 
 ```text
 parse_browser_extension_manifest
 → review_browser_extension_permissions
 ```
 
-Scope:
-
-```text
-reviewer only
-no scoring
-no finding generation
-no browser-store lookup
-no extension install/execution
-no network
-preserve observed vs inferred separation
-include evidence references
-```
-
-Initial review surfaces:
-
-```text
-permissions
-host_permissions
-optional permissions
-content scripts
-background/service worker
-externally_connectable
-web_accessible_resources
-update_url
-oauth2
-content_security_policy
-```
-
-### PR 7B+ — First scoring/export path
-
-Candidates:
+Candidate next skills:
 
 ```text
 score_browser_extension_risk
@@ -107,7 +85,7 @@ export_markdown
 export_json
 ```
 
-Do not add scoring until reviewer evidence shape is stable.
+Keep scoring deterministic, explainable, and evidence-linked. Finding/export work can follow once score shape is stable.
 
 ## Near-term parser backlog
 

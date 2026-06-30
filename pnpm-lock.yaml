@@ -26,6 +26,9 @@ importers:
       '@security-workbench/core-parsers':
         specifier: workspace:*
         version: link:../../plugins/core-parsers
+      '@security-workbench/core-reviewers':
+        specifier: workspace:*
+        version: link:../../plugins/core-reviewers
       '@security-workbench/core-utilities':
         specifier: workspace:*
         version: link:../../plugins/core-utilities
@@ -70,6 +73,19 @@ importers:
       yaml:
         specifier: ^2.9.0
         version: 2.9.0
+
+  plugins/core-reviewers:
+    dependencies:
+      '@security-workbench/schemas':
+        specifier: workspace:*
+        version: link:../../packages/schemas
+    devDependencies:
+      typescript:
+        specifier: ^5.5.4
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.1
+        version: 2.1.9(@types/node@26.0.0)
 
   plugins/core-utilities:
     dependencies:

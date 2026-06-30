@@ -18,7 +18,8 @@
     "@security-workbench/core": "workspace:*",
     "@security-workbench/core-utilities": "workspace:*",
     "@security-workbench/schemas": "workspace:*",
-    "@security-workbench/core-parsers": "workspace:*"
+    "@security-workbench/core-parsers": "workspace:*",
+    "@security-workbench/core-reviewers": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.5.4",
