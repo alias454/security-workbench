@@ -340,4 +340,77 @@ describe("formatSkillRunResult", () => {
     expect(output).toContain("browser_extension.broad_host_permissions_present");
   });
 
+
+  it("renders browser extension risk scores in pretty output", () => {
+    const output = formatSkillRunResult(
+      result({
+        skill: { name: "score_browser_extension_risk", version: "0.1.0" },
+        output: {
+          artifact: {
+            id: "artifact_browser_extension_risk_score",
+            type: "browser_extension_risk_score",
+            source_review_artifact_id: "artifact_browser_extension_permission_review",
+            source_artifact_id: "artifact_browser_extension_manifest",
+            source_artifact_type: "browser_extension_manifest",
+            name: "Fixture Extension",
+            version: "1.0.0",
+            manifest_version: 3,
+          },
+          observed: {
+            source_reviewer: "review_browser_extension_permissions",
+            score_model: "browser_extension_review_attention_v1",
+            score: 56,
+            max_score: 100,
+            raw_score: 56,
+            capped: false,
+            review_attention_level: "high",
+            risk_level: "high",
+            confidence: "high",
+            review_signal_count: 4,
+            review_evidence_count: 4,
+            contributing_signal_count: 4,
+            source_warning_count: 0,
+            category_scores: { host_access: 34, content_scripts: 16, extension_runtime: 6 },
+            contributing_signal_types: [
+              "browser_extension.all_urls_permission_present",
+              "browser_extension.broad_host_permissions_present",
+            ],
+            unmatched_signal_types: [],
+            evidence_refs: ["evidence_browser_extension_001"],
+          },
+          risk: {
+            score: 56,
+            level: "high",
+            confidence: "high",
+            rationale: ["browser_extension.all_urls_permission_present: +20 (host_access)"],
+            signal_refs: ["signal_browser_extension_001"],
+            evidence_refs: ["evidence_browser_extension_001"],
+          },
+          contributions: [
+            {
+              id: "contribution_browser_extension_001",
+              category: "host_access",
+              signal_ref: "signal_browser_extension_001",
+              signal_type: "browser_extension.all_urls_permission_present",
+              points: 20,
+              rationale: "<all_urls> host access usually warrants focused review.",
+              evidence_refs: ["evidence_browser_extension_001"],
+            },
+          ],
+          limitations: ["Score is a deterministic review-attention score, not a maliciousness verdict."],
+          warnings: [],
+        },
+      }),
+      { format: "pretty" }
+    );
+
+    expect(output).toContain("Browser Extension Risk Score");
+    expect(output).toContain("Score: 56/100");
+    expect(output).toContain("Review attention: high");
+    expect(output).toContain("Risk level: high");
+    expect(output).toContain("Category scores");
+    expect(output).toContain("host_access: 34");
+    expect(output).toContain("browser_extension.all_urls_permission_present");
+  });
+
 });

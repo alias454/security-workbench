@@ -12,6 +12,7 @@ packages/core
 plugins/core-utilities
 plugins/core-parsers
 plugins/core-reviewers
+plugins/core-scoring
 apps/cli
 ```
 
@@ -42,6 +43,7 @@ docs/plugins/README.md
 docs/plugins/core-utilities.md
 docs/plugins/core-parsers.md
 docs/plugins/core-reviewers.md
+docs/plugins/core-scoring.md
 ```
 
 Avoid duplicating volatile skill counts outside plugin docs unless needed for a release note.
@@ -67,7 +69,7 @@ Target model:
 Artifact → Skill → Signal → Evidence → Risk → Finding → Export
 ```
 
-Current implementation covers local transform, parser, and initial reviewer skills. Scoring, finding generation, export plugins, workflow runner, and enrichment are future work.
+Current implementation covers local transform, parser, initial reviewer, and initial scoring skills. Finding generation, export plugins, workflow runner, and enrichment are future work.
 
 Design rule:
 

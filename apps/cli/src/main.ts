@@ -6,6 +6,7 @@ import {
 } from "@security-workbench/core";
 import { skills as parserSkills } from "@security-workbench/core-parsers";
 import { skills as reviewerSkills } from "@security-workbench/core-reviewers";
+import { skills as scoringSkills } from "@security-workbench/core-scoring";
 import { skills as utilitySkills } from "@security-workbench/core-utilities";
 import { parseCliArgs, readBoundedUtf8File } from "./args.js";
 import { formatSkillDescription } from "./describeFormat.js";
@@ -38,6 +39,10 @@ function buildRegistry(): SkillRegistry {
   }
 
   for (const skill of reviewerSkills) {
+    registry.register(skill);
+  }
+
+  for (const skill of scoringSkills) {
     registry.register(skill);
   }
 

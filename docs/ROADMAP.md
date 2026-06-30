@@ -65,27 +65,35 @@ Core reviewers:
 review_browser_extension_permissions
 ```
 
+## Current scoring baseline
+
+Core scoring:
+
+```text
+score_browser_extension_risk
+```
+
 ## Next work
 
-### PR 7B — First browser extension scoring/export path
+### PR 7C — First browser extension finding/export path
 
-Completed in PR 7A:
+Completed through PR 7B:
 
 ```text
 parse_browser_extension_manifest
 → review_browser_extension_permissions
+→ score_browser_extension_risk
 ```
 
 Candidate next skills:
 
 ```text
-score_browser_extension_risk
 generate_finding
 export_markdown
 export_json
 ```
 
-Keep scoring deterministic, explainable, and evidence-linked. Finding/export work can follow once score shape is stable.
+Finding/export work should preserve evidence links, score context, confidence, and open limitations.
 
 ## Near-term parser backlog
 
@@ -169,11 +177,9 @@ Purpose: browser extension review workflow.
 Candidate skills:
 
 ```text
-review_browser_extension_permissions
 review_content_scripts
 review_externally_connectable
 review_web_accessible_resources
-score_browser_extension_risk
 ```
 
 ### plugin-scanner-normalize
