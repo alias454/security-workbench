@@ -369,6 +369,48 @@ function renderBrowserExtensionRiskScore(
   ]);
 }
 
+
+function renderBrowserExtensionFinding(
+  record: Record<string, unknown>,
+  options: DisplayOptions
+): string[] | undefined {
+  const artifact = recordValue(record, "artifact");
+  const observed = recordValue(record, "observed");
+  const finding = recordValue(record, "finding");
+  if (!observed || !finding) {
+    return undefined;
+  }
+
+  const markdown = typeof record.markdown === "string" ? record.markdown : "";
+  const observedBehavior = stringArray(finding, "observed_behavior");
+  const inferredRisk = stringArray(finding, "inferred_risk");
+  const mitigations = stringArray(finding, "mitigations");
+  const openQuestions = stringArray(finding, "open_questions");
+
+  return section("Browser Extension Finding", [
+    `Name: ${displayString(String(artifact?.name ?? "unknown"), options)}`,
+    `Version: ${String(artifact?.version ?? "unknown")}`,
+    `Manifest version: ${String(artifact?.manifest_version ?? "unknown")}`,
+    `Finding ID: ${String(finding.id ?? "unknown")}`,
+    `Status: ${String(finding.status ?? "unknown")}`,
+    `Score: ${String(observed.score ?? "unknown")}/${String(observed.max_score ?? "unknown")}`,
+    `Review attention: ${String(observed.review_attention_level ?? "unknown")}`,
+    `Risk level: ${String(observed.risk_level ?? "unknown")}`,
+    `Confidence: ${String(observed.confidence ?? "unknown")}`,
+    `Finding template: ${String(observed.finding_template ?? "unknown")}`,
+    `Evidence refs: ${numberValue(observed, "evidence_ref_count") ?? 0}`,
+    `Signal refs: ${numberValue(observed, "signal_ref_count") ?? 0}`,
+    `Markdown lines: ${numberValue(observed, "markdown_line_count") ?? (markdown.length > 0 ? markdown.split("\n").length : 0)}`,
+    "",
+    "Summary",
+    displayString(String(finding.summary ?? ""), options),
+    ...namedList("Observed behavior", observedBehavior, options),
+    ...namedList("Inferred risk", inferredRisk, options),
+    ...namedList("Recommended review actions", mitigations, options),
+    ...namedList("Open questions", openQuestions, options),
+  ]);
+}
+
 function renderBrowserExtensionManifest(
   record: Record<string, unknown>,
   options: DisplayOptions
@@ -725,6 +767,8 @@ function renderSkillAwareOutput(
       return renderBrowserExtensionPermissionReview(record, options);
     case "score_browser_extension_risk":
       return renderBrowserExtensionRiskScore(record, options);
+    case "generate_browser_extension_finding":
+      return renderBrowserExtensionFinding(record, options);
     case "parse_dockerfile":
       return renderDockerfile(record, options);
     case "parse_github_actions_workflow":

@@ -4,6 +4,7 @@ import {
   SkillRegistry,
   SkillRunner,
 } from "@security-workbench/core";
+import { skills as outputSkills } from "@security-workbench/core-output";
 import { skills as parserSkills } from "@security-workbench/core-parsers";
 import { skills as reviewerSkills } from "@security-workbench/core-reviewers";
 import { skills as scoringSkills } from "@security-workbench/core-scoring";
@@ -43,6 +44,10 @@ function buildRegistry(): SkillRegistry {
   }
 
   for (const skill of scoringSkills) {
+    registry.register(skill);
+  }
+
+  for (const skill of outputSkills) {
     registry.register(skill);
   }
 

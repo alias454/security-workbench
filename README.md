@@ -9,7 +9,8 @@ artifact or text blob
   → parse / transform
   → extract useful structure
   → review supported signals
-  → export structured output later
+  → score review attention
+  → generate draft finding output
 ```
 
 ## Current status
@@ -25,6 +26,7 @@ plugins/core-utilities
 plugins/core-parsers
 plugins/core-reviewers
 plugins/core-scoring
+plugins/core-output
 apps/cli
 single-skill registry and runner
 runtime policy enforcement
@@ -45,7 +47,7 @@ Not implemented yet:
 plugin manifest loader
 plugin install commands
 workflow runner
-output plugins
+generic output/export plugins
 external enrichment
 REST API
 web UI

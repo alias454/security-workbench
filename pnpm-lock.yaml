@@ -23,6 +23,9 @@ importers:
       '@security-workbench/core':
         specifier: workspace:*
         version: link:../../packages/core
+      '@security-workbench/core-output':
+        specifier: workspace:*
+        version: link:../../plugins/core-output
       '@security-workbench/core-parsers':
         specifier: workspace:*
         version: link:../../plugins/core-parsers
@@ -60,6 +63,19 @@ importers:
         version: 2.1.9(@types/node@26.0.0)
 
   packages/schemas:
+    devDependencies:
+      typescript:
+        specifier: ^5.5.4
+        version: 5.9.3
+      vitest:
+        specifier: ^2.1.1
+        version: 2.1.9(@types/node@26.0.0)
+
+  plugins/core-output:
+    dependencies:
+      '@security-workbench/schemas':
+        specifier: workspace:*
+        version: link:../../packages/schemas
     devDependencies:
       typescript:
         specifier: ^5.5.4

@@ -679,6 +679,32 @@ run_ok_require_output_pattern "score_browser_extension_risk pretty output includ
 run_ok_require_output_pattern "score_browser_extension_risk pretty output includes attention" 'Review attention: ' "$BROWSER_EXT_SCORE_SCRIPT"
 run_ok_require_output_pattern "score_browser_extension_risk pretty output includes contribution" 'browser_extension\.all_urls_permission_present' "$BROWSER_EXT_SCORE_SCRIPT"
 
+run_ok "skills describe generate_browser_extension_finding --format table" \
+  pnpm --filter @security-workbench/cli start skills describe generate_browser_extension_finding --format table
+
+run_ok_require_output_pattern "output list includes generate_browser_extension_finding" '^generate_browser_extension_finding[[:space:]]' \
+  pnpm --filter @security-workbench/cli start skills list --category output --format tsv
+
+run_expect_fail "generate_browser_extension_finding rejects raw manifest" \
+  pnpm --filter @security-workbench/cli start skills run generate_browser_extension_finding --input '{"manifest_version":3,"name":"Raw"}'
+
+BROWSER_EXT_FINDING_INPUT="$TMP_ROOT/browser-extension-v2-broad-hosts.score.json"
+BROWSER_EXT_FINDING_SCRIPT="$TMP_ROOT/generate-browser-extension-finding.sh"
+cat >"$BROWSER_EXT_FINDING_SCRIPT" <<SCRIPT
+#!/usr/bin/env bash
+set -euo pipefail
+pnpm --filter @security-workbench/cli start skills run parse_browser_extension_manifest --input-file "$FIXTURES_ROOT/browser-extension/manifest-v2-broad-hosts.json" > "$BROWSER_EXT_REVIEW_INPUT"
+pnpm --filter @security-workbench/cli start skills run review_browser_extension_permissions --input-file "$BROWSER_EXT_REVIEW_INPUT" > "$BROWSER_EXT_SCORE_INPUT"
+pnpm --filter @security-workbench/cli start skills run score_browser_extension_risk --input-file "$BROWSER_EXT_SCORE_INPUT" > "$BROWSER_EXT_FINDING_INPUT"
+pnpm --filter @security-workbench/cli start skills run generate_browser_extension_finding --input-file "$BROWSER_EXT_FINDING_INPUT" --format pretty
+SCRIPT
+chmod +x "$BROWSER_EXT_FINDING_SCRIPT"
+
+run_ok "fixture generate_browser_extension_finding v2 broad hosts" "$BROWSER_EXT_FINDING_SCRIPT"
+run_ok_require_output_pattern "generate_browser_extension_finding pretty output includes finding" 'Browser Extension Finding' "$BROWSER_EXT_FINDING_SCRIPT"
+run_ok_require_output_pattern "generate_browser_extension_finding pretty output includes score" 'Score: [0-9]+/100' "$BROWSER_EXT_FINDING_SCRIPT"
+run_ok_require_output_pattern "generate_browser_extension_finding pretty output includes finding id" 'finding_browser_extension_permission_review' "$BROWSER_EXT_FINDING_SCRIPT"
+
 run_ok "fixture parse_jwt alg none" "${CLI[@]}" skills run parse_jwt --input-file "$FIXTURES_ROOT/jwt/alg-none.jwt" --format pretty
 
 log_section "SOURCE AUDIT: suspicious API scan"
