@@ -24,9 +24,9 @@ CLI only
 Current registered skills:
 
 ```text
-51 total
+52 total
 39 core-utilities
-9 core-parsers
+10 core-parsers
 1 core-reviewers
 1 core-scoring
 1 core-output
@@ -38,7 +38,7 @@ transform, parser, reviewer, scoring, and output categories
 | Package | Skills | Role |
 |---|---:|---|
 | `plugins/core-utilities` | 39 | deterministic transforms and lightweight parser-category utilities |
-| `plugins/core-parsers` | 9 | richer local artifact/document parsers |
+| `plugins/core-parsers` | 10 | richer local artifact/document parsers |
 | `plugins/core-reviewers` | 1 | deterministic local evidence-backed reviewer skills |
 | `plugins/core-scoring` | 1 | deterministic local evidence-linked prioritization skills |
 | `plugins/core-output` | 1 | deterministic local finding and export output skills |
@@ -99,6 +99,7 @@ parse_package_json
 parse_csv
 parse_yaml
 parse_browser_extension_manifest
+parse_ip_prefix_list
 ```
 
 ## core-reviewers inventory

@@ -34,6 +34,7 @@ fixtures/dockerfile/          parse_dockerfile
 fixtures/email/               parse_email_headers
 fixtures/github-actions/      parse_github_actions_workflow
 fixtures/http-headers/        parse_http_headers
+fixtures/ip-prefixes/         parse_ip_prefix_list
 fixtures/identifiers/         extract_cves, extract_uuids
 fixtures/iocs/                extract_iocs and fang/refang helpers
 fixtures/jwt/                 parse_jwt
@@ -56,6 +57,7 @@ pnpm --filter @security-workbench/cli start skills run parse_browser_extension_m
 pnpm --filter @security-workbench/cli start skills run parse_csv --input-file "$PWD/fixtures/csv/assets.csv" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_yaml --input-file "$PWD/fixtures/yaml/app-config.yaml" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_package_json --input-file "$PWD/fixtures/package-json/basic-package.json" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_ip_prefix_list --input-file "$PWD/fixtures/ip-prefixes/mixed-prefixes.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_jwt --input-file "$PWD/fixtures/jwt/alg-none.jwt" --format pretty
 pnpm --filter @security-workbench/cli start skills run extract_iocs --input-file "$PWD/fixtures/iocs/mixed-iocs.txt" --format pretty
 ```
