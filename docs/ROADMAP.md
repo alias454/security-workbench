@@ -1,17 +1,24 @@
 # Roadmap
 
-This file tracks engineering work only. Avoid product-spec sprawl here.
+This file tracks open engineering work and sequencing. Completed capability behavior belongs in `README.md`, `docs/plugins/README.md`, and the owning `docs/plugins/*.md` file. When work lands, update those docs and reshape this roadmap around the remaining work.
 
 Current baseline:
 
 ```text
-CLI MVP
-core runtime
-core utilities
-core parsers
-safe input-file handling
-exposure metadata contracts
-fixture-backed smoke script
+CLI skill runner
+local-only runtime policy and safe input handling
+core transform/parser/reviewer/scoring/output plugins
+one browser-extension artifact-to-finding chain
+full smoke, source audit, and Semgrep validation
+```
+
+Detailed implemented capability is documented in:
+
+```text
+README.md
+docs/plugins/README.md
+docs/plugins/core-*.md
+docs/SECURITY_MODEL.md
 ```
 
 Verified gate:
@@ -23,206 +30,175 @@ pnpm typecheck:test
 ./security-workbench-full-smoke.sh
 ```
 
-## Current skill baseline
-
-Core parsers:
+## Active sequence
 
 ```text
-parse_http_headers
-parse_dockerfile
-parse_github_actions_workflow
-parse_trufflehog_ndjson
-parse_sarif
-parse_package_json
-parse_csv
-parse_yaml
-parse_browser_extension_manifest
-parse_ip_prefix_list
-parse_asn_list
-parse_asn_allow_deny_list
-parse_asn_observations
-parse_bgp_prefix_table
+1. Add browser extension review recipe docs.
+2. Add a recipes index.
+3. Add workflow runner lite for browser_extension_review.
+4. Add SARIF/static-analysis triage as the second review chain.
+5. Add minimal schema validation for stable workflow inputs and outputs.
 ```
 
-Core utility parser-category skills:
+Sequence rule:
 
 ```text
-identify_hash
-json_parse
-extract_iocs
-extract_urls
-extract_domains
-extract_emails
-extract_ipv4
-extract_hashes
-extract_cves
-extract_uuids
-parse_url
-parse_jwt
-parse_email_headers
+recipes before workflow runner
+registered workflows before arbitrary DAGs
+workflow CLI before REST/web/MCP adapters
+local-only workflows before network enrichment
 ```
 
-## Current reviewer baseline
+## Workflow runner lite
 
-Core reviewers:
+Start with narrow registered workflows, not general pipeline execution.
+
+First target:
 
 ```text
-review_browser_extension_permissions
+browser_extension_review
+  parse_browser_extension_manifest
+  review_browser_extension_permissions
+  score_browser_extension_risk
+  generate_browser_extension_finding
 ```
 
-## Current scoring baseline
-
-Core scoring:
+Second target:
 
 ```text
-score_browser_extension_risk
+static_analysis_triage
+  parse_sarif
+  review_static_analysis_results
+  score_static_analysis_attention
+  generate_static_analysis_triage_summary
 ```
 
-## Current output baseline
+Later pipeline support should add registration, input/output validation, evidence reference preservation, structured run results, CLI list/run support, and fixture-backed golden-output tests.
 
-Core output:
+## Near-term candidates
 
-```text
-generate_browser_extension_finding
-```
-
-## Current browser extension chain
-
-Completed through PR 7C:
+These are candidates for the next small PR stack after the active sequence starts.
 
 ```text
-parse_browser_extension_manifest
-→ review_browser_extension_permissions
-→ score_browser_extension_risk
-→ generate_browser_extension_finding
-```
-
-## Next work
-
-Recommended next infrastructure parser:
-
-```text
-parse_rir_whois_text
-```
-
-Generic output/export candidates remain future work:
-
-```text
+review_static_analysis_results
+score_static_analysis_attention
+generate_static_analysis_triage_summary
 export_markdown
 export_json
 generate_finding
-```
-
-## Near-term parser backlog
-
-General parser candidates:
-
-```text
-parse_pem_certificate
-parse_package_lock
-parse_pnpm_lock
-parse_yarn_lock
-parse_requirements_txt
-parse_cyclonedx_sbom
-parse_spdx_sbom
-parse_csp
-parse_set_cookie_headers
 parse_semgrep_json
 parse_checkov_json
 parse_grype_json
-parse_npm_audit_json
+parse_pem_certificate
+parse_lockfiles
+parse_sbom
 ```
 
-Infrastructure artifact parser lane:
+## Workflow backlog
 
 ```text
-parse_asn_list
-parse_asn_allow_deny_list
-parse_asn_observations
-parse_bgp_prefix_table
-parse_rir_whois_text
-parse_mac_address_list
-parse_oui_registry
+url_review
+phishing_review
+email_header_review
+jwt_review
+certificate_review
+browser_extension_review
+package_review
+sbom_review
+ai_workflow_review
+domain_security_review
+security_headers_review
+typosquat_review
+vulnerability_prioritization
+scanner_summary
+merge_scanner_results
+ioc_cleanup
+extract_defang_urls
+asn_cluster_iocs
+asn_denylist_review
+local_mac_vendor_lookup
+prefix_membership_review
+vuln_feed_infra_cluster
+notion_export_markdown
+```
+
+## Scanner/static-analysis lane
+
+Purpose: normalize scanner output into deduplicated, evidence-backed triage summaries.
+
+Candidate work:
+
+```text
+parse scanner-native JSON outputs
+normalize scanner results
+dedupe scanner results
+review static-analysis results
+score static-analysis attention
+generate static-analysis triage summary
+```
+
+Keep tool-specific parsing separate from prioritization and finding generation.
+
+## Infrastructure and local registry lane
+
+Purpose: normalize local infrastructure artifacts and support offline/control-owned registry lookups.
+
+Candidate work:
+
+```text
+parse RIR WHOIS text
+parse MAC address lists
+parse OUI registry snapshots
+lookup MAC vendor from local registry
+lookup IP prefix membership from local registry
+lookup ASN membership from local registry
+normalize local registry snapshots
 ```
 
 Boundary:
 
 ```text
-Parsers normalize local artifacts only. `parse_ip_prefix_list`, `parse_asn_list`, `parse_asn_allow_deny_list`, `parse_asn_observations`, and `parse_bgp_prefix_table` are implemented infrastructure parsers. `parse_rir_whois_text` remains future work.
+Parsers normalize local artifacts only.
 No live ASN/BGP/RIR/RDAP/DNS/MAC vendor lookups in parsers.
 No reputation claims.
 No malicious/benign ASN conclusions.
 ```
 
+## Network enrichment lane
+
+Network/provider enrichment is deferred until disclosure, policy, audit, and adapter labeling are ready.
+
+Candidate work:
+
+```text
+DNS lookup
+RDAP lookup
+certificate transparency lookup
+URLhaus lookup
+CVE lookup
+OSV lookup
+GHSA lookup
+EPSS lookup
+CISA KEV lookup
+MITRE ATT&CK lookup
+package registry lookup
+GitHub repository metadata lookup
+IP/domain/ASN enrichment
+RPKI status enrichment
+```
+
 ## Future plugin lanes
 
-### plugin-local-registries
-
-Purpose: offline/control-owned registry parsing and lookup.
-
-Candidate skills:
-
 ```text
-parse_oui_registry
-lookup_mac_vendor_local
-lookup_ip_prefix_membership_local
-lookup_asn_membership_local
-lookup_oui_registry_local
-normalize_registry_snapshot
-```
-
-Data sources should be bundled, cached, or user-supplied. Network update commands come later and require explicit policy.
-
-### plugin-infrastructure-intel
-
-Purpose: explicit opt-in network/provider infrastructure enrichment.
-
-Candidate skills:
-
-```text
-enrich_ip_to_asn
-enrich_domain_to_asn
-enrich_asn_prefixes
-enrich_asn_neighbors
-enrich_prefix_rpki_status
-```
-
-### plugin-browser-extension
-
-Purpose: browser extension review workflow.
-
-Candidate skills:
-
-```text
-review_content_scripts
-review_externally_connectable
-review_web_accessible_resources
-```
-
-### plugin-scanner-normalize
-
-Purpose: scanner-specific normalization and summary workflows.
-
-Candidate skills:
-
-```text
-parse_semgrep_json
-parse_checkov_json
-parse_grype_json
-normalize_scanner_results
-dedupe_scanner_results
-summarize_scanner_results
-```
-
-`parse_sarif` and `parse_trufflehog_ndjson` are already implemented as core parser primitives.
-
-### Other plugin candidates
-
-```text
+plugin-browser-extension
+plugin-scanner-normalize
+plugin-local-registries
+plugin-infrastructure-intel
 plugin-url-triage
 plugin-email
 plugin-certificates
 plugin-packages
+plugin-sbom
 plugin-cloudformation
 plugin-kubernetes
 plugin-terraform
@@ -232,39 +208,82 @@ plugin-ai-agent
 plugin-notion
 ```
 
-## Future workflow candidates
+## Deferred platform capabilities
+
+Runtime and plugin system:
 
 ```text
-browser_extension_review
-ioc_cleanup
-extract_defang_urls
-jwt_review
-email_header_review
-package_review
-scanner_summary
-merge_scanner_results
-asn_cluster_iocs
-asn_denylist_review
-local_mac_vendor_lookup
-prefix_membership_review
-vuln_feed_infra_cluster
-notion_export_markdown
+plugin manifest schema and loader
+plugin install/search/update commands
+third-party plugin execution
+plugin quality labels
+profiles
+full input/output schema validation
+structured local audit/run metadata
 ```
 
-## Deferred platform work
+REST API:
 
 ```text
-CircleCI or other CI runner
-plugin manifest schema
-plugin install/search/update commands
-workflow runner
-profiles
-REST API
-web UI
-MCP server
-network/provider enrichment foundation
-local persistence/run history
-third-party plugin execution
+shared-runtime API adapter
+health and discovery endpoints
+skill run endpoint
+workflow run endpoint
+```
+
+Local web UI:
+
+```text
+workflow selection
+artifact paste/upload
+structured result viewer
+evidence and signal drill-down
+risk and finding preview
+Markdown/JSON export
+run history
+network/disclosure indicators
+```
+
+MCP and agent safety:
+
+```text
+MCP server over stable workflows
+tool allowlist
+network lookup approval model
+artifact size limits
+explicit persistence flags
+safe logging and redaction defaults
+structured refusal/error responses
+agent-triggered run audit metadata
+no destructive actions in initial MCP release
+```
+
+Community and release hardening:
+
+```text
+plugin contribution guide
+skill and pipeline templates
+enrichment/scoring/exporter templates
+fixture and golden-output guidance
+issue and pull request templates
+release automation
+Docker image and local Docker Compose
+signed/checksummed release artifacts where practical
+example plugin repository/template
+documentation site or expanded docs index
+screenshots/demo data
+```
+
+Persistence and audit:
+
+```text
+SQLite-backed local store
+artifacts
+runs
+findings
+saved pipelines
+enrichment cache
+audit log
 ```
 
 CI note:
@@ -277,8 +296,16 @@ Avoid self-hosted CI for public PRs unless runner isolation is reviewed.
 
 ## Release blockers before API/MCP/plugin loading
 
-Before REST API, MCP, hosted mode, plugin manifest loading, third-party plugins, or network-capable enrichment, satisfy:
+Before REST API, MCP, hosted mode, plugin manifest loading, third-party plugins, persistence, or network-capable enrichment, satisfy:
 
 ```text
-docs/SECURITY_MODEL.md
+shared runtime path for all adapters
+fail-closed exposure metadata behavior
+policy enforcement for network, filesystem, persistence, and external binaries
+schema validation for stable workflow inputs and outputs
+redaction-safe logs and outputs
+bounded artifact handling per adapter
+audit metadata for runs
+clear external disclosure model
+updated docs/SECURITY_MODEL.md
 ```

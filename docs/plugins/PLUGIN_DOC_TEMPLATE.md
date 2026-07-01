@@ -37,6 +37,18 @@ what requires network/provider/persistence approval
 
 List expected skill permissions and any policy requirements.
 
+## Schemas
+
+List input and output schemas, or note why schema coverage is not implemented yet.
+
+## Privacy and exposure
+
+Document network behavior, external sends, persistence, future API/web/MCP exposure intent, and any redaction behavior.
+
+## Examples
+
+Show one CLI command for the main skill or workflow.
+
 ## Fixtures
 
 List fixture folders or package testdata.
@@ -46,6 +58,20 @@ List fixture folders or package testdata.
 ```bash
 pnpm --filter <package> test
 pnpm --filter <package> typecheck:test
+```
+
+## Contribution checklist
+
+```text
+manifest entry or registered skill metadata
+input/output schema coverage when stable
+privacy declaration
+fixtures
+unit tests
+malformed-input tests for parsers
+README/plugin doc update
+example run
+license compatibility note when adding dependencies or external data
 ```
 
 ## Notes

@@ -68,10 +68,12 @@ The CLI must remain a thin adapter. Analysis logic belongs in plugins.
 Target model:
 
 ```text
-Artifact → Skill → Signal → Evidence → Risk → Finding → Export
+Artifact → Skill → Signal → Evidence → Risk Score → Finding / Export
 ```
 
-Current implementation covers local transform, parser, initial reviewer, initial scoring, and initial output skills. Generic export plugins, workflow runner, and enrichment are future work.
+The same analysis path should be reused by the CLI, future workflow runner, REST API, local web UI, and MCP adapters. Adapters acquire input and render output; skills and workflows own analysis behavior.
+
+Current implementation covers local transform, parser, initial reviewer, initial scoring, and initial output skills. Generic export plugins, workflow runner, web/API/MCP adapters, persistence, and enrichment are future work.
 
 Design rule:
 
@@ -169,10 +171,11 @@ Pipeline classes:
 
 ```text
 transform recipe: clean, decode, extract, normalize, export
-review pipeline: parse, preserve evidence, review, score, export
+review pipeline: parse, preserve evidence, review, score, finding/export
+enrichment pipeline: parse, approve disclosure, enrich, review, score, export
 ```
 
-Candidate workflows are tracked in `docs/ROADMAP.md`.
+Start with narrow registered workflows before general DAG support. Candidate workflows and implementation order are tracked in `docs/ROADMAP.md`.
 
 ## Future adapters
 
@@ -184,7 +187,7 @@ web UI
 MCP server
 ```
 
-All future adapters must use the same runtime path and fail closed on missing or unreviewed exposure metadata. Expose workflow-level tools before broad raw-skill exposure.
+All future adapters must use the same runtime path and fail closed on missing or unreviewed exposure metadata. Expose workflow-level tools before broad raw-skill exposure. MCP should wrap stable workflows first and should not become a separate analysis engine.
 
 ## Validation commands
 
@@ -215,5 +218,6 @@ redact obvious secrets by default
 add malformed-input tests for parsers
 update owning plugin docs when skill behavior changes
 update roadmap when implementation priority changes
+move completed roadmap detail into README/plugin docs instead of leaving stale task lists
 run the full gate before release or public push
 ```
