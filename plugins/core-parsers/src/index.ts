@@ -12,6 +12,8 @@ import { parseCheckovJsonSkill } from "./parseCheckovJson.js";
 import { parseGrypeJsonSkill } from "./parseGrypeJson.js";
 import { parsePemCertificateSkill } from "./parsePemCertificate.js";
 import { parseLockfilesSkill } from "./parseLockfiles.js";
+import { normalizeScannerResultsSkill } from "./normalizeScannerResults.js";
+import { dedupeScannerResultsSkill } from "./dedupeScannerResults.js";
 import { parseIpPrefixListSkill } from "./parseIpPrefixList.js";
 import { parseAsnListSkill } from "./parseAsnList.js";
 import { parseAsnAllowDenyListSkill } from "./parseAsnAllowDenyList.js";
@@ -29,6 +31,8 @@ export { parseCheckovJson, parseCheckovJsonSkill } from "./parseCheckovJson.js";
 export { parseGrypeJson, parseGrypeJsonSkill } from "./parseGrypeJson.js";
 export { parsePemCertificate, parsePemCertificateSkill } from "./parsePemCertificate.js";
 export { parseLockfiles, parseLockfilesSkill } from "./parseLockfiles.js";
+export { normalizeScannerResults, normalizeScannerResultsSkill } from "./normalizeScannerResults.js";
+export { dedupeScannerResults, dedupeScannerResultsSkill } from "./dedupeScannerResults.js";
 export { parseIpPrefixList, parseIpPrefixListSkill } from "./parseIpPrefixList.js";
 export { parseAsnList, parseAsnListSkill } from "./parseAsnList.js";
 export { parseAsnAllowDenyList, parseAsnAllowDenyListSkill } from "./parseAsnAllowDenyList.js";
@@ -73,6 +77,20 @@ export type {
   LockfilePackageObservation,
   ParseLockfilesOutput,
 } from "./parseLockfiles.js";
+export type {
+  NormalizedScannerResultKind,
+  NormalizedScannerResultObservation,
+  NormalizedScannerSeverity,
+  NormalizedScannerStatus,
+  NormalizeScannerResultsOutput,
+  ScannerFamily,
+  ScannerName,
+} from "./normalizeScannerResults.js";
+export type {
+  DedupedScannerResultObservation,
+  DedupeScannerResultsOutput,
+  ScannerDuplicateGroupObservation,
+} from "./dedupeScannerResults.js";
 export type {
   BgpPrefixDuplicateEntry,
   BgpPrefixOriginConflict,
@@ -155,6 +173,8 @@ export const skills = [
   parseGrypeJsonSkill,
   parsePemCertificateSkill,
   parseLockfilesSkill,
+  normalizeScannerResultsSkill,
+  dedupeScannerResultsSkill,
   parseIpPrefixListSkill,
   parseAsnListSkill,
   parseAsnAllowDenyListSkill,
