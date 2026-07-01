@@ -2,6 +2,7 @@ import { reviewBrowserExtensionPermissionsSkill } from "./reviewBrowserExtension
 import { reviewStaticAnalysisResultsSkill } from "./reviewStaticAnalysisResults.js";
 import { reviewCertificateSkill } from "./reviewCertificate.js";
 import { reviewJwtSkill } from "./reviewJwt.js";
+import { reviewSbomSkill } from "./reviewSbom.js";
 
 export {
   reviewBrowserExtensionPermissions,
@@ -19,6 +20,7 @@ export {
 } from "./reviewStaticAnalysisResults.js";
 export { reviewCertificate, reviewCertificateSkill } from "./reviewCertificate.js";
 export { reviewJwt, reviewJwtSkill } from "./reviewJwt.js";
+export { reviewSbom, reviewSbomSkill } from "./reviewSbom.js";
 export type {
   StaticAnalysisReviewOutput,
   StaticAnalysisReviewResultObservation,
@@ -28,10 +30,12 @@ export type {
   CertificateReviewOutput,
 } from "./reviewCertificate.js";
 export type { JwtReviewOutput } from "./reviewJwt.js";
+export type { SbomReviewComponentObservation, SbomReviewOutput } from "./reviewSbom.js";
 
 export const skills = [
   reviewBrowserExtensionPermissionsSkill,
   reviewStaticAnalysisResultsSkill,
   reviewCertificateSkill,
   reviewJwtSkill,
+  reviewSbomSkill,
 ] as const;
