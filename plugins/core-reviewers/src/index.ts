@@ -1,5 +1,6 @@
 import { reviewBrowserExtensionPermissionsSkill } from "./reviewBrowserExtensionPermissions.js";
 import { reviewStaticAnalysisResultsSkill } from "./reviewStaticAnalysisResults.js";
+import { reviewCertificateSkill } from "./reviewCertificate.js";
 
 export {
   reviewBrowserExtensionPermissions,
@@ -15,9 +16,14 @@ export {
   reviewStaticAnalysisResults,
   reviewStaticAnalysisResultsSkill,
 } from "./reviewStaticAnalysisResults.js";
+export { reviewCertificate, reviewCertificateSkill } from "./reviewCertificate.js";
 export type {
   StaticAnalysisReviewOutput,
   StaticAnalysisReviewResultObservation,
 } from "./reviewStaticAnalysisResults.js";
+export type {
+  CertificateReviewCertificateObservation,
+  CertificateReviewOutput,
+} from "./reviewCertificate.js";
 
-export const skills = [reviewBrowserExtensionPermissionsSkill, reviewStaticAnalysisResultsSkill] as const;
+export const skills = [reviewBrowserExtensionPermissionsSkill, reviewStaticAnalysisResultsSkill, reviewCertificateSkill] as const;
