@@ -27,4 +27,31 @@ export const browserExtensionReviewWorkflow: WorkflowDefinition = {
   ],
 };
 
-export const workflows = [browserExtensionReviewWorkflow] as const;
+export const staticAnalysisTriageWorkflow: WorkflowDefinition = {
+  name: "static_analysis_triage",
+  version: "0.1.0",
+  description: "Parse SARIF, review scanner results, score review attention, and generate a triage summary.",
+  steps: [
+    {
+      id: "parse",
+      skill: "parse_sarif",
+    },
+    {
+      id: "review",
+      skill: "review_static_analysis_results",
+      input_from: "parse",
+    },
+    {
+      id: "score",
+      skill: "score_static_analysis_attention",
+      input_from: "review",
+    },
+    {
+      id: "summary",
+      skill: "generate_static_analysis_triage_summary",
+      input_from: "score",
+    },
+  ],
+};
+
+export const workflows = [browserExtensionReviewWorkflow, staticAnalysisTriageWorkflow] as const;

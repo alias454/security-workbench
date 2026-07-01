@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 1
+Implemented skills: 2
 ```
 
 ## Purpose
@@ -37,6 +37,7 @@ no findings
 | Skill | Input | Output summary |
 |---|---|---|
 | `review_browser_extension_permissions` | `parse_browser_extension_manifest` output or JSON run result | evidence-backed signals for extension permission and exposure surfaces |
+| `review_static_analysis_results` | `parse_sarif` output or JSON run result | evidence-backed signals for SARIF static-analysis result triage |
 
 ## `review_browser_extension_permissions`
 
@@ -123,4 +124,50 @@ minimal low-surface output
 malformed input rejection
 pretty output coverage through CLI tests
 fixture-backed smoke coverage
+```
+
+
+## `review_static_analysis_results`
+
+Reviews parsed SARIF observations and emits evidence-backed static-analysis triage signals.
+
+It reports:
+
+```text
+source parser and warning count
+SARIF tool names
+rule and result counts
+result levels
+suppressed result count
+fix availability count
+new result count
+affected artifact URIs
+affected rule IDs
+evidence records
+signal records
+```
+
+It does not:
+
+```text
+run scanners
+inspect source files
+verify true-positive or false-positive status
+perform CVE, EPSS, KEV, package, or repository enrichment
+score risk
+generate findings
+```
+
+## Static-analysis example
+
+Run from repo root:
+
+```bash
+pnpm --filter @security-workbench/cli start skills run parse_sarif \
+  --input-file "$PWD/fixtures/sarif/codeql-results.sarif" \
+  > /tmp/static-analysis.parsed.json
+
+pnpm --filter @security-workbench/cli start skills run review_static_analysis_results \
+  --input-file /tmp/static-analysis.parsed.json \
+  --format pretty
 ```

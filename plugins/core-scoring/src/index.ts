@@ -1,4 +1,5 @@
 import { scoreBrowserExtensionRiskSkill } from "./scoreBrowserExtensionRisk.js";
+import { scoreStaticAnalysisAttentionSkill } from "./scoreStaticAnalysisAttention.js";
 
 export {
   scoreBrowserExtensionRisk,
@@ -9,5 +10,13 @@ export type {
   BrowserExtensionRiskScoreOutput,
   ParsedBrowserExtensionPermissionReviewForScoring,
 } from "./scoreBrowserExtensionRisk.js";
+export {
+  scoreStaticAnalysisAttention,
+  scoreStaticAnalysisAttentionSkill,
+} from "./scoreStaticAnalysisAttention.js";
+export type {
+  StaticAnalysisAttentionContribution,
+  StaticAnalysisAttentionScoreOutput,
+} from "./scoreStaticAnalysisAttention.js";
 
-export const skills = [scoreBrowserExtensionRiskSkill] as const;
+export const skills = [scoreBrowserExtensionRiskSkill, scoreStaticAnalysisAttentionSkill] as const;

@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 1
+Implemented skills: 2
 ```
 
 ## Boundary
@@ -31,6 +31,7 @@ Scoring skills must be deterministic, explainable, evidence-linked, and clear ab
 | Skill | Input | Output |
 |---|---|---|
 | `score_browser_extension_risk` | `review_browser_extension_permissions` output or JSON run result | deterministic browser extension review-attention score and risk assessment |
+| `score_static_analysis_attention` | `review_static_analysis_results` output or JSON run result | deterministic static-analysis review-attention score and risk assessment |
 
 ## `score_browser_extension_risk`
 
@@ -107,4 +108,42 @@ pnpm --filter @security-workbench/cli start skills run score_browser_extension_r
 pnpm --filter @security-workbench/core-scoring test
 pnpm --filter @security-workbench/core-scoring typecheck:test
 pnpm --filter @security-workbench/core-scoring build
+```
+
+
+## `score_static_analysis_attention`
+
+Scores static-analysis review signals into a bounded review-attention assessment.
+
+It reports:
+
+```text
+artifact identity
+source review artifact reference
+score model name
+raw and capped score
+review attention level
+risk level
+confidence
+review signal count
+contributing signal count
+category scores
+contributing signal types
+unmatched signal types
+risk assessment
+per-signal score contributions
+limitations
+warnings
+```
+
+It intentionally does not:
+
+```text
+inspect source code
+run scanners
+contact scanner services
+perform enrichment
+verify exploitability
+generate findings
+claim true-positive or false-positive status
 ```
