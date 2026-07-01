@@ -119,6 +119,7 @@ docs/ENGINEERING.md          runtime, repo layout, implementation rules
 docs/ROADMAP.md              current backlog and implementation order
 docs/SECURITY_MODEL.md       trust boundaries, privacy, exposure, output safety
 docs/FIXTURES.md             fixture policy and inventory
+docs/recipes/README.md       copy/paste workflow recipes
 docs/plugins/README.md       plugin and skill inventory
 docs/plugins/*.md            per-plugin behavior and limits
 ```
