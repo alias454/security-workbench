@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 10
+Implemented skills: 14
 ```
 
 ## Purpose
@@ -134,6 +134,10 @@ plugins/core-parsers/src/
   parsePackageJson.ts
   parseSarif.ts
   parseIpPrefixList.ts
+  parseAsnList.ts
+  parseAsnAllowDenyList.ts
+  parseAsnObservations.ts
+  parseBgpPrefixTable.ts
   parseTrufflehogNdjson.ts
   parseYaml.ts
 plugins/core-parsers/tests/

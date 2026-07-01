@@ -2,6 +2,8 @@
 
 Security Workbench is a CLI workbench for repeatable security artifact tasks: parse, transform, normalize, review, and export.
 
+Security Workbench is intended to grow from a CLI workbench into a shared runtime for evidence-backed skills and registered workflows. Future adapters such as REST API, local web UI, and MCP should reuse that runtime path rather than becoming separate analysis engines.
+
 The current build is intentionally local and deterministic. Routine artifacts such as encoded blobs, URLs, headers, JSON, CSV, YAML, Dockerfiles, GitHub Actions workflows, scanner outputs, JWTs, and manifests should be parsed and normalized before deciding whether AI or external enrichment is needed.
 
 ```text
@@ -81,6 +83,19 @@ pnpm --filter @security-workbench/cli start skills run parse_asn_allow_deny_list
 pnpm --filter @security-workbench/cli start skills run parse_asn_observations --input-file "$PWD/fixtures/asn/asn-observations.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_bgp_prefix_table --input-file "$PWD/fixtures/asn/bgp-prefix-table.txt" --format pretty
 ```
+
+## Current completed chain
+
+The first artifact-to-finding path is browser extension permission review:
+
+```text
+parse_browser_extension_manifest
+  → review_browser_extension_permissions
+  → score_browser_extension_risk
+  → generate_browser_extension_finding
+```
+
+Detailed behavior lives in the core parser, reviewer, scoring, and output plugin docs.
 
 ## Validation
 

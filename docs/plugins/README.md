@@ -24,9 +24,9 @@ CLI only
 Current registered skills:
 
 ```text
-52 total
+56 total
 39 core-utilities
-10 core-parsers
+14 core-parsers
 1 core-reviewers
 1 core-scoring
 1 core-output
@@ -38,7 +38,7 @@ transform, parser, reviewer, scoring, and output categories
 | Package | Skills | Role |
 |---|---:|---|
 | `plugins/core-utilities` | 39 | deterministic transforms and lightweight parser-category utilities |
-| `plugins/core-parsers` | 10 | richer local artifact/document parsers |
+| `plugins/core-parsers` | 14 | richer local artifact/document parsers |
 | `plugins/core-reviewers` | 1 | deterministic local evidence-backed reviewer skills |
 | `plugins/core-scoring` | 1 | deterministic local evidence-linked prioritization skills |
 | `plugins/core-output` | 1 | deterministic local finding and export output skills |
@@ -161,10 +161,25 @@ plugin-notion
 pick owning plugin
 keep scope small
 declare permissions
+declare future exposure intent when relevant
+add input/output schema coverage when the skill is stable
 add tests, including malformed input
 add fixtures if useful
 update plugin docs and this inventory
 run full gate
+```
+
+Future third-party plugins must also document privacy behavior, network/provider sends, persistence, examples, and license compatibility before they are considered for reviewed or stable quality labels.
+
+## Adding/changing a pipeline
+
+```text
+define expected input artifact type
+list skill steps in execution order
+preserve evidence references between steps
+state risk and confidence assumptions
+add fixture input and golden output coverage
+document network behavior and external disclosure
 ```
 
 Full gate:
