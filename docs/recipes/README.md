@@ -2,7 +2,7 @@
 
 Recipes are copy/paste workflows for running existing Security Workbench skills together.
 
-They are not a workflow runner yet. Until pipeline execution exists, recipes document the intended sequence, inputs, outputs, and limits for repeatable local analysis.
+Recipes document the intended sequence, inputs, outputs, and limits for repeatable local analysis. When a registered workflow exists, the recipe should show the workflow command first and keep manual skill-chain commands as a troubleshooting fallback.
 
 ## Available recipes
 
@@ -26,3 +26,5 @@ validation
 Recipes should not introduce new behavior that is not implemented in skills.
 
 ## Future direction
+
+Registered workflows should stay aligned with recipes. Recipes remain useful for explaining what each workflow does, what it observes, and what it intentionally does not do.

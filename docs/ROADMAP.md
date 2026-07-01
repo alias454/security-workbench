@@ -5,10 +5,10 @@ This file tracks open engineering work and sequencing. Completed capability beha
 Current baseline:
 
 ```text
-CLI skill runner
+CLI skill and workflow runners
 local-only runtime policy and safe input handling
 core transform/parser/reviewer/scoring/output plugins
-one browser-extension artifact-to-finding chain
+one registered browser-extension artifact-to-finding workflow
 full smoke, source audit, and Semgrep validation
 ```
 
@@ -33,17 +33,16 @@ pnpm typecheck:test
 ## Active sequence
 
 ```text
-1. Add browser extension review recipe docs.
-2. Add a recipes index.
-3. Add workflow runner lite for browser_extension_review.
-4. Add SARIF/static-analysis triage as the second review chain.
-5. Add minimal schema validation for stable workflow inputs and outputs.
+1. Add SARIF/static-analysis triage as the second review chain.
+2. Add minimal schema validation for stable workflow inputs and outputs.
+3. Add generic Markdown and JSON export helpers.
+4. Add generic finding output once at least two workflows need it.
 ```
 
 Sequence rule:
 
 ```text
-recipes before workflow runner
+recipes explain workflows
 registered workflows before arbitrary DAGs
 workflow CLI before REST/web/MCP adapters
 local-only workflows before network enrichment
@@ -51,19 +50,9 @@ local-only workflows before network enrichment
 
 ## Workflow runner lite
 
-Start with narrow registered workflows, not general pipeline execution.
+The current runner supports narrow registered workflows, not general pipeline execution.
 
-First target:
-
-```text
-browser_extension_review
-  parse_browser_extension_manifest
-  review_browser_extension_permissions
-  score_browser_extension_risk
-  generate_browser_extension_finding
-```
-
-Second target:
+Next target:
 
 ```text
 static_analysis_triage
@@ -73,7 +62,7 @@ static_analysis_triage
   generate_static_analysis_triage_summary
 ```
 
-Later pipeline support should add registration, input/output validation, evidence reference preservation, structured run results, CLI list/run support, and fixture-backed golden-output tests.
+Later pipeline support should add stronger input/output validation and more fixture-backed golden-output coverage.
 
 ## Near-term candidates
 

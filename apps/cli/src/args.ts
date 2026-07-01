@@ -26,6 +26,15 @@ export interface CliSkillsRunOptions {
   unsafe?: boolean;
 }
 
+export interface CliWorkflowsListOptions {
+  format: CliListFormat;
+}
+
+export interface CliWorkflowsRunOptions {
+  format: CliRunFormat;
+  unsafe?: boolean;
+}
+
 export type CliInputSource =
   | { kind: "inline"; value: string }
   | { kind: "file"; path: string };
@@ -39,6 +48,13 @@ export type CliCommand =
       skillName: string;
       input_source: CliInputSource;
       options: CliSkillsRunOptions;
+    }
+  | { kind: "workflows_list"; options: CliWorkflowsListOptions }
+  | {
+      kind: "workflows_run";
+      workflowName: string;
+      input_source: CliInputSource;
+      options: CliWorkflowsRunOptions;
     };
 
 const SKILLS_RUN_USAGE =
@@ -47,6 +63,10 @@ const SKILLS_LIST_USAGE =
   "Usage: skills list [--category <category>] [--format table|json|tsv]";
 const SKILLS_DESCRIBE_USAGE =
   "Usage: skills describe <skill_name> [--format table|json|tsv]";
+const WORKFLOWS_LIST_USAGE =
+  "Usage: workflows list [--format table|json|tsv]";
+const WORKFLOWS_RUN_USAGE =
+  "Usage: workflows run <workflow_name> (--input <value> | --input-file <path>) [--format json|pretty] [--unsafe]";
 
 function requireFlagValue(argv: string[], index: number, flag: string): string {
   const value = argv[index + 1];
@@ -249,12 +269,138 @@ function parseSkillsRunArgs(argv: string[]): CliCommand {
   };
 }
 
+function parseWorkflowsListArgs(argv: string[]): CliCommand {
+  let format: CliListFormat = "tsv";
+  let seenFormat = false;
+
+  for (let index = 2; index < argv.length; index += 1) {
+    const token = argv[index];
+
+    if (token === "--format") {
+      if (seenFormat) {
+        throw new UsageError("Duplicate --format flag");
+      }
+
+      format = parseListFormat(requireFlagValue(argv, index, "--format"));
+      seenFormat = true;
+      index += 1;
+      continue;
+    }
+
+    if (token.startsWith("--")) {
+      throw new UsageError(`Unknown flag: ${token}`);
+    }
+
+    throw new UsageError(`${WORKFLOWS_LIST_USAGE}. Unexpected argument: ${token}`);
+  }
+
+  return { kind: "workflows_list", options: { format } };
+}
+
+function parseWorkflowsRunArgs(argv: string[]): CliCommand {
+  const workflowName = argv[2];
+
+  if (!workflowName) {
+    throw new UsageError(WORKFLOWS_RUN_USAGE);
+  }
+
+  let inlineInput: string | undefined;
+  let inputFile: string | undefined;
+  let format: CliRunFormat = "json";
+  let seenFormat = false;
+  let seenUnsafe = false;
+
+  for (let index = 3; index < argv.length; index += 1) {
+    const token = argv[index];
+
+    if (token === "--input") {
+      if (inlineInput !== undefined) {
+        throw new UsageError("Duplicate --input flag");
+      }
+
+      inlineInput = requireFlagValue(argv, index, "--input");
+      index += 1;
+      continue;
+    }
+
+    if (token === "--input-file") {
+      if (inputFile !== undefined) {
+        throw new UsageError("Duplicate --input-file flag");
+      }
+
+      inputFile = requireFlagValue(argv, index, "--input-file");
+      index += 1;
+      continue;
+    }
+
+    if (token === "--format") {
+      if (seenFormat) {
+        throw new UsageError("Duplicate --format flag");
+      }
+
+      format = parseRunFormat(requireFlagValue(argv, index, "--format"));
+      seenFormat = true;
+      index += 1;
+      continue;
+    }
+
+    if (token === "--unsafe") {
+      if (seenUnsafe) {
+        throw new UsageError("Duplicate --unsafe flag");
+      }
+
+      seenUnsafe = true;
+      continue;
+    }
+
+    if (token.startsWith("--")) {
+      throw new UsageError(`Unknown flag: ${token}`);
+    }
+
+    throw new UsageError(`Unexpected argument: ${token}`);
+  }
+
+  if (inlineInput !== undefined && inputFile !== undefined) {
+    throw new UsageError("Use either --input or --input-file, not both");
+  }
+
+  if (inlineInput === undefined && inputFile === undefined) {
+    throw new UsageError(WORKFLOWS_RUN_USAGE);
+  }
+
+  if (seenUnsafe && format !== "pretty") {
+    throw new UsageError("--unsafe is only supported with --format pretty");
+  }
+
+  return {
+    kind: "workflows_run",
+    workflowName,
+    input_source:
+      inputFile !== undefined
+        ? { kind: "file", path: inputFile }
+        : { kind: "inline", value: inlineInput as string },
+    options: seenUnsafe ? { format, unsafe: true } : { format },
+  };
+}
+
 export function parseCliArgs(argv: string[]): CliCommand {
   if (argv.length === 0 || argv[0] === "--help" || argv[0] === "-h") {
     return { kind: "help" };
   }
 
   const [command, subcommand] = argv;
+
+  if (command === "workflows") {
+    if (subcommand === "list") {
+      return parseWorkflowsListArgs(argv);
+    }
+
+    if (subcommand === "run") {
+      return parseWorkflowsRunArgs(argv);
+    }
+
+    throw new UsageError(`Unknown workflows command: ${subcommand ?? ""}`.trim());
+  }
 
   if (command !== "skills") {
     throw new UsageError(`Unknown command: ${command}`);

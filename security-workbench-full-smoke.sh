@@ -468,6 +468,13 @@ run_ok_reject_output_pattern "transform list excludes parser-observation skills"
 run_ok "skills list --category transform --format table" "${CLI[@]}" skills list --category transform --format table
 run_ok "skills list --category transform --format tsv" "${CLI[@]}" skills list --category transform --format tsv
 
+run_ok "workflows list" "${CLI[@]}" workflows list
+run_ok "workflows list --format table" "${CLI[@]}" workflows list --format table
+run_ok "workflows list --format json" "${CLI[@]}" workflows list --format json
+run_ok_require_output_pattern "workflows list includes browser_extension_review" "^browser_extension_review[[:space:]]" "${CLI[@]}" workflows list --format tsv
+run_ok "workflow browser_extension_review fixture" "${CLI[@]}" workflows run browser_extension_review --input-file "$FIXTURES_ROOT/browser-extension/manifest-v2-broad-hosts.json" --format pretty
+run_ok_require_output_pattern "workflow browser_extension_review output includes finding" "Browser Extension Finding" "${CLI[@]}" workflows run browser_extension_review --input-file "$FIXTURES_ROOT/browser-extension/manifest-v2-broad-hosts.json" --format pretty
+
 run_ok "skills describe parse_jwt" "${CLI[@]}" skills describe parse_jwt
 run_ok "skills describe parse_jwt --format table" "${CLI[@]}" skills describe parse_jwt --format table
 run_ok "skills describe parse_jwt --format json" "${CLI[@]}" skills describe parse_jwt --format json

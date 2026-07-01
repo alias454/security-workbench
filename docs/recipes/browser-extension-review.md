@@ -2,7 +2,7 @@
 
 Review a browser extension manifest for permission and browser-surface risk using the current local CLI skill chain.
 
-This recipe is the current manual form of the future `browser_extension_review` workflow.
+This recipe documents the registered `browser_extension_review` workflow and the equivalent manual skill chain.
 
 ## Goal
 
@@ -25,9 +25,19 @@ Example fixture:
 fixtures/browser-extension/manifest-v2-broad-hosts.json
 ```
 
-## Run the recipe
+## Run the registered workflow
 
-Run from the repo root.
+Run from the repo root:
+
+```bash
+pnpm --filter @security-workbench/cli start workflows run browser_extension_review \
+  --input-file "$PWD/fixtures/browser-extension/manifest-v2-broad-hosts.json" \
+  --format pretty
+```
+
+## Run the manual skill chain
+
+Use the manual chain when debugging intermediate parser, reviewer, scorer, or output behavior.
 
 Build the CLI once and capture the repo root for stable paths:
 
