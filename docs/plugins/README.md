@@ -130,6 +130,16 @@ export_markdown
 export_json
 ```
 
+
+## Current registered workflows
+
+Registered workflows are runtime definitions that chain existing skills. Workflow behavior is documented in recipes and the owning plugin docs.
+
+| Workflow | Steps | Purpose |
+|---|---|---|
+| `browser_extension_review` | `parse_browser_extension_manifest` → `review_browser_extension_permissions` → `score_browser_extension_risk` → `generate_browser_extension_finding` | Review a browser extension manifest and generate a draft permission finding. |
+| `static_analysis_triage` | `parse_sarif` → `review_static_analysis_results` → `score_static_analysis_attention` → `generate_static_analysis_triage_summary` | Review SARIF scanner output and generate a draft triage summary. |
+
 ## Ownership rules
 
 ```text
