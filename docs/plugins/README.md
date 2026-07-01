@@ -24,12 +24,12 @@ CLI only
 Current registered skills:
 
 ```text
-59 total
+62 total
 39 core-utilities
 14 core-parsers
 2 core-reviewers
 2 core-scoring
-2 core-output
+5 core-output
 transform, parser, reviewer, scoring, and output categories
 ```
 
@@ -41,7 +41,7 @@ transform, parser, reviewer, scoring, and output categories
 | `plugins/core-parsers` | 14 | richer local artifact/document parsers |
 | `plugins/core-reviewers` | 2 | deterministic local evidence-backed reviewer skills |
 | `plugins/core-scoring` | 2 | deterministic local evidence-linked prioritization skills |
-| `plugins/core-output` | 2 | deterministic local finding and export output skills |
+| `plugins/core-output` | 5 | deterministic local finding and export output skills |
 
 ## core-utilities inventory
 
@@ -125,6 +125,9 @@ score_static_analysis_attention
 ```text
 generate_browser_extension_finding
 generate_static_analysis_triage_summary
+generate_finding
+export_markdown
+export_json
 ```
 
 ## Ownership rules
