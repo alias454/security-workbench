@@ -319,6 +319,9 @@ log "node_version=$(node --version 2>/dev/null || echo 'node not found')"
 log "pnpm_version=$(pnpm --version 2>/dev/null || echo 'pnpm not found')"
 terminal_header
 
+run_ok_require_output_pattern "cli help shows discovery usage" 'security-workbench list' "${CLI[@]}" help
+run_ok_require_output_pattern "cli list shows registered workflows" 'browser_extension_review' "${CLI[@]}" list
+
 cat >"$TMP_ROOT/iocs.txt" <<'DATA'
  https://evil.example.com/path
 
