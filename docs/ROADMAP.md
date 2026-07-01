@@ -8,7 +8,7 @@ Current baseline:
 CLI skill and workflow runners
 local-only runtime policy and safe input handling
 core transform/parser/reviewer/scoring/output plugins
-one registered browser-extension artifact-to-finding workflow
+registered browser-extension and static-analysis triage workflows
 full smoke, source audit, and Semgrep validation
 ```
 
@@ -33,10 +33,9 @@ pnpm typecheck:test
 ## Active sequence
 
 ```text
-1. Add SARIF/static-analysis triage as the second review chain.
-2. Add minimal schema validation for stable workflow inputs and outputs.
-3. Add generic Markdown and JSON export helpers.
-4. Add generic finding output once at least two workflows need it.
+1. Add minimal schema validation for stable workflow inputs and outputs.
+2. Add generic Markdown and JSON export helpers.
+3. Add generic finding output now that at least two workflows need it.
 ```
 
 Sequence rule:
@@ -52,14 +51,11 @@ local-only workflows before network enrichment
 
 The current runner supports narrow registered workflows, not general pipeline execution.
 
-Next target:
+Current registered workflows:
 
 ```text
+browser_extension_review
 static_analysis_triage
-  parse_sarif
-  review_static_analysis_results
-  score_static_analysis_attention
-  generate_static_analysis_triage_summary
 ```
 
 Later pipeline support should add stronger input/output validation and more fixture-backed golden-output coverage.
@@ -69,9 +65,6 @@ Later pipeline support should add stronger input/output validation and more fixt
 These are candidates for the next small PR stack after the active sequence starts.
 
 ```text
-review_static_analysis_results
-score_static_analysis_attention
-generate_static_analysis_triage_summary
 export_markdown
 export_json
 generate_finding
@@ -121,9 +114,7 @@ Candidate work:
 parse scanner-native JSON outputs
 normalize scanner results
 dedupe scanner results
-review static-analysis results
-score static-analysis attention
-generate static-analysis triage summary
+expand static-analysis triage across scanner-native formats
 ```
 
 Keep tool-specific parsing separate from prioritization and finding generation.

@@ -9,6 +9,7 @@ Recipes document the intended sequence, inputs, outputs, and limits for repeatab
 | Recipe | Purpose |
 |---|---|
 | [Browser extension review](browser-extension-review.md) | Parse a browser extension manifest, review permission surfaces, score review attention, and generate a draft finding. |
+| [Static-analysis triage](static-analysis-triage.md) | Parse SARIF scanner output, review results, score review attention, and generate a draft triage summary. |
 
 ## Recipe rules
 

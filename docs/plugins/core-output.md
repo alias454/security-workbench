@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 1
+Implemented skills: 2
 ```
 
 ## Boundary
@@ -31,6 +31,7 @@ Output skills must remain evidence-linked. They may format or publish structured
 | Skill | Input | Output |
 |---|---|---|
 | `generate_browser_extension_finding` | `score_browser_extension_risk` output or JSON run result | draft finding record plus Markdown summary |
+| `generate_static_analysis_triage_summary` | `score_static_analysis_attention` output or JSON run result | draft static-analysis triage finding plus Markdown summary |
 
 ## `generate_browser_extension_finding`
 
@@ -93,4 +94,49 @@ pnpm --filter @security-workbench/cli start skills run generate_browser_extensio
 pnpm --filter @security-workbench/core-output test
 pnpm --filter @security-workbench/core-output typecheck:test
 pnpm --filter @security-workbench/core-output build
+```
+
+
+## `generate_static_analysis_triage_summary`
+
+Generates a draft static-analysis triage summary from deterministic static-analysis attention scoring output.
+
+It reports:
+
+```text
+artifact identity
+source score artifact reference
+source review artifact reference
+source SARIF artifact reference
+summary template name
+score and max score
+review attention level
+risk level
+confidence
+evidence reference count
+signal reference count
+structured FindingRecord
+Markdown summary
+limitations
+warnings
+```
+
+It intentionally does not:
+
+```text
+inspect source code
+run scanners
+contact scanner services
+perform CVE, EPSS, KEV, package, or repository enrichment
+verify true-positive or false-positive status
+send findings to external systems
+persist findings
+```
+
+## Static-analysis example
+
+```bash
+pnpm --filter @security-workbench/cli start workflows run static_analysis_triage \
+  --input-file "$PWD/fixtures/sarif/codeql-results.sarif" \
+  --format pretty
 ```

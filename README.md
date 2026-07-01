@@ -72,6 +72,7 @@ pnpm --filter @security-workbench/cli start skills describe parse_sarif
 pnpm --filter @security-workbench/cli start skills run json_parse --input '{"ok":true}'
 pnpm --filter @security-workbench/cli start workflows list --format table
 pnpm --filter @security-workbench/cli start workflows run browser_extension_review --input-file "$PWD/fixtures/browser-extension/manifest-v2-broad-hosts.json" --format pretty
+pnpm --filter @security-workbench/cli start workflows run static_analysis_triage --input-file "$PWD/fixtures/sarif/codeql-results.sarif" --format pretty
 ```
 
 Fixture examples use `$PWD` from the repo root:
@@ -87,7 +88,7 @@ pnpm --filter @security-workbench/cli start skills run parse_asn_observations --
 pnpm --filter @security-workbench/cli start skills run parse_bgp_prefix_table --input-file "$PWD/fixtures/asn/bgp-prefix-table.txt" --format pretty
 ```
 
-## Current completed chain
+## Current completed chains
 
 The first registered artifact-to-finding workflow is browser extension permission review:
 
@@ -96,6 +97,15 @@ parse_browser_extension_manifest
   → review_browser_extension_permissions
   → score_browser_extension_risk
   → generate_browser_extension_finding
+```
+
+The second registered workflow is static-analysis triage:
+
+```text
+parse_sarif
+  → review_static_analysis_results
+  → score_static_analysis_attention
+  → generate_static_analysis_triage_summary
 ```
 
 Detailed behavior lives in the core parser, reviewer, scoring, and output plugin docs.

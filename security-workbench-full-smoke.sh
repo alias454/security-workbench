@@ -472,8 +472,11 @@ run_ok "workflows list" "${CLI[@]}" workflows list
 run_ok "workflows list --format table" "${CLI[@]}" workflows list --format table
 run_ok "workflows list --format json" "${CLI[@]}" workflows list --format json
 run_ok_require_output_pattern "workflows list includes browser_extension_review" "^browser_extension_review[[:space:]]" "${CLI[@]}" workflows list --format tsv
+run_ok_require_output_pattern "workflows list includes static_analysis_triage" "^static_analysis_triage[[:space:]]" "${CLI[@]}" workflows list --format tsv
 run_ok "workflow browser_extension_review fixture" "${CLI[@]}" workflows run browser_extension_review --input-file "$FIXTURES_ROOT/browser-extension/manifest-v2-broad-hosts.json" --format pretty
 run_ok_require_output_pattern "workflow browser_extension_review output includes finding" "Browser Extension Finding" "${CLI[@]}" workflows run browser_extension_review --input-file "$FIXTURES_ROOT/browser-extension/manifest-v2-broad-hosts.json" --format pretty
+run_ok "workflow static_analysis_triage fixture" "${CLI[@]}" workflows run static_analysis_triage --input-file "$FIXTURES_ROOT/sarif/codeql-results.sarif" --format pretty
+run_ok_require_output_pattern "workflow static_analysis_triage output includes summary" "Static-analysis triage summary" "${CLI[@]}" workflows run static_analysis_triage --input-file "$FIXTURES_ROOT/sarif/codeql-results.sarif" --format pretty
 
 run_ok "skills describe parse_jwt" "${CLI[@]}" skills describe parse_jwt
 run_ok "skills describe parse_jwt --format table" "${CLI[@]}" skills describe parse_jwt --format table
@@ -485,6 +488,9 @@ run_ok "skills describe parse_dockerfile --format table" "${CLI[@]}" skills desc
 run_ok "skills describe parse_github_actions_workflow --format table" "${CLI[@]}" skills describe parse_github_actions_workflow --format table
 run_ok "skills describe parse_trufflehog_ndjson --format table" "${CLI[@]}" skills describe parse_trufflehog_ndjson --format table
 run_ok "skills describe parse_sarif --format table" "${CLI[@]}" skills describe parse_sarif --format table
+run_ok "skills describe review_static_analysis_results --format table" "${CLI[@]}" skills describe review_static_analysis_results --format table
+run_ok "skills describe score_static_analysis_attention --format table" "${CLI[@]}" skills describe score_static_analysis_attention --format table
+run_ok "skills describe generate_static_analysis_triage_summary --format table" "${CLI[@]}" skills describe generate_static_analysis_triage_summary --format table
 run_ok "skills describe parse_package_json --format table" "${CLI[@]}" skills describe parse_package_json --format table
 run_ok "skills describe parse_csv --format table" "${CLI[@]}" skills describe parse_csv --format table
 run_ok "skills describe parse_yaml --format table" "${CLI[@]}" skills describe parse_yaml --format table

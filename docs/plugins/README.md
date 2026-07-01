@@ -24,12 +24,12 @@ CLI only
 Current registered skills:
 
 ```text
-56 total
+59 total
 39 core-utilities
 14 core-parsers
-1 core-reviewers
-1 core-scoring
-1 core-output
+2 core-reviewers
+2 core-scoring
+2 core-output
 transform, parser, reviewer, scoring, and output categories
 ```
 
@@ -39,9 +39,9 @@ transform, parser, reviewer, scoring, and output categories
 |---|---:|---|
 | `plugins/core-utilities` | 39 | deterministic transforms and lightweight parser-category utilities |
 | `plugins/core-parsers` | 14 | richer local artifact/document parsers |
-| `plugins/core-reviewers` | 1 | deterministic local evidence-backed reviewer skills |
-| `plugins/core-scoring` | 1 | deterministic local evidence-linked prioritization skills |
-| `plugins/core-output` | 1 | deterministic local finding and export output skills |
+| `plugins/core-reviewers` | 2 | deterministic local evidence-backed reviewer skills |
+| `plugins/core-scoring` | 2 | deterministic local evidence-linked prioritization skills |
+| `plugins/core-output` | 2 | deterministic local finding and export output skills |
 
 ## core-utilities inventory
 
@@ -110,18 +110,21 @@ parse_bgp_prefix_table
 
 ```text
 review_browser_extension_permissions
+review_static_analysis_results
 ```
 
 ## core-scoring inventory
 
 ```text
 score_browser_extension_risk
+score_static_analysis_attention
 ```
 
 ## core-output inventory
 
 ```text
 generate_browser_extension_finding
+generate_static_analysis_triage_summary
 ```
 
 ## Ownership rules
