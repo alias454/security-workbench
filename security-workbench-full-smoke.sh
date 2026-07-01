@@ -677,7 +677,10 @@ run_ok_require_output_pattern "parse_pem_certificate pretty output includes cert
 
 run_ok "skills describe review_certificate --format table" "${CLI[@]}" skills describe review_certificate --format table
 run_ok_require_output_pattern "reviewer list includes review_certificate" '^review_certificate[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
+run_ok "skills describe review_jwt --format table" "${CLI[@]}" skills describe review_jwt --format table
+run_ok_require_output_pattern "reviewer list includes review_jwt" '^review_jwt[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
 run_expect_fail "review_certificate rejects raw certificate-like object" "${CLI[@]}" skills run review_certificate --input '{"subject":"CN=raw"}'
+run_expect_fail "review_jwt rejects raw claim-like object" "${CLI[@]}" skills run review_jwt --input '{"sub":"123"}'
 
 CERT_REVIEW_INPUT="$TMP_ROOT/certificate.parsed.json"
 CERT_REVIEW_SCRIPT="$TMP_ROOT/review-certificate.sh"
@@ -691,6 +694,19 @@ chmod +x "$CERT_REVIEW_SCRIPT"
 
 run_ok "fixture review_certificate example cert" "$CERT_REVIEW_SCRIPT"
 run_ok_require_output_pattern "review_certificate pretty output includes CA certificate signal" 'certificate\.ca_certificate_present' "$CERT_REVIEW_SCRIPT"
+
+JWT_REVIEW_INPUT="$TMP_ROOT/jwt.parsed.json"
+JWT_REVIEW_SCRIPT="$TMP_ROOT/review-jwt.sh"
+cat >"$JWT_REVIEW_SCRIPT" <<SCRIPT
+#!/usr/bin/env bash
+set -euo pipefail
+pnpm --filter @security-workbench/cli start skills run parse_jwt --input-file "$FIXTURES_ROOT/jwt/alg-none.jwt" > "$JWT_REVIEW_INPUT"
+pnpm --filter @security-workbench/cli start skills run review_jwt --input-file "$JWT_REVIEW_INPUT" --format pretty
+SCRIPT
+chmod +x "$JWT_REVIEW_SCRIPT"
+
+run_ok "fixture review_jwt alg none" "$JWT_REVIEW_SCRIPT"
+run_ok_require_output_pattern "review_jwt pretty output includes alg none signal" 'jwt\.unsecured_algorithm_observed' "$JWT_REVIEW_SCRIPT"
 run_ok "fixture parse_lockfiles package lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/package-lock.json" --format pretty
 run_ok "fixture parse_lockfiles pnpm lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/pnpm-lock.yaml" --format pretty
 run_ok "fixture parse_lockfiles yarn lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/yarn.lock" --format pretty
