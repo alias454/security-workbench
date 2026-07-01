@@ -292,6 +292,77 @@ describe("parseCliArgs", () => {
       ])
     ).toThrow("Duplicate --input-file flag");
   });
+  it("parses workflows list with default TSV format", () => {
+    expect(parseCliArgs(["workflows", "list"])).toEqual({
+      kind: "workflows_list",
+      options: { format: "tsv" },
+    });
+  });
+
+  it("parses workflows list with table format", () => {
+    expect(parseCliArgs(["workflows", "list", "--format", "table"])).toEqual({
+      kind: "workflows_list",
+      options: { format: "table" },
+    });
+  });
+
+  it("parses workflows run with file input", () => {
+    expect(
+      parseCliArgs([
+        "workflows",
+        "run",
+        "browser_extension_review",
+        "--input-file",
+        "manifest.json",
+      ])
+    ).toEqual({
+      kind: "workflows_run",
+      workflowName: "browser_extension_review",
+      input_source: { kind: "file", path: "manifest.json" },
+      options: { format: "json" },
+    });
+  });
+
+  it("parses workflows run with pretty unsafe output", () => {
+    expect(
+      parseCliArgs([
+        "workflows",
+        "run",
+        "browser_extension_review",
+        "--input",
+        "{}",
+        "--format",
+        "pretty",
+        "--unsafe",
+      ])
+    ).toEqual({
+      kind: "workflows_run",
+      workflowName: "browser_extension_review",
+      input_source: { kind: "inline", value: "{}" },
+      options: { format: "pretty", unsafe: true },
+    });
+  });
+
+  it("rejects unsupported workflows list formats", () => {
+    expect(() =>
+      parseCliArgs(["workflows", "list", "--format", "pretty"])
+    ).toThrow("Unsupported --format value: pretty");
+  });
+
+  it("rejects workflows run without input", () => {
+    expect(() =>
+      parseCliArgs(["workflows", "run", "browser_extension_review"])
+    ).toThrow(
+      "Usage: workflows run <workflow_name> (--input <value> | --input-file <path>) [--format json|pretty] [--unsafe]"
+    );
+  });
+
+  it("rejects unknown workflows subcommands", () => {
+    expect(() => parseCliArgs(["workflows", "describe"])).toThrow(
+      "Unknown workflows command: describe"
+    );
+  });
+
 });
 
 describe("readBoundedUtf8File", () => {

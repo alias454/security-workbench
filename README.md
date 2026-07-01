@@ -31,6 +31,8 @@ plugins/core-scoring
 plugins/core-output
 apps/cli
 single-skill registry and runner
+registered workflow registry and runner
+CLI workflows list / run
 runtime policy enforcement
 safe bounded --input-file handling
 runtime redaction helpers
@@ -48,7 +50,6 @@ Not implemented yet:
 ```text
 plugin manifest loader
 plugin install commands
-workflow runner
 generic output/export plugins
 external enrichment
 REST API
@@ -69,6 +70,8 @@ pnpm install
 pnpm --filter @security-workbench/cli start skills list
 pnpm --filter @security-workbench/cli start skills describe parse_sarif
 pnpm --filter @security-workbench/cli start skills run json_parse --input '{"ok":true}'
+pnpm --filter @security-workbench/cli start workflows list --format table
+pnpm --filter @security-workbench/cli start workflows run browser_extension_review --input-file "$PWD/fixtures/browser-extension/manifest-v2-broad-hosts.json" --format pretty
 ```
 
 Fixture examples use `$PWD` from the repo root:
@@ -86,7 +89,7 @@ pnpm --filter @security-workbench/cli start skills run parse_bgp_prefix_table --
 
 ## Current completed chain
 
-The first artifact-to-finding path is browser extension permission review:
+The first registered artifact-to-finding workflow is browser extension permission review:
 
 ```text
 parse_browser_extension_manifest

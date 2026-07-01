@@ -165,7 +165,7 @@ Plugin installation is a trust decision. Manifest metadata is not a sandbox.
 
 ## Pipeline direction
 
-Pipeline runner is not implemented.
+The current workflow runner supports narrow registered workflows. General pipeline/DAG execution is not implemented.
 
 Pipeline classes:
 

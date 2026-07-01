@@ -27,3 +27,5 @@ export {
   redactValue,
   toRedactedJson,
 } from "./redaction.js";
+export { WorkflowRegistry } from "./workflowRegistry.js";
+export { WorkflowRunner } from "./workflowRunner.js";
