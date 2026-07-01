@@ -720,6 +720,7 @@ export function parseDockerfile(input: string): ParseDockerfileOutput {
         if (rawValue.length > 0) {
           workdirs.push(rawValue);
         } else {
+          // nosemgrep: semgrep-rules.generic.dockerfile.best-practice.use-absolute-workdir -- parser handles Dockerfile WORKDIR instructions; this is not a Dockerfile
           warnings.push(`Dockerfile line ${logicalInstruction.line} has WORKDIR without a value.`);
         }
         break;

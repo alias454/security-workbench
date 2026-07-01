@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+.turbo/
+.pnpm-store/
+scan-results/
+*.sarif
+*.patch
+smoke-results-*.txt
+
+# Artifact fixtures are intentionally attacker-shaped parser inputs.
+# Semgrep SAST should scan implementation code, not fixture artifacts.
+fixtures/
+
+# Test files intentionally contain malformed and synthetic security artifacts.
+**/tests/

@@ -435,6 +435,7 @@ if (hostedMcp.exposure !== "allowlist_only") {
 console.log("parse_package_json exposure metadata OK");
 DATA
 
+# nosemgrep: semgrep-rules.generic.secrets.security.detected-jwt-token, semgrep-rules.generic.secrets.gitleaks.jwt, generic.secrets.security.detected-jwt-token.detected-jwt-token -- synthetic unsigned JWT smoke fixture, not a secret
 JWT_NONE="eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiIxMjMiLCJyb2xlIjoiYWRtaW4ifQ."
 
 run_ok "pnpm build" pnpm build

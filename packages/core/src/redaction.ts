@@ -11,6 +11,7 @@ const REDACTED = "[REDACTED]";
 const SECRET_PATTERNS: Array<[RegExp, string]> = [
   [
     /-----BEGIN [A-Z ]*PRIVATE KEY-----[\s\S]*?-----END [A-Z ]*PRIVATE KEY-----/g,
+    // nosemgrep: semgrep-rules.generic.secrets.gitleaks.private-key -- synthetic replacement text used by redaction tests, not a private key
     "-----BEGIN REDACTED PRIVATE KEY-----\n[REDACTED]\n-----END REDACTED PRIVATE KEY-----",
   ],
   [/\bAKIA[0-9A-Z]{16}\b/g, REDACTED],
