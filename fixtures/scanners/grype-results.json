@@ -1,0 +1,38 @@
+{
+  "schema": "https://anchore.com/syft/grype/schema/json/schema-1.2.0.json",
+  "descriptor": { "name": "grype", "version": "0.79.0" },
+  "source": { "type": "image", "target": "example/app:latest" },
+  "distro": { "name": "alpine", "version": "3.19" },
+  "matches": [
+    {
+      "vulnerability": {
+        "id": "CVE-2024-0001",
+        "namespace": "alpine:distro:alpine:3.19",
+        "severity": "High",
+        "dataSource": "https://secdb.alpinelinux.org/",
+        "urls": ["https://security.example/CVE-2024-0001"],
+        "fix": { "versions": ["1.2.4-r0"], "state": "fixed" },
+        "cvss": [{ "version": "3.1" }]
+      },
+      "artifact": {
+        "id": "pkg-1",
+        "name": "openssl",
+        "version": "1.2.3-r0",
+        "type": "apk",
+        "language": "c",
+        "purl": "pkg:apk/alpine/openssl@1.2.3-r0",
+        "cpes": ["cpe:2.3:a:openssl:openssl:1.2.3:*:*:*:*:*:*:*"],
+        "locations": [{ "path": "/lib/apk/db/installed" }],
+        "metadata": { "type": "ApkMetadata", "originPackage": "openssl" }
+      },
+      "matchDetails": [
+        {
+          "type": "exact-direct-match",
+          "matcher": "apk-matcher",
+          "searchedBy": { "namespace": "alpine:distro:alpine:3.19", "package": { "name": "openssl", "version": "1.2.3-r0" } },
+          "found": { "versionConstraint": "< 1.2.4-r0" }
+        }
+      ]
+    }
+  ]
+}
