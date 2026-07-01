@@ -14,6 +14,8 @@ import { parsePemCertificateSkill } from "./parsePemCertificate.js";
 import { parseLockfilesSkill } from "./parseLockfiles.js";
 import { normalizeScannerResultsSkill } from "./normalizeScannerResults.js";
 import { dedupeScannerResultsSkill } from "./dedupeScannerResults.js";
+import { scannerSummarySkill } from "./scannerSummary.js";
+import { mergeScannerResultsSkill } from "./mergeScannerResults.js";
 import { parseIpPrefixListSkill } from "./parseIpPrefixList.js";
 import { parseAsnListSkill } from "./parseAsnList.js";
 import { parseAsnAllowDenyListSkill } from "./parseAsnAllowDenyList.js";
@@ -33,6 +35,8 @@ export { parsePemCertificate, parsePemCertificateSkill } from "./parsePemCertifi
 export { parseLockfiles, parseLockfilesSkill } from "./parseLockfiles.js";
 export { normalizeScannerResults, normalizeScannerResultsSkill } from "./normalizeScannerResults.js";
 export { dedupeScannerResults, dedupeScannerResultsSkill } from "./dedupeScannerResults.js";
+export { scannerSummary, scannerSummarySkill } from "./scannerSummary.js";
+export { mergeScannerResults, mergeScannerResultsSkill } from "./mergeScannerResults.js";
 export { parseIpPrefixList, parseIpPrefixListSkill } from "./parseIpPrefixList.js";
 export { parseAsnList, parseAsnListSkill } from "./parseAsnList.js";
 export { parseAsnAllowDenyList, parseAsnAllowDenyListSkill } from "./parseAsnAllowDenyList.js";
@@ -91,6 +95,17 @@ export type {
   DedupeScannerResultsOutput,
   ScannerDuplicateGroupObservation,
 } from "./dedupeScannerResults.js";
+export type {
+  ScannerSummaryOutput,
+  ScannerSummaryRecordObservation,
+  ScannerSummarySourceArtifactType,
+} from "./scannerSummary.js";
+export type {
+  MergeScannerResultsOutput,
+  MergedScannerResultObservation,
+  MergeScannerSourceArtifactType,
+  ScannerMergeSourceObservation,
+} from "./mergeScannerResults.js";
 export type {
   BgpPrefixDuplicateEntry,
   BgpPrefixOriginConflict,
@@ -175,6 +190,8 @@ export const skills = [
   parseLockfilesSkill,
   normalizeScannerResultsSkill,
   dedupeScannerResultsSkill,
+  scannerSummarySkill,
+  mergeScannerResultsSkill,
   parseIpPrefixListSkill,
   parseAsnListSkill,
   parseAsnAllowDenyListSkill,
