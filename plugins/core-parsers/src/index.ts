@@ -7,6 +7,11 @@ import { parseDockerfileSkill } from "./parseDockerfile.js";
 import { parseGithubActionsWorkflowSkill } from "./parseGithubActionsWorkflow.js";
 import { parseTrufflehogNdjsonSkill } from "./parseTrufflehogNdjson.js";
 import { parseSarifSkill } from "./parseSarif.js";
+import { parseSemgrepJsonSkill } from "./parseSemgrepJson.js";
+import { parseCheckovJsonSkill } from "./parseCheckovJson.js";
+import { parseGrypeJsonSkill } from "./parseGrypeJson.js";
+import { parsePemCertificateSkill } from "./parsePemCertificate.js";
+import { parseLockfilesSkill } from "./parseLockfiles.js";
 import { parseIpPrefixListSkill } from "./parseIpPrefixList.js";
 import { parseAsnListSkill } from "./parseAsnList.js";
 import { parseAsnAllowDenyListSkill } from "./parseAsnAllowDenyList.js";
@@ -19,6 +24,11 @@ export { parseDockerfile, parseDockerfileSkill } from "./parseDockerfile.js";
 export { parseGithubActionsWorkflow, parseGithubActionsWorkflowSkill } from "./parseGithubActionsWorkflow.js";
 export { parseTrufflehogNdjson, parseTrufflehogNdjsonSkill } from "./parseTrufflehogNdjson.js";
 export { parseSarif, parseSarifSkill } from "./parseSarif.js";
+export { parseSemgrepJson, parseSemgrepJsonSkill } from "./parseSemgrepJson.js";
+export { parseCheckovJson, parseCheckovJsonSkill } from "./parseCheckovJson.js";
+export { parseGrypeJson, parseGrypeJsonSkill } from "./parseGrypeJson.js";
+export { parsePemCertificate, parsePemCertificateSkill } from "./parsePemCertificate.js";
+export { parseLockfiles, parseLockfilesSkill } from "./parseLockfiles.js";
 export { parseIpPrefixList, parseIpPrefixListSkill } from "./parseIpPrefixList.js";
 export { parseAsnList, parseAsnListSkill } from "./parseAsnList.js";
 export { parseAsnAllowDenyList, parseAsnAllowDenyListSkill } from "./parseAsnAllowDenyList.js";
@@ -32,6 +42,37 @@ export type {
   SarifRuleObservation,
   SarifRunObservation,
 } from "./parseSarif.js";
+export type {
+  ParseSemgrepJsonOutput,
+  SemgrepErrorObservation,
+  SemgrepPositionObservation,
+  SemgrepResultObservation,
+  SemgrepSkippedPathObservation,
+} from "./parseSemgrepJson.js";
+export type {
+  CheckovCheckObservation,
+  CheckovFileLineRangeObservation,
+  CheckovParsingErrorObservation,
+  CheckovResultStatus,
+  ParseCheckovJsonOutput,
+} from "./parseCheckovJson.js";
+export type {
+  GrypeArtifactObservation,
+  GrypeMatchObservation,
+  GrypeVulnerabilityObservation,
+  ParseGrypeJsonOutput,
+} from "./parseGrypeJson.js";
+export type {
+  InvalidPemCertificateBlockObservation,
+  ParsePemCertificateOutput,
+  PemCertificateObservation,
+  PemCertificateSubjectAltNameObservation,
+} from "./parsePemCertificate.js";
+export type {
+  LockfileFormat,
+  LockfilePackageObservation,
+  ParseLockfilesOutput,
+} from "./parseLockfiles.js";
 export type {
   BgpPrefixDuplicateEntry,
   BgpPrefixOriginConflict,
@@ -109,6 +150,11 @@ export const skills = [
   parseHttpHeadersSkill,
   parseTrufflehogNdjsonSkill,
   parseSarifSkill,
+  parseSemgrepJsonSkill,
+  parseCheckovJsonSkill,
+  parseGrypeJsonSkill,
+  parsePemCertificateSkill,
+  parseLockfilesSkill,
   parseIpPrefixListSkill,
   parseAsnListSkill,
   parseAsnAllowDenyListSkill,

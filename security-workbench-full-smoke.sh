@@ -458,6 +458,11 @@ run_ok_require_output_pattern "parser list includes parse_dockerfile" '^parse_do
 run_ok_require_output_pattern "parser list includes parse_github_actions_workflow" '^parse_github_actions_workflow[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes parse_trufflehog_ndjson" '^parse_trufflehog_ndjson[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes parse_sarif" '^parse_sarif[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
+run_ok_require_output_pattern "parser list includes parse_semgrep_json" '^parse_semgrep_json[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
+run_ok_require_output_pattern "parser list includes parse_checkov_json" '^parse_checkov_json[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
+run_ok_require_output_pattern "parser list includes parse_grype_json" '^parse_grype_json[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
+run_ok_require_output_pattern "parser list includes parse_pem_certificate" '^parse_pem_certificate[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
+run_ok_require_output_pattern "parser list includes parse_lockfiles" '^parse_lockfiles[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes parse_package_json" '^parse_package_json[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes parse_csv" '^parse_csv[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes parse_yaml" '^parse_yaml[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
@@ -492,6 +497,11 @@ run_ok "skills describe parse_dockerfile --format table" "${CLI[@]}" skills desc
 run_ok "skills describe parse_github_actions_workflow --format table" "${CLI[@]}" skills describe parse_github_actions_workflow --format table
 run_ok "skills describe parse_trufflehog_ndjson --format table" "${CLI[@]}" skills describe parse_trufflehog_ndjson --format table
 run_ok "skills describe parse_sarif --format table" "${CLI[@]}" skills describe parse_sarif --format table
+run_ok "skills describe parse_semgrep_json --format table" "${CLI[@]}" skills describe parse_semgrep_json --format table
+run_ok "skills describe parse_checkov_json --format table" "${CLI[@]}" skills describe parse_checkov_json --format table
+run_ok "skills describe parse_grype_json --format table" "${CLI[@]}" skills describe parse_grype_json --format table
+run_ok "skills describe parse_pem_certificate --format table" "${CLI[@]}" skills describe parse_pem_certificate --format table
+run_ok "skills describe parse_lockfiles --format table" "${CLI[@]}" skills describe parse_lockfiles --format table
 run_ok "skills describe review_static_analysis_results --format table" "${CLI[@]}" skills describe review_static_analysis_results --format table
 run_ok "skills describe score_static_analysis_attention --format table" "${CLI[@]}" skills describe score_static_analysis_attention --format table
 run_ok "skills describe generate_static_analysis_triage_summary --format table" "${CLI[@]}" skills describe generate_static_analysis_triage_summary --format table
@@ -583,6 +593,11 @@ run_expect_fail "parse_dockerfile rejects no valid instructions" "${CLI[@]}" ski
 run_expect_fail "parse_github_actions_workflow rejects missing jobs" "${CLI[@]}" skills run parse_github_actions_workflow --input $'name: No Jobs\non: push'
 run_expect_fail "parse_trufflehog_ndjson rejects no valid records" "${CLI[@]}" skills run parse_trufflehog_ndjson --input $'{bad json}\n[]'
 run_expect_fail "parse_sarif rejects missing runs" "${CLI[@]}" skills run parse_sarif --input '{"version":"2.1.0"}'
+run_expect_fail "parse_semgrep_json rejects missing results" "${CLI[@]}" skills run parse_semgrep_json --input '{"version":"1.0.0"}'
+run_expect_fail "parse_checkov_json rejects missing results" "${CLI[@]}" skills run parse_checkov_json --input '{"check_type":"terraform"}'
+run_expect_fail "parse_grype_json rejects missing matches" "${CLI[@]}" skills run parse_grype_json --input '{"descriptor":{"name":"grype"}}'
+run_expect_fail "parse_pem_certificate rejects no certificate block" "${CLI[@]}" skills run parse_pem_certificate --input 'not a certificate'
+run_expect_fail "parse_lockfiles rejects unknown content" "${CLI[@]}" skills run parse_lockfiles --input 'not a lockfile'
 run_expect_fail "parse_package_json rejects invalid JSON" "${CLI[@]}" skills run parse_package_json --input '{bad json}'
 run_expect_fail "parse_package_json rejects arrays" "${CLI[@]}" skills run parse_package_json --input '[]'
 run_expect_fail "parse_package_json rejects null" "${CLI[@]}" skills run parse_package_json --input 'null'
@@ -618,6 +633,18 @@ run_ok "fixture parse_sarif malformed shapes" "${CLI[@]}" skills run parse_sarif
 run_ok "fixture parse_sarif minimal" "${CLI[@]}" skills run parse_sarif --input-file "$FIXTURES_ROOT/sarif/minimal.sarif" --format pretty
 run_ok_require_output_pattern "parse_sarif pretty output includes result levels" 'Result levels \(2\)' "${CLI[@]}" skills run parse_sarif --input-file "$FIXTURES_ROOT/sarif/codeql-results.sarif" --format pretty
 run_ok_require_output_pattern "parse_sarif pretty output includes location refs" 'src/app\[.\]ts:42' "${CLI[@]}" skills run parse_sarif --input-file "$FIXTURES_ROOT/sarif/codeql-results.sarif" --format pretty
+run_ok "fixture parse_semgrep_json results" "${CLI[@]}" skills run parse_semgrep_json --input-file "$FIXTURES_ROOT/scanners/semgrep-results.json" --format pretty
+run_ok_require_output_pattern "parse_semgrep_json pretty output includes result count" '"result_count": 2' "${CLI[@]}" skills run parse_semgrep_json --input-file "$FIXTURES_ROOT/scanners/semgrep-results.json" --format pretty
+run_ok "fixture parse_checkov_json results" "${CLI[@]}" skills run parse_checkov_json --input-file "$FIXTURES_ROOT/scanners/checkov-results.json" --format pretty
+run_ok_require_output_pattern "parse_checkov_json pretty output includes failed count" '"failed_count": 1' "${CLI[@]}" skills run parse_checkov_json --input-file "$FIXTURES_ROOT/scanners/checkov-results.json" --format pretty
+run_ok "fixture parse_grype_json results" "${CLI[@]}" skills run parse_grype_json --input-file "$FIXTURES_ROOT/scanners/grype-results.json" --format pretty
+run_ok_require_output_pattern "parse_grype_json pretty output includes match count" '"match_count": 1' "${CLI[@]}" skills run parse_grype_json --input-file "$FIXTURES_ROOT/scanners/grype-results.json" --format pretty
+run_ok "fixture parse_pem_certificate example cert" "${CLI[@]}" skills run parse_pem_certificate --input-file "$FIXTURES_ROOT/certificates/example-cert.pem" --format pretty
+run_ok_require_output_pattern "parse_pem_certificate pretty output includes certificate count" '"valid_certificate_count": 1' "${CLI[@]}" skills run parse_pem_certificate --input-file "$FIXTURES_ROOT/certificates/example-cert.pem" --format pretty
+run_ok "fixture parse_lockfiles package lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/package-lock.json" --format pretty
+run_ok "fixture parse_lockfiles pnpm lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/pnpm-lock.yaml" --format pretty
+run_ok "fixture parse_lockfiles yarn lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/yarn.lock" --format pretty
+run_ok_require_output_pattern "parse_lockfiles pretty output includes package count" '"package_count": 2' "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/package-lock.json" --format pretty
 run_ok "fixture parse_http_headers duplicate headers" "${CLI[@]}" skills run parse_http_headers --input-file "$FIXTURES_ROOT/http-headers/duplicate-headers.txt" --format pretty
 run_ok "fixture parse_http_headers malformed headers" "${CLI[@]}" skills run parse_http_headers --input-file "$FIXTURES_ROOT/http-headers/malformed-headers.txt" --format pretty
 run_ok "fixture parse_email_headers sample" "${CLI[@]}" skills run parse_email_headers --input-file "$FIXTURES_ROOT/email/sample-headers.txt" --format pretty
