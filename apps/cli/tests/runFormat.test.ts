@@ -651,4 +651,53 @@ describe("formatSkillRunResult", () => {
   });
 
 
+  it("renders BGP prefix table observations in pretty output", () => {
+    const output = formatSkillRunResult(
+      result({
+        skill: { name: "parse_bgp_prefix_table", version: "0.1.0" },
+        output: {
+          artifact: { id: "artifact_bgp_prefix_table", type: "bgp_prefix_table" },
+          observed: {
+            line_ending: "lf",
+            physical_line_count: 5,
+            blank_line_count: 0,
+            comment_line_count: 1,
+            nonempty_line_count: 5,
+            inline_comment_count: 0,
+            valid_entry_count: 4,
+            malformed_line_count: 1,
+            ipv4_prefix_count: 3,
+            ipv6_prefix_count: 1,
+            unique_prefix_count: 2,
+            unique_origin_asn_count: 2,
+            duplicate_entry_count: 1,
+            conflicting_prefix_count: 1,
+            prefix_lengths: { "12": 3, "32": 1 },
+            entries: [
+              { line: 2, normalized_prefix: "104.16.0.0/12", origin_asn: "AS13335", ip_version: "ipv4" },
+              { line: 3, normalized_prefix: "2001:4860::/32", origin_asn: "AS15169", ip_version: "ipv6" },
+            ],
+            duplicate_entries: [
+              { normalized_prefix: "104.16.0.0/12", origin_asn: "AS13335", first_line: 2, duplicate_line: 5, occurrences: 2 },
+            ],
+            conflicting_prefixes: [
+              { normalized_prefix: "104.16.0.0/12", origin_asns: ["AS13335", "AS15169"], lines: [2, 5, 6] },
+            ],
+            invalid_lines: [{ line: 7, value: "198.51.100.10 AS64512", reason: "missing valid CIDR prefix token" }],
+          },
+          warnings: [],
+        },
+      }),
+      { format: "pretty" }
+    );
+
+    expect(output).toContain("BGP Prefix Table");
+    expect(output).toContain("Valid entries: 4");
+    expect(output).toContain("IPv6 prefixes: 1");
+    expect(output).toContain("Conflicting prefixes: 1");
+    expect(output).toContain("104[.]16[.]0[.]0/12");
+    expect(output).toContain("198[.]51[.]100[.]10 AS64512 - missing valid CIDR prefix token");
+  });
+
+
 });

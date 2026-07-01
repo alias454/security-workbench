@@ -79,6 +79,7 @@ pnpm --filter @security-workbench/cli start skills run parse_ip_prefix_list --in
 pnpm --filter @security-workbench/cli start skills run parse_asn_list --input-file "$PWD/fixtures/asn/asn-list.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_asn_allow_deny_list --input-file "$PWD/fixtures/asn/asn-allow-deny-list.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_asn_observations --input-file "$PWD/fixtures/asn/asn-observations.txt" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_bgp_prefix_table --input-file "$PWD/fixtures/asn/bgp-prefix-table.txt" --format pretty
 ```
 
 ## Validation

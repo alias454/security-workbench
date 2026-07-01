@@ -103,6 +103,7 @@ parse_ip_prefix_list
 parse_asn_list
 parse_asn_allow_deny_list
 parse_asn_observations
+parse_bgp_prefix_table
 ```
 
 ## core-reviewers inventory

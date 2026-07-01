@@ -458,6 +458,67 @@ function renderAsnObservations(record: Record<string, unknown>, options: Display
   ]);
 }
 
+function renderBgpPrefixTable(record: Record<string, unknown>, options: DisplayOptions): string[] | undefined {
+  const observed = recordValue(record, "observed");
+  if (!observed) {
+    return undefined;
+  }
+
+  const entries = recordArray(observed, "entries");
+  const invalidLines = recordArray(observed, "invalid_lines");
+  const duplicateEntries = recordArray(observed, "duplicate_entries");
+  const conflictingPrefixes = recordArray(observed, "conflicting_prefixes");
+  const prefixLengths = recordValue(observed, "prefix_lengths");
+  const prefixLengthLines = prefixLengths
+    ? Object.entries(prefixLengths)
+        .filter(([, value]) => typeof value === "number")
+        .sort(([left], [right]) => Number(left) - Number(right))
+        .map(([length, count]) => `/${length}: ${String(count)}`)
+    : [];
+  const entryLines = entries.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const prefix = String(entry.normalized_prefix ?? entry.prefix ?? "unknown");
+    const originAsn = String(entry.origin_asn ?? "unknown");
+    const version = String(entry.ip_version ?? "unknown");
+    return `line ${line}: ${displayString(prefix, options)} origin=${displayString(originAsn, options)} (${version})`;
+  });
+  const duplicateLineSummaries = duplicateEntries.slice(0, 20).map((entry) => {
+    const prefix = String(entry.normalized_prefix ?? "unknown");
+    const originAsn = String(entry.origin_asn ?? "unknown");
+    return `${displayString(prefix, options)} origin=${displayString(originAsn, options)} first_line=${String(entry.first_line ?? "?")} duplicate_line=${String(entry.duplicate_line ?? "?")} occurrences=${String(entry.occurrences ?? "?")}`;
+  });
+  const conflictLineSummaries = conflictingPrefixes.slice(0, 20).map((entry) => {
+    const prefix = String(entry.normalized_prefix ?? "unknown");
+    const originAsns = Array.isArray(entry.origin_asns) ? entry.origin_asns.join(",") : "?";
+    const lines = Array.isArray(entry.lines) ? entry.lines.join(",") : "?";
+    return `${displayString(prefix, options)} origin_asns=${originAsns} lines=${lines}`;
+  });
+  const invalidLineSummaries = invalidLines.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const value = String(entry.value ?? "unknown");
+    const reason = String(entry.reason ?? "invalid");
+    return `line ${line}: ${displayString(value, options)} - ${reason}`;
+  });
+
+  return section("BGP Prefix Table", [
+    `Physical lines: ${numberValue(observed, "physical_line_count") ?? "unknown"}`,
+    `Line ending: ${typeof observed.line_ending === "string" ? observed.line_ending : "unknown"}`,
+    `Valid entries: ${numberValue(observed, "valid_entry_count") ?? entries.length}`,
+    `IPv4 prefixes: ${numberValue(observed, "ipv4_prefix_count") ?? "unknown"}`,
+    `IPv6 prefixes: ${numberValue(observed, "ipv6_prefix_count") ?? "unknown"}`,
+    `Unique prefixes: ${numberValue(observed, "unique_prefix_count") ?? "unknown"}`,
+    `Unique origin ASNs: ${numberValue(observed, "unique_origin_asn_count") ?? "unknown"}`,
+    `Duplicate entries: ${numberValue(observed, "duplicate_entry_count") ?? duplicateEntries.length}`,
+    `Conflicting prefixes: ${numberValue(observed, "conflicting_prefix_count") ?? conflictingPrefixes.length}`,
+    `Malformed lines: ${numberValue(observed, "malformed_line_count") ?? invalidLines.length}`,
+    ...namedList("Prefix lengths", prefixLengthLines, options),
+    ...namedList("Entries", entryLines, options),
+    ...namedList("Duplicates", duplicateLineSummaries, options),
+    ...namedList("Conflicting prefixes", conflictLineSummaries, options),
+    ...namedList("Invalid lines", invalidLineSummaries, options),
+  ]);
+}
+
 function renderBrowserExtensionPermissionReview(
   record: Record<string, unknown>,
   options: DisplayOptions
@@ -975,6 +1036,8 @@ function renderSkillAwareOutput(
       return renderAsnAllowDenyList(record, options);
     case "parse_asn_observations":
       return renderAsnObservations(record, options);
+    case "parse_bgp_prefix_table":
+      return renderBgpPrefixTable(record, options);
     case "parse_http_headers":
       return renderHttpHeaders(record, options);
     default:
