@@ -165,7 +165,7 @@ Plugin installation is a trust decision. Manifest metadata is not a sandbox.
 
 ## Pipeline direction
 
-The current workflow runner supports narrow registered workflows. General pipeline/DAG execution is not implemented.
+The current workflow runner supports narrow registered workflows. Workflow definitions are validated at registration for required fields, duplicate step IDs, known skill names, and `input_from` references. General pipeline/DAG execution is not implemented.
 
 Pipeline classes:
 

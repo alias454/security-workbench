@@ -1,24 +1,20 @@
-import type { WorkflowDefinition } from "@security-workbench/schemas";
+import {
+  assertValidWorkflowDefinition,
+  type WorkflowDefinition,
+} from "@security-workbench/schemas";
+
+export interface WorkflowRegistryRegisterOptions {
+  readonly knownSkillNames?: readonly string[];
+}
 
 export class WorkflowRegistry {
   private workflows = new Map<string, WorkflowDefinition>();
 
-  register(workflow: WorkflowDefinition): void {
+  register(workflow: WorkflowDefinition, options: WorkflowRegistryRegisterOptions = {}): void {
+    assertValidWorkflowDefinition(workflow, options);
+
     if (this.workflows.has(workflow.name)) {
       throw new Error(`Workflow already registered: ${workflow.name}`);
-    }
-
-    if (workflow.steps.length === 0) {
-      throw new Error(`Workflow must define at least one step: ${workflow.name}`);
-    }
-
-    const stepIds = new Set<string>();
-    for (const step of workflow.steps) {
-      if (stepIds.has(step.id)) {
-        throw new Error(`Workflow '${workflow.name}' has duplicate step id: ${step.id}`);
-      }
-
-      stepIds.add(step.id);
     }
 
     this.workflows.set(workflow.name, workflow);

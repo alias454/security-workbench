@@ -62,11 +62,12 @@ function buildSkillRegistry(): SkillRegistry {
   return registry;
 }
 
-function buildWorkflowRegistry(): WorkflowRegistry {
+function buildWorkflowRegistry(skillRegistry: SkillRegistry): WorkflowRegistry {
   const registry = new WorkflowRegistry();
+  const knownSkillNames = skillRegistry.list().map((skill) => skill.metadata.name);
 
   for (const workflow of workflows) {
-    registry.register(workflow);
+    registry.register(workflow, { knownSkillNames });
   }
 
   return registry;
@@ -91,7 +92,7 @@ export async function main(argv = process.argv.slice(2)): Promise<number> {
   try {
     const command = parseCliArgs(argv);
     const skillRegistry = buildSkillRegistry();
-    const workflowRegistry = buildWorkflowRegistry();
+    const workflowRegistry = buildWorkflowRegistry(skillRegistry);
 
     if (command.kind === "help") {
       console.log(usage());

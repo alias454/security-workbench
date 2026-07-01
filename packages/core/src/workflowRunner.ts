@@ -20,6 +20,15 @@ function unique(values: readonly string[]): string[] {
   return [...new Set(values)];
 }
 
+function workflowMetadata(workflow: { name: string; version: string; description?: string; steps?: readonly unknown[] }): WorkflowRunResult["workflow"] {
+  return {
+    name: workflow.name,
+    version: workflow.version,
+    description: workflow.description,
+    step_count: workflow.steps?.length,
+  };
+}
+
 function maybeRedact(value: unknown, redactSecrets: boolean): unknown {
   return redactSecrets ? redactValue(value) : value;
 }
@@ -89,10 +98,7 @@ export class WorkflowRunner {
           return {
             run_id,
             status: workflowStatus(result.status),
-            workflow: {
-              name: workflow.name,
-              version: workflow.version,
-            },
+            workflow: workflowMetadata(workflow),
             policy: {
               allow_network: mergedPolicy.allow_network,
               network_used: networkUsed,
@@ -110,10 +116,7 @@ export class WorkflowRunner {
       return {
         run_id,
         status: "completed",
-        workflow: {
-          name: workflow.name,
-          version: workflow.version,
-        },
+        workflow: workflowMetadata(workflow),
         policy: {
           allow_network: mergedPolicy.allow_network,
           network_used: networkUsed,

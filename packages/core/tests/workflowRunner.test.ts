@@ -30,12 +30,14 @@ function skill(name: string, run: (input: unknown) => unknown): Skill<unknown, u
 
 function buildRunner(workflow: WorkflowDefinition, skills: readonly Skill<unknown, unknown>[]): WorkflowRunner {
   const workflowRegistry = new WorkflowRegistry();
-  workflowRegistry.register(workflow);
-
   const skillRegistry = new SkillRegistry();
   for (const candidate of skills) {
     skillRegistry.register(candidate);
   }
+
+  workflowRegistry.register(workflow, {
+    knownSkillNames: skillRegistry.list().map((candidate) => candidate.metadata.name),
+  });
 
   return new WorkflowRunner(workflowRegistry, skillRegistry);
 }
@@ -64,7 +66,12 @@ describe("WorkflowRunner", () => {
     const result = await runner.run("two_step", "hello");
 
     expect(result.status).toBe("completed");
-    expect(result.workflow).toEqual({ name: "two_step", version: "0.1.0" });
+    expect(result.workflow).toEqual({
+      name: "two_step",
+      version: "0.1.0",
+      description: "Two step workflow.",
+      step_count: 2,
+    });
     expect(result.steps.map((step) => step.id)).toEqual(["first", "second"]);
     expect(result.steps[0].output).toEqual({ received: "hello", value: "one" });
     expect(result.output).toEqual({ previous: "one", value: "two" });
@@ -97,26 +104,5 @@ describe("WorkflowRunner", () => {
     expect(result.steps.map((step) => step.id)).toEqual(["ok", "fail"]);
     expect(result.errors[0]).toContain("stopped at step 'fail'");
     expect(result.errors[0]).toContain("boom");
-  });
-
-  it("fails when a step references an unknown previous step", async () => {
-    const ok = skill("ok", () => ({ ok: true }));
-
-    const runner = buildRunner(
-      {
-        name: "bad_ref",
-        version: "0.1.0",
-        description: "Bad reference.",
-        steps: [{ id: "ok", skill: "ok", input_from: "missing" }],
-      },
-      [ok],
-    );
-
-    const result = await runner.run("bad_ref", "hello");
-
-    expect(result.status).toBe("failed");
-    expect(result.errors).toEqual([
-      "Workflow 'bad_ref' step 'ok' references unknown input_from step: missing",
-    ]);
   });
 });

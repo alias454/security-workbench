@@ -32,6 +32,7 @@ plugins/core-output
 apps/cli
 single-skill registry and runner
 registered workflow registry and runner
+workflow definition validation
 CLI workflows list / run
 runtime policy enforcement
 safe bounded --input-file handling

@@ -49,6 +49,18 @@ describe("WorkflowRegistry", () => {
     );
   });
 
+  it("rejects workflows with missing required fields", () => {
+    const registry = new WorkflowRegistry();
+
+    expect(() =>
+      registry.register({
+        name: "",
+        description: "Missing version and name.",
+        steps: [{ id: "step", skill: "echo" }],
+      } as unknown as WorkflowDefinition),
+    ).toThrow("Workflow name must be a non-empty string.");
+  });
+
   it("rejects workflows with no steps", () => {
     const registry = new WorkflowRegistry();
 
@@ -59,7 +71,7 @@ describe("WorkflowRegistry", () => {
         description: "No steps.",
         steps: [],
       }),
-    ).toThrow("Workflow must define at least one step: empty_workflow");
+    ).toThrow("Workflow 'empty_workflow' must define at least one step.");
   });
 
   it("rejects duplicate step ids", () => {
@@ -75,6 +87,38 @@ describe("WorkflowRegistry", () => {
           { id: "step", skill: "two" },
         ],
       }),
-    ).toThrow("Workflow 'duplicate_steps' has duplicate step id: step");
+    ).toThrow("Workflow 'duplicate_steps' has duplicate step id: step.");
+  });
+
+  it("rejects unknown skill names when known skills are supplied", () => {
+    const registry = new WorkflowRegistry();
+
+    expect(() => registry.register(fakeWorkflow, { knownSkillNames: ["other"] })).toThrow(
+      "Workflow 'fake_workflow' step 'echo' references unknown skill: echo.",
+    );
+  });
+
+  it("accepts workflow skill names when known skills are supplied", () => {
+    const registry = new WorkflowRegistry();
+
+    registry.register(fakeWorkflow, { knownSkillNames: ["echo"] });
+
+    expect(registry.list()).toEqual([fakeWorkflow]);
+  });
+
+  it("rejects input_from references to later or missing steps", () => {
+    const registry = new WorkflowRegistry();
+
+    expect(() =>
+      registry.register({
+        name: "bad_refs",
+        version: "0.1.0",
+        description: "Bad references.",
+        steps: [
+          { id: "first", skill: "one", input_from: "second" },
+          { id: "second", skill: "two" },
+        ],
+      }),
+    ).toThrow("Workflow 'bad_refs' step 'first' references unknown input_from step: second.");
   });
 });
