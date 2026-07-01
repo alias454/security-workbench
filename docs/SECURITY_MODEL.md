@@ -391,3 +391,20 @@ pnpm test
 pnpm typecheck:test
 ./security-workbench-full-smoke.sh
 ```
+
+Optional local SAST validation:
+
+```bash
+mkdir -p scan-results
+semgrep scan . --metrics=off --config p/default --config p/typescript --config p/javascript --exclude-rule package_managers.pnpm.pnpm-block-exotic-sub-dependencies.pnpm-block-exotic-sub-dependencies --exclude-rule package_managers.pnpm.pnpm-missing-minimum-release-age.pnpm-minimum-release-age --exclude-rule package_managers.pnpm.pnpm-trust-policy.pnpm-trust-policy --json-output scan-results/semgrep-public-baseline.json --sarif-output scan-results/semgrep-public-baseline.sarif
+```
+
+Expected local SAST baseline:
+
+```text
+0 findings
+```
+
+The Semgrep baseline focuses on implementation SAST findings. It intentionally excludes pnpm workspace hardening rules from this gate because package-manager install policy should be changed and reviewed separately from source scanning.
+
+The repository also uses `.semgrepignore` to exclude dependency/build/cache outputs, local scanner outputs, smoke artifacts, fixtures, and tests. Fixtures and tests intentionally contain malformed, synthetic, attacker-shaped, or security-shaped inputs that are expected to trigger generic scanner rules.

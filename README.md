@@ -91,6 +91,12 @@ pnpm typecheck:test
 ./security-workbench-full-smoke.sh
 ```
 
+## Security scanning
+
+Security Workbench has a Semgrep baseline for local SAST validation. The baseline focuses on implementation findings and intentionally excludes fixture/test artifacts that contain synthetic attacker-shaped inputs.
+
+See `docs/SECURITY_MODEL.md` for the Semgrep command, expected result, and exclusion rationale.
+
 ## Documentation
 
 ```text
