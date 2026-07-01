@@ -1,0 +1,51 @@
+{
+  "version": "1.75.0",
+  "paths": {
+    "scanned": ["src/app.ts", "src/config.ts"],
+    "skipped": [{ "path": "dist/bundle.js", "reason": "ignored", "details": "matched .semgrepignore" }]
+  },
+  "results": [
+    {
+      "check_id": "typescript.express.security.audit.express-sqli.express-sqli",
+      "path": "src/app.ts",
+      "start": { "line": 42, "col": 7, "offset": 1200 },
+      "end": { "line": 42, "col": 28, "offset": 1221 },
+      "fingerprint": "abc123",
+      "extra": {
+        "message": "Detected string-built SQL query.",
+        "severity": "ERROR",
+        "metadata": {
+          "category": "security",
+          "confidence": "HIGH",
+          "impact": "HIGH",
+          "likelihood": "MEDIUM",
+          "technology": ["express", "typescript"],
+          "cwe": ["CWE-89"],
+          "owasp": ["A03:2021"],
+          "references": ["https://semgrep.example/rules/express-sqli"]
+        },
+        "fix": "db.query(sql, [userId])",
+        "validation_state": "NO_VALIDATOR"
+      }
+    },
+    {
+      "check_id": "javascript.lang.security.audit.detect-non-literal-regexp.detect-non-literal-regexp",
+      "path": "src/config.ts",
+      "start": { "line": 8, "col": 12 },
+      "end": { "line": 8, "col": 31 },
+      "extra": {
+        "message": "RegExp constructed from non-literal input.",
+        "severity": "WARNING",
+        "metadata": {
+          "category": "security",
+          "confidence": "MEDIUM",
+          "technology": ["javascript"]
+        },
+        "is_ignored": true
+      }
+    }
+  ],
+  "errors": [
+    { "code": 2, "level": "warn", "type": "Syntax error", "message": "Could not parse file", "path": "src/bad.ts" }
+  ]
+}
