@@ -12,6 +12,7 @@ import { parseCheckovJsonSkill } from "./parseCheckovJson.js";
 import { parseGrypeJsonSkill } from "./parseGrypeJson.js";
 import { parsePemCertificateSkill } from "./parsePemCertificate.js";
 import { parseLockfilesSkill } from "./parseLockfiles.js";
+import { parseSbomSkill } from "./parseSbom.js";
 import { normalizeScannerResultsSkill } from "./normalizeScannerResults.js";
 import { dedupeScannerResultsSkill } from "./dedupeScannerResults.js";
 import { scannerSummarySkill } from "./scannerSummary.js";
@@ -33,6 +34,7 @@ export { parseCheckovJson, parseCheckovJsonSkill } from "./parseCheckovJson.js";
 export { parseGrypeJson, parseGrypeJsonSkill } from "./parseGrypeJson.js";
 export { parsePemCertificate, parsePemCertificateSkill } from "./parsePemCertificate.js";
 export { parseLockfiles, parseLockfilesSkill } from "./parseLockfiles.js";
+export { parseSbom, parseSbomSkill } from "./parseSbom.js";
 export { normalizeScannerResults, normalizeScannerResultsSkill } from "./normalizeScannerResults.js";
 export { dedupeScannerResults, dedupeScannerResultsSkill } from "./dedupeScannerResults.js";
 export { scannerSummary, scannerSummarySkill } from "./scannerSummary.js";
@@ -81,6 +83,12 @@ export type {
   LockfilePackageObservation,
   ParseLockfilesOutput,
 } from "./parseLockfiles.js";
+export type {
+  ParseSbomOutput,
+  SbomComponentObservation,
+  SbomExternalReferenceObservation,
+  SbomFormat,
+} from "./parseSbom.js";
 export type {
   NormalizedScannerResultKind,
   NormalizedScannerResultObservation,
@@ -188,6 +196,7 @@ export const skills = [
   parseGrypeJsonSkill,
   parsePemCertificateSkill,
   parseLockfilesSkill,
+  parseSbomSkill,
   normalizeScannerResultsSkill,
   dedupeScannerResultsSkill,
   scannerSummarySkill,
