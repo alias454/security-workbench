@@ -34,9 +34,10 @@ pnpm typecheck:test
 ## Active sequence
 
 ```text
-1. Add scanner-native JSON parsers for Semgrep, Checkov, and Grype.
-2. Normalize and dedupe scanner results.
-3. Expand static-analysis triage beyond SARIF.
+1. Normalize scanner-native parser outputs into a shared scanner result shape.
+2. Dedupe scanner results across native parser outputs.
+3. Add scanner summary and merge helpers.
+4. Expand static-analysis triage beyond SARIF.
 ```
 
 Sequence rule:
@@ -66,11 +67,12 @@ Later pipeline support should add broader skill input/output schema validation, 
 These are candidates for the next small PR stack after the active sequence starts.
 
 ```text
-parse_semgrep_json
-parse_checkov_json
-parse_grype_json
-parse_pem_certificate
-parse_lockfiles
+normalize_scanner_results
+dedupe_scanner_results
+scanner_summary
+merge_scanner_results
+certificate_review
+package_review
 parse_sbom
 ```
 
@@ -109,9 +111,10 @@ Purpose: normalize scanner output into deduplicated, evidence-backed triage summ
 Candidate work:
 
 ```text
-parse scanner-native JSON outputs
 normalize scanner results
 dedupe scanner results
+summarize scanner results
+merge scanner results
 expand static-analysis triage across scanner-native formats
 ```
 

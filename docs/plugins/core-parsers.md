@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 14
+Implemented skills: 19
 ```
 
 ## Purpose
@@ -39,6 +39,11 @@ no findings
 | `parse_github_actions_workflow` | workflow YAML | triggers, permissions, jobs, steps, action uses, contexts, redacted run steps |
 | `parse_trufflehog_ndjson` | TruffleHog NDJSON | detectors, sources, verification counts, redacted secret metadata |
 | `parse_sarif` | SARIF JSON | runs, tools, rules, results, locations, fingerprints, suppressions, fixes, taxa |
+| `parse_semgrep_json` | Semgrep native JSON | results, paths, severities, metadata, skipped paths, and errors |
+| `parse_checkov_json` | Checkov native JSON | failed/passed/skipped checks, resources, paths, severities, and parsing errors |
+| `parse_grype_json` | Grype native JSON | vulnerability matches, packages, source/distro metadata, and matcher details |
+| `parse_pem_certificate` | PEM certificate text | X.509 subjects, issuers, validity dates, fingerprints, SANs, and public key metadata |
+| `parse_lockfiles` | npm/pnpm/yarn lockfiles | package names, versions, dependency edges, importer names, and root dependency sections |
 | `parse_package_json` | package.json | package metadata, scripts, dependencies, repository/bin/workspaces |
 | `parse_csv` | CSV text | rows, records, headers, delimiter, line endings, irregular rows |
 | `parse_yaml` | YAML text | JSON-compatible documents, summaries, warnings |
@@ -52,10 +57,6 @@ no findings
 ## Planned parser candidates
 
 ```text
-parse_pem_certificate
-parse_package_lock
-parse_pnpm_lock
-parse_yarn_lock
 parse_requirements_txt
 parse_cyclonedx_sbom
 parse_spdx_sbom
@@ -117,7 +118,7 @@ hosted_default: allowlist_only
 requires_authentication: true
 rate_limit_recommended: true
 audit_required: true
-risk: low
+risk: low or medium depending on artifact sensitivity
 ```
 
 ## Current package shape
@@ -126,6 +127,7 @@ risk: low
 plugins/core-parsers/src/
   index.ts
   localOnlyPermissions.ts
+  nativeParserUtils.ts
   parseBrowserExtensionManifest.ts
   parseCsv.ts
   parseDockerfile.ts
@@ -133,6 +135,11 @@ plugins/core-parsers/src/
   parseHttpHeaders.ts
   parsePackageJson.ts
   parseSarif.ts
+  parseSemgrepJson.ts
+  parseCheckovJson.ts
+  parseGrypeJson.ts
+  parsePemCertificate.ts
+  parseLockfiles.ts
   parseIpPrefixList.ts
   parseAsnList.ts
   parseAsnAllowDenyList.ts
@@ -151,6 +158,11 @@ Run from repo root:
 ```bash
 pnpm --filter @security-workbench/cli start skills run parse_sarif --input-file "$PWD/fixtures/sarif/codeql-results.sarif" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_trufflehog_ndjson --input-file "$PWD/fixtures/trufflehog/git-results.ndjson" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_semgrep_json --input-file "$PWD/fixtures/scanners/semgrep-results.json" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_checkov_json --input-file "$PWD/fixtures/scanners/checkov-results.json" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_grype_json --input-file "$PWD/fixtures/scanners/grype-results.json" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_pem_certificate --input-file "$PWD/fixtures/certificates/example-cert.pem" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_lockfiles --input-file "$PWD/fixtures/lockfiles/package-lock.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_github_actions_workflow --input-file "$PWD/fixtures/github-actions/basic-workflow.yml" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_dockerfile --input-file "$PWD/fixtures/dockerfile/multi-stage.Dockerfile" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_http_headers --input-file "$PWD/fixtures/http-headers/security-headers.txt" --format pretty
@@ -182,6 +194,11 @@ parse_dockerfile                → container_build_review
 parse_github_actions_workflow   → ci_workflow_review
 parse_trufflehog_ndjson         → secret-scanner normalization
 parse_sarif                     → scanner normalization/code scanning review
+parse_semgrep_json              → scanner native-output parsing/normalization
+parse_checkov_json              → scanner native-output parsing/normalization
+parse_grype_json                → scanner native-output parsing/normalization
+parse_pem_certificate           → certificate_review
+parse_lockfiles                 → package_review
 parse_ip_prefix_list            → infrastructure/local-registry/prefix-membership workflows
 parse_asn_list                  → ASN/local-registry/infrastructure-clustering workflows
 parse_asn_allow_deny_list       → ASN policy review and local membership workflows
