@@ -565,4 +565,49 @@ describe("formatSkillRunResult", () => {
   });
 
 
+  it("renders ASN allow/deny list observations in pretty output", () => {
+    const output = formatSkillRunResult(
+      result({
+        skill: { name: "parse_asn_allow_deny_list", version: "0.1.0" },
+        output: {
+          artifact: { id: "artifact_asn_allow_deny_list", type: "asn_allow_deny_list" },
+          observed: {
+            line_ending: "lf",
+            physical_line_count: 5,
+            blank_line_count: 0,
+            comment_line_count: 1,
+            nonempty_line_count: 5,
+            inline_comment_count: 1,
+            valid_entry_count: 4,
+            allow_entry_count: 2,
+            deny_entry_count: 2,
+            unique_asn_count: 3,
+            malformed_line_count: 1,
+            duplicate_entry_count: 1,
+            conflict_entry_count: 1,
+            duplicate_entries: [
+              { action: "deny", normalized_asn: "AS15169", first_line: 3, duplicate_line: 5, occurrences: 2 },
+            ],
+            conflicting_entries: [{ normalized_asn: "AS15169", allow_lines: [6], deny_lines: [3, 5] }],
+            entries: [
+              { line: 2, action: "allow", normalized_asn: "AS13335", reason: null },
+              { line: 3, action: "deny", normalized_asn: "AS15169", reason: "suspicious concentration" },
+            ],
+            invalid_lines: [{ line: 7, value: "ASnotvalid", reason: "missing valid ASN token" }],
+          },
+          warnings: [],
+        },
+      }),
+      { format: "pretty" }
+    );
+
+    expect(output).toContain("ASN Allow/Deny List");
+    expect(output).toContain("Allow entries: 2");
+    expect(output).toContain("Deny entries: 2");
+    expect(output).toContain("Conflicting entries: 1");
+    expect(output).toContain("deny AS15169");
+    expect(output).toContain("ASnotvalid - missing valid ASN token");
+  });
+
+
 });

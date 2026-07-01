@@ -362,6 +362,59 @@ function renderAsnList(record: Record<string, unknown>, options: DisplayOptions)
   ]);
 }
 
+function renderAsnAllowDenyList(record: Record<string, unknown>, options: DisplayOptions): string[] | undefined {
+  const observed = recordValue(record, "observed");
+  if (!observed) {
+    return undefined;
+  }
+
+  const entries = recordArray(observed, "entries");
+  const invalidLines = recordArray(observed, "invalid_lines");
+  const duplicateEntries = recordArray(observed, "duplicate_entries");
+  const conflictingEntries = recordArray(observed, "conflicting_entries");
+  const entryLines = entries.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const action = String(entry.action ?? "unknown");
+    const normalizedAsn = String(entry.normalized_asn ?? "unknown");
+    const reason = typeof entry.reason === "string" && entry.reason.length > 0 ? ` reason=${displayString(entry.reason, options)}` : "";
+    return `line ${line}: ${action} ${displayString(normalizedAsn, options)}${reason}`;
+  });
+  const invalidLineSummaries = invalidLines.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const value = String(entry.value ?? "unknown");
+    const reason = String(entry.reason ?? "invalid");
+    return `line ${line}: ${displayString(value, options)} - ${reason}`;
+  });
+  const duplicateLineSummaries = duplicateEntries.slice(0, 20).map((entry) => {
+    const action = String(entry.action ?? "unknown");
+    const value = String(entry.normalized_asn ?? "unknown");
+    return `${action} ${displayString(value, options)} first_line=${String(entry.first_line ?? "?")} duplicate_line=${String(entry.duplicate_line ?? "?")} occurrences=${String(entry.occurrences ?? "?")}`;
+  });
+  const conflictLineSummaries = conflictingEntries.slice(0, 20).map((entry) => {
+    const value = String(entry.normalized_asn ?? "unknown");
+    const allowLines = Array.isArray(entry.allow_lines) ? entry.allow_lines.join(",") : "?";
+    const denyLines = Array.isArray(entry.deny_lines) ? entry.deny_lines.join(",") : "?";
+    return `${displayString(value, options)} allow_lines=${allowLines} deny_lines=${denyLines}`;
+  });
+
+  return section("ASN Allow/Deny List", [
+    `Physical lines: ${numberValue(observed, "physical_line_count") ?? "unknown"}`,
+    `Line ending: ${typeof observed.line_ending === "string" ? observed.line_ending : "unknown"}`,
+    `Valid entries: ${numberValue(observed, "valid_entry_count") ?? entries.length}`,
+    `Allow entries: ${numberValue(observed, "allow_entry_count") ?? "unknown"}`,
+    `Deny entries: ${numberValue(observed, "deny_entry_count") ?? "unknown"}`,
+    `Unique ASNs: ${numberValue(observed, "unique_asn_count") ?? "unknown"}`,
+    `Malformed lines: ${numberValue(observed, "malformed_line_count") ?? invalidLines.length}`,
+    `Duplicate entries: ${numberValue(observed, "duplicate_entry_count") ?? duplicateEntries.length}`,
+    `Conflicting entries: ${numberValue(observed, "conflict_entry_count") ?? conflictingEntries.length}`,
+    `Blank/comment/inline-comment lines: ${String(numberValue(observed, "blank_line_count") ?? "unknown")}/${String(numberValue(observed, "comment_line_count") ?? "unknown")}/${String(numberValue(observed, "inline_comment_count") ?? "unknown")}`,
+    ...namedList("Entries", entryLines, options),
+    ...namedList("Duplicates", duplicateLineSummaries, options),
+    ...namedList("Conflicts", conflictLineSummaries, options),
+    ...namedList("Invalid lines", invalidLineSummaries, options),
+  ]);
+}
+
 function renderBrowserExtensionPermissionReview(
   record: Record<string, unknown>,
   options: DisplayOptions
@@ -875,6 +928,8 @@ function renderSkillAwareOutput(
       return renderIpPrefixList(record, options);
     case "parse_asn_list":
       return renderAsnList(record, options);
+    case "parse_asn_allow_deny_list":
+      return renderAsnAllowDenyList(record, options);
     case "parse_http_headers":
       return renderHttpHeaders(record, options);
     default:

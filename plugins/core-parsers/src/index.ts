@@ -9,6 +9,7 @@ import { parseTrufflehogNdjsonSkill } from "./parseTrufflehogNdjson.js";
 import { parseSarifSkill } from "./parseSarif.js";
 import { parseIpPrefixListSkill } from "./parseIpPrefixList.js";
 import { parseAsnListSkill } from "./parseAsnList.js";
+import { parseAsnAllowDenyListSkill } from "./parseAsnAllowDenyList.js";
 
 export { parsePackageJson, parsePackageJsonSkill } from "./parsePackageJson.js";
 export { parseHttpHeaders, parseHttpHeadersSkill } from "./parseHttpHeaders.js";
@@ -18,6 +19,7 @@ export { parseTrufflehogNdjson, parseTrufflehogNdjsonSkill } from "./parseTruffl
 export { parseSarif, parseSarifSkill } from "./parseSarif.js";
 export { parseIpPrefixList, parseIpPrefixListSkill } from "./parseIpPrefixList.js";
 export { parseAsnList, parseAsnListSkill } from "./parseAsnList.js";
+export { parseAsnAllowDenyList, parseAsnAllowDenyListSkill } from "./parseAsnAllowDenyList.js";
 export type { ParsedHttpHeaderField, ParseHttpHeadersOutput } from "./parseHttpHeaders.js";
 export type {
   ParseSarifOutput,
@@ -26,6 +28,14 @@ export type {
   SarifRuleObservation,
   SarifRunObservation,
 } from "./parseSarif.js";
+export type {
+  AsnAllowDenyEntry,
+  AsnAllowDenyInvalidLine,
+  AsnPolicyAction,
+  AsnPolicyConflictEntry,
+  AsnPolicyDuplicateEntry,
+  ParseAsnAllowDenyListOutput,
+} from "./parseAsnAllowDenyList.js";
 export type {
   AsnListDuplicateEntry,
   AsnListEntry,
@@ -84,6 +94,7 @@ export const skills = [
   parseSarifSkill,
   parseIpPrefixListSkill,
   parseAsnListSkill,
+  parseAsnAllowDenyListSkill,
   parsePackageJsonSkill,
   parseCsvSkill,
   parseYamlSkill,
