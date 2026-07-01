@@ -34,9 +34,8 @@ pnpm typecheck:test
 ## Active sequence
 
 ```text
-1. Add SBOM parsing and review.
-2. Add package review.
-3. Add email, IOC, and URL review lanes.
+1. Add package review.
+2. Add email, IOC, and URL review lanes.
 ```
 
 Sequence rule:
@@ -67,7 +66,6 @@ These are candidates for the next small PR stack after the active sequence start
 
 ```text
 package_review
-parse_sbom
 ```
 
 ## Workflow backlog

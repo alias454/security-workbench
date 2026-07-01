@@ -41,6 +41,7 @@ fixtures/identifiers/         extract_cves, extract_uuids
 fixtures/iocs/                extract_iocs and fang/refang helpers
 fixtures/jwt/                 parse_jwt, review_jwt
 fixtures/lockfiles/           parse_lockfiles
+fixtures/sbom/                parse_sbom, review_sbom
 fixtures/package-json/        parse_package_json
 fixtures/sarif/               parse_sarif
 fixtures/scanners/            parse_semgrep_json, parse_checkov_json, parse_grype_json
@@ -59,6 +60,7 @@ pnpm --filter @security-workbench/cli start skills run parse_checkov_json --inpu
 pnpm --filter @security-workbench/cli start skills run parse_grype_json --input-file "$PWD/fixtures/scanners/grype-results.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_pem_certificate --input-file "$PWD/fixtures/certificates/example-cert.pem" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_lockfiles --input-file "$PWD/fixtures/lockfiles/package-lock.json" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_sbom --input-file "$PWD/fixtures/sbom/cyclonedx.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_github_actions_workflow --input-file "$PWD/fixtures/github-actions/basic-workflow.yml" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_dockerfile --input-file "$PWD/fixtures/dockerfile/multi-stage.Dockerfile" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_http_headers --input-file "$PWD/fixtures/http-headers/security-headers.txt" --format pretty

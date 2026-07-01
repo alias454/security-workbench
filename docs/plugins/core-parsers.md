@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 23
+Implemented skills: 24
 ```
 
 ## Purpose
@@ -48,6 +48,7 @@ no findings
 | `merge_scanner_results` | normalized or deduplicated scanner result outputs | merged scanner-result collection, duplicate counts, source refs, and scanner/source inventories |
 | `parse_pem_certificate` | PEM certificate text | X.509 subjects, issuers, validity dates, fingerprints, SANs, and public key metadata |
 | `parse_lockfiles` | npm/pnpm/yarn lockfiles | package names, versions, dependency edges, importer names, and root dependency sections |
+| `parse_sbom` | CycloneDX or SPDX SBOM JSON | components/packages, versions, suppliers, licenses, identifiers, external references, and dependency metadata |
 | `parse_package_json` | package.json | package metadata, scripts, dependencies, repository/bin/workspaces |
 | `parse_csv` | CSV text | rows, records, headers, delimiter, line endings, irregular rows |
 | `parse_yaml` | YAML text | JSON-compatible documents, summaries, warnings |
@@ -62,8 +63,6 @@ no findings
 
 ```text
 parse_requirements_txt
-parse_cyclonedx_sbom
-parse_spdx_sbom
 parse_csp
 parse_set_cookie_headers
 parse_rir_whois_text
@@ -144,8 +143,11 @@ plugins/core-parsers/src/
   parseGrypeJson.ts
   parsePemCertificate.ts
   parseLockfiles.ts
+  parseSbom.ts
   normalizeScannerResults.ts
   dedupeScannerResults.ts
+  scannerSummary.ts
+  mergeScannerResults.ts
   parseIpPrefixList.ts
   parseAsnList.ts
   parseAsnAllowDenyList.ts
@@ -174,6 +176,7 @@ pnpm --filter @security-workbench/cli start skills run dedupe_scanner_results --
 pnpm --filter @security-workbench/cli start skills run scanner_summary --input-file /tmp/semgrep.deduped.json --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_pem_certificate --input-file "$PWD/fixtures/certificates/example-cert.pem" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_lockfiles --input-file "$PWD/fixtures/lockfiles/package-lock.json" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_sbom --input-file "$PWD/fixtures/sbom/cyclonedx.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_github_actions_workflow --input-file "$PWD/fixtures/github-actions/basic-workflow.yml" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_dockerfile --input-file "$PWD/fixtures/dockerfile/multi-stage.Dockerfile" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_http_headers --input-file "$PWD/fixtures/http-headers/security-headers.txt" --format pretty
@@ -210,6 +213,7 @@ parse_checkov_json              → scanner native-output parsing/normalization
 parse_grype_json                → scanner native-output parsing/normalization
 parse_pem_certificate           → review_certificate
 parse_lockfiles                 → package_review
+parse_sbom                      → review_sbom
 parse_ip_prefix_list            → infrastructure/local-registry/prefix-membership workflows
 parse_asn_list                  → ASN/local-registry/infrastructure-clustering workflows
 parse_asn_allow_deny_list       → ASN policy review and local membership workflows
