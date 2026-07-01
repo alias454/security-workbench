@@ -9,6 +9,7 @@ CLI skill and workflow runners
 local-only runtime policy and safe input handling
 core transform/parser/reviewer/scoring/output plugins
 registered browser-extension and static-analysis triage workflows
+stable workflow definition validation
 full smoke, source audit, and Semgrep validation
 ```
 
@@ -33,7 +34,9 @@ pnpm typecheck:test
 ## Active sequence
 
 ```text
-1. Add minimal schema validation for stable workflow inputs and outputs.
+1. Add scanner-native JSON parsers for Semgrep, Checkov, and Grype.
+2. Normalize and dedupe scanner results.
+3. Expand static-analysis triage beyond SARIF.
 ```
 
 Sequence rule:
@@ -56,7 +59,7 @@ browser_extension_review
 static_analysis_triage
 ```
 
-Later pipeline support should add stronger input/output validation and more fixture-backed golden-output coverage.
+Later pipeline support should add broader skill input/output schema validation and more fixture-backed golden-output coverage.
 
 ## Near-term candidates
 
@@ -277,7 +280,7 @@ Before REST API, MCP, hosted mode, plugin manifest loading, third-party plugins,
 shared runtime path for all adapters
 fail-closed exposure metadata behavior
 policy enforcement for network, filesystem, persistence, and external binaries
-schema validation for stable workflow inputs and outputs
+broader skill and workflow input/output schema validation
 redaction-safe logs and outputs
 bounded artifact handling per adapter
 audit metadata for runs

@@ -477,6 +477,7 @@ run_ok "workflow browser_extension_review fixture" "${CLI[@]}" workflows run bro
 run_ok_require_output_pattern "workflow browser_extension_review output includes finding" "Browser Extension Finding" "${CLI[@]}" workflows run browser_extension_review --input-file "$FIXTURES_ROOT/browser-extension/manifest-v2-broad-hosts.json" --format pretty
 run_ok "workflow static_analysis_triage fixture" "${CLI[@]}" workflows run static_analysis_triage --input-file "$FIXTURES_ROOT/sarif/codeql-results.sarif" --format pretty
 run_ok_require_output_pattern "workflow static_analysis_triage output includes summary" "Static-analysis triage summary" "${CLI[@]}" workflows run static_analysis_triage --input-file "$FIXTURES_ROOT/sarif/codeql-results.sarif" --format pretty
+run_ok_require_output_pattern "workflow static_analysis_triage json includes step count" '"step_count": 4' "${CLI[@]}" workflows run static_analysis_triage --input-file "$FIXTURES_ROOT/sarif/codeql-results.sarif" --format json
 
 run_ok "skills describe parse_jwt" "${CLI[@]}" skills describe parse_jwt
 run_ok "skills describe parse_jwt --format table" "${CLI[@]}" skills describe parse_jwt --format table
