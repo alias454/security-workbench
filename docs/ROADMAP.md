@@ -34,10 +34,10 @@ pnpm typecheck:test
 ## Active sequence
 
 ```text
-1. Normalize scanner-native parser outputs into a shared scanner result shape.
-2. Dedupe scanner results across native parser outputs.
-3. Add scanner summary and merge helpers.
-4. Expand static-analysis triage beyond SARIF.
+1. Add scanner summary and merge helpers.
+2. Expand static-analysis triage beyond SARIF.
+3. Add certificate review.
+4. Add package review.
 ```
 
 Sequence rule:
@@ -67,8 +67,6 @@ Later pipeline support should add broader skill input/output schema validation, 
 These are candidates for the next small PR stack after the active sequence starts.
 
 ```text
-normalize_scanner_results
-dedupe_scanner_results
 scanner_summary
 merge_scanner_results
 certificate_review
@@ -111,8 +109,6 @@ Purpose: normalize scanner output into deduplicated, evidence-backed triage summ
 Candidate work:
 
 ```text
-normalize scanner results
-dedupe scanner results
 summarize scanner results
 merge scanner results
 expand static-analysis triage across scanner-native formats
