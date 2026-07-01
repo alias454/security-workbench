@@ -1,0 +1,5 @@
+# ASN observations
+2026-06-30T12:00:00Z AS13335 evil.example source=feed-a
+asn=AS15169 198.51.100.10 source=proxy
+AS13335 suspicious.example source=feed-b confidence=medium
+AS64512 lab-observation

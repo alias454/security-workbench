@@ -321,6 +321,204 @@ function renderIpPrefixList(record: Record<string, unknown>, options: DisplayOpt
   ]);
 }
 
+function renderAsnList(record: Record<string, unknown>, options: DisplayOptions): string[] | undefined {
+  const observed = recordValue(record, "observed");
+  if (!observed) {
+    return undefined;
+  }
+
+  const entries = recordArray(observed, "entries");
+  const invalidLines = recordArray(observed, "invalid_lines");
+  const duplicateEntries = recordArray(observed, "duplicate_entries");
+  const entryLines = entries.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const normalizedAsn = String(entry.normalized_asn ?? "unknown");
+    const note = typeof entry.note === "string" && entry.note.length > 0 ? ` note=${displayString(entry.note, options)}` : "";
+    return `line ${line}: ${displayString(normalizedAsn, options)}${note}`;
+  });
+  const invalidLineSummaries = invalidLines.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const value = String(entry.value ?? "unknown");
+    const reason = String(entry.reason ?? "invalid");
+    return `line ${line}: ${displayString(value, options)} - ${reason}`;
+  });
+  const duplicateLineSummaries = duplicateEntries.slice(0, 20).map((entry) => {
+    const value = String(entry.normalized_asn ?? "unknown");
+    return `${displayString(value, options)} first_line=${String(entry.first_line ?? "?")} duplicate_line=${String(entry.duplicate_line ?? "?")} occurrences=${String(entry.occurrences ?? "?")}`;
+  });
+
+  return section("ASN List", [
+    `Physical lines: ${numberValue(observed, "physical_line_count") ?? "unknown"}`,
+    `Line ending: ${typeof observed.line_ending === "string" ? observed.line_ending : "unknown"}`,
+    `Valid entries: ${numberValue(observed, "valid_entry_count") ?? entries.length}`,
+    `Unique ASNs: ${numberValue(observed, "unique_asn_count") ?? "unknown"}`,
+    `Malformed lines: ${numberValue(observed, "malformed_line_count") ?? invalidLines.length}`,
+    `Duplicate entries: ${numberValue(observed, "duplicate_entry_count") ?? duplicateEntries.length}`,
+    `Blank/comment/inline-comment lines: ${String(numberValue(observed, "blank_line_count") ?? "unknown")}/${String(numberValue(observed, "comment_line_count") ?? "unknown")}/${String(numberValue(observed, "inline_comment_count") ?? "unknown")}`,
+    ...namedList("ASNs", stringArray(observed, "normalized_asns"), options),
+    ...namedList("Entries", entryLines, options),
+    ...namedList("Duplicates", duplicateLineSummaries, options),
+    ...namedList("Invalid lines", invalidLineSummaries, options),
+  ]);
+}
+
+function renderAsnAllowDenyList(record: Record<string, unknown>, options: DisplayOptions): string[] | undefined {
+  const observed = recordValue(record, "observed");
+  if (!observed) {
+    return undefined;
+  }
+
+  const entries = recordArray(observed, "entries");
+  const invalidLines = recordArray(observed, "invalid_lines");
+  const duplicateEntries = recordArray(observed, "duplicate_entries");
+  const conflictingEntries = recordArray(observed, "conflicting_entries");
+  const entryLines = entries.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const action = String(entry.action ?? "unknown");
+    const normalizedAsn = String(entry.normalized_asn ?? "unknown");
+    const reason = typeof entry.reason === "string" && entry.reason.length > 0 ? ` reason=${displayString(entry.reason, options)}` : "";
+    return `line ${line}: ${action} ${displayString(normalizedAsn, options)}${reason}`;
+  });
+  const invalidLineSummaries = invalidLines.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const value = String(entry.value ?? "unknown");
+    const reason = String(entry.reason ?? "invalid");
+    return `line ${line}: ${displayString(value, options)} - ${reason}`;
+  });
+  const duplicateLineSummaries = duplicateEntries.slice(0, 20).map((entry) => {
+    const action = String(entry.action ?? "unknown");
+    const value = String(entry.normalized_asn ?? "unknown");
+    return `${action} ${displayString(value, options)} first_line=${String(entry.first_line ?? "?")} duplicate_line=${String(entry.duplicate_line ?? "?")} occurrences=${String(entry.occurrences ?? "?")}`;
+  });
+  const conflictLineSummaries = conflictingEntries.slice(0, 20).map((entry) => {
+    const value = String(entry.normalized_asn ?? "unknown");
+    const allowLines = Array.isArray(entry.allow_lines) ? entry.allow_lines.join(",") : "?";
+    const denyLines = Array.isArray(entry.deny_lines) ? entry.deny_lines.join(",") : "?";
+    return `${displayString(value, options)} allow_lines=${allowLines} deny_lines=${denyLines}`;
+  });
+
+  return section("ASN Allow/Deny List", [
+    `Physical lines: ${numberValue(observed, "physical_line_count") ?? "unknown"}`,
+    `Line ending: ${typeof observed.line_ending === "string" ? observed.line_ending : "unknown"}`,
+    `Valid entries: ${numberValue(observed, "valid_entry_count") ?? entries.length}`,
+    `Allow entries: ${numberValue(observed, "allow_entry_count") ?? "unknown"}`,
+    `Deny entries: ${numberValue(observed, "deny_entry_count") ?? "unknown"}`,
+    `Unique ASNs: ${numberValue(observed, "unique_asn_count") ?? "unknown"}`,
+    `Malformed lines: ${numberValue(observed, "malformed_line_count") ?? invalidLines.length}`,
+    `Duplicate entries: ${numberValue(observed, "duplicate_entry_count") ?? duplicateEntries.length}`,
+    `Conflicting entries: ${numberValue(observed, "conflict_entry_count") ?? conflictingEntries.length}`,
+    `Blank/comment/inline-comment lines: ${String(numberValue(observed, "blank_line_count") ?? "unknown")}/${String(numberValue(observed, "comment_line_count") ?? "unknown")}/${String(numberValue(observed, "inline_comment_count") ?? "unknown")}`,
+    ...namedList("Entries", entryLines, options),
+    ...namedList("Duplicates", duplicateLineSummaries, options),
+    ...namedList("Conflicts", conflictLineSummaries, options),
+    ...namedList("Invalid lines", invalidLineSummaries, options),
+  ]);
+}
+
+function renderAsnObservations(record: Record<string, unknown>, options: DisplayOptions): string[] | undefined {
+  const observed = recordValue(record, "observed");
+  if (!observed) {
+    return undefined;
+  }
+
+  const entries = recordArray(observed, "entries");
+  const repeatedAsns = recordArray(observed, "repeated_asns");
+  const invalidLines = recordArray(observed, "invalid_lines");
+  const entryLines = entries.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const normalizedAsn = String(entry.normalized_asn ?? "unknown");
+    const indicator = typeof entry.indicator === "string" ? ` indicator=${displayString(entry.indicator, options)}` : "";
+    const source = typeof entry.source === "string" ? ` source=${displayString(entry.source, options)}` : "";
+    return `line ${line}: ${displayString(normalizedAsn, options)}${indicator}${source}`;
+  });
+  const repeatedAsnLines = repeatedAsns.slice(0, 20).map((entry) => {
+    const normalizedAsn = String(entry.normalized_asn ?? "unknown");
+    const lines = Array.isArray(entry.lines) ? entry.lines.join(",") : "?";
+    return `${displayString(normalizedAsn, options)} count=${String(entry.count ?? "?")} lines=${lines}`;
+  });
+  const invalidLineSummaries = invalidLines.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const value = String(entry.value ?? "unknown");
+    const reason = String(entry.reason ?? "invalid");
+    return `line ${line}: ${displayString(value, options)} - ${reason}`;
+  });
+
+  return section("ASN Observations", [
+    `Physical lines: ${numberValue(observed, "physical_line_count") ?? "unknown"}`,
+    `Line ending: ${typeof observed.line_ending === "string" ? observed.line_ending : "unknown"}`,
+    `Valid observations: ${numberValue(observed, "valid_observation_count") ?? entries.length}`,
+    `Unique ASNs: ${numberValue(observed, "unique_asn_count") ?? "unknown"}`,
+    `Repeated ASNs: ${numberValue(observed, "repeated_asn_count") ?? repeatedAsns.length}`,
+    `With indicator/source/timestamp: ${String(numberValue(observed, "observations_with_indicator_count") ?? "unknown")}/${String(numberValue(observed, "observations_with_source_count") ?? "unknown")}/${String(numberValue(observed, "observations_with_timestamp_count") ?? "unknown")}`,
+    `Malformed lines: ${numberValue(observed, "malformed_line_count") ?? invalidLines.length}`,
+    `Blank/comment/inline-comment lines: ${String(numberValue(observed, "blank_line_count") ?? "unknown")}/${String(numberValue(observed, "comment_line_count") ?? "unknown")}/${String(numberValue(observed, "inline_comment_count") ?? "unknown")}`,
+    ...namedList("Observations", entryLines, options),
+    ...namedList("Repeated ASNs", repeatedAsnLines, options),
+    ...namedList("Invalid lines", invalidLineSummaries, options),
+  ]);
+}
+
+function renderBgpPrefixTable(record: Record<string, unknown>, options: DisplayOptions): string[] | undefined {
+  const observed = recordValue(record, "observed");
+  if (!observed) {
+    return undefined;
+  }
+
+  const entries = recordArray(observed, "entries");
+  const invalidLines = recordArray(observed, "invalid_lines");
+  const duplicateEntries = recordArray(observed, "duplicate_entries");
+  const conflictingPrefixes = recordArray(observed, "conflicting_prefixes");
+  const prefixLengths = recordValue(observed, "prefix_lengths");
+  const prefixLengthLines = prefixLengths
+    ? Object.entries(prefixLengths)
+        .filter(([, value]) => typeof value === "number")
+        .sort(([left], [right]) => Number(left) - Number(right))
+        .map(([length, count]) => `/${length}: ${String(count)}`)
+    : [];
+  const entryLines = entries.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const prefix = String(entry.normalized_prefix ?? entry.prefix ?? "unknown");
+    const originAsn = String(entry.origin_asn ?? "unknown");
+    const version = String(entry.ip_version ?? "unknown");
+    return `line ${line}: ${displayString(prefix, options)} origin=${displayString(originAsn, options)} (${version})`;
+  });
+  const duplicateLineSummaries = duplicateEntries.slice(0, 20).map((entry) => {
+    const prefix = String(entry.normalized_prefix ?? "unknown");
+    const originAsn = String(entry.origin_asn ?? "unknown");
+    return `${displayString(prefix, options)} origin=${displayString(originAsn, options)} first_line=${String(entry.first_line ?? "?")} duplicate_line=${String(entry.duplicate_line ?? "?")} occurrences=${String(entry.occurrences ?? "?")}`;
+  });
+  const conflictLineSummaries = conflictingPrefixes.slice(0, 20).map((entry) => {
+    const prefix = String(entry.normalized_prefix ?? "unknown");
+    const originAsns = Array.isArray(entry.origin_asns) ? entry.origin_asns.join(",") : "?";
+    const lines = Array.isArray(entry.lines) ? entry.lines.join(",") : "?";
+    return `${displayString(prefix, options)} origin_asns=${originAsns} lines=${lines}`;
+  });
+  const invalidLineSummaries = invalidLines.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const value = String(entry.value ?? "unknown");
+    const reason = String(entry.reason ?? "invalid");
+    return `line ${line}: ${displayString(value, options)} - ${reason}`;
+  });
+
+  return section("BGP Prefix Table", [
+    `Physical lines: ${numberValue(observed, "physical_line_count") ?? "unknown"}`,
+    `Line ending: ${typeof observed.line_ending === "string" ? observed.line_ending : "unknown"}`,
+    `Valid entries: ${numberValue(observed, "valid_entry_count") ?? entries.length}`,
+    `IPv4 prefixes: ${numberValue(observed, "ipv4_prefix_count") ?? "unknown"}`,
+    `IPv6 prefixes: ${numberValue(observed, "ipv6_prefix_count") ?? "unknown"}`,
+    `Unique prefixes: ${numberValue(observed, "unique_prefix_count") ?? "unknown"}`,
+    `Unique origin ASNs: ${numberValue(observed, "unique_origin_asn_count") ?? "unknown"}`,
+    `Duplicate entries: ${numberValue(observed, "duplicate_entry_count") ?? duplicateEntries.length}`,
+    `Conflicting prefixes: ${numberValue(observed, "conflicting_prefix_count") ?? conflictingPrefixes.length}`,
+    `Malformed lines: ${numberValue(observed, "malformed_line_count") ?? invalidLines.length}`,
+    ...namedList("Prefix lengths", prefixLengthLines, options),
+    ...namedList("Entries", entryLines, options),
+    ...namedList("Duplicates", duplicateLineSummaries, options),
+    ...namedList("Conflicting prefixes", conflictLineSummaries, options),
+    ...namedList("Invalid lines", invalidLineSummaries, options),
+  ]);
+}
+
 function renderBrowserExtensionPermissionReview(
   record: Record<string, unknown>,
   options: DisplayOptions
@@ -832,6 +1030,14 @@ function renderSkillAwareOutput(
       return renderSarif(record, options);
     case "parse_ip_prefix_list":
       return renderIpPrefixList(record, options);
+    case "parse_asn_list":
+      return renderAsnList(record, options);
+    case "parse_asn_allow_deny_list":
+      return renderAsnAllowDenyList(record, options);
+    case "parse_asn_observations":
+      return renderAsnObservations(record, options);
+    case "parse_bgp_prefix_table":
+      return renderBgpPrefixTable(record, options);
     case "parse_http_headers":
       return renderHttpHeaders(record, options);
     default:

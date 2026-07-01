@@ -571,6 +571,10 @@ run_expect_fail "parse_package_json rejects null" "${CLI[@]}" skills run parse_p
 run_expect_fail "parse_csv rejects malformed quoted field" "${CLI[@]}" skills run parse_csv --input $'name,note\nAlice,"unterminated'
 run_expect_fail "parse_yaml rejects malformed YAML" "${CLI[@]}" skills run parse_yaml --input $'name: [unterminated'
 run_expect_fail "parse_ip_prefix_list rejects no valid entries" "${CLI[@]}" skills run parse_ip_prefix_list --input-file "$FIXTURES_ROOT/ip-prefixes/no-valid-prefixes.txt"
+run_expect_fail "parse_asn_list rejects no valid entries" "${CLI[@]}" skills run parse_asn_list --input-file "$FIXTURES_ROOT/asn/no-valid-asn-list.txt"
+run_expect_fail "parse_asn_allow_deny_list rejects no valid entries" "${CLI[@]}" skills run parse_asn_allow_deny_list --input-file "$FIXTURES_ROOT/asn/no-valid-asn-allow-deny-list.txt"
+run_expect_fail "parse_asn_observations rejects no valid entries" "${CLI[@]}" skills run parse_asn_observations --input-file "$FIXTURES_ROOT/asn/no-valid-asn-observations.txt"
+run_expect_fail "parse_bgp_prefix_table rejects no valid entries" "${CLI[@]}" skills run parse_bgp_prefix_table --input-file "$FIXTURES_ROOT/asn/no-valid-bgp-prefix-table.txt"
 run_expect_fail "parse_url rejects invalid URL" "${CLI[@]}" skills run parse_url --input "not a url"
 
 
@@ -608,6 +612,22 @@ run_ok "fixture parse_ip_prefix_list mixed prefixes" "${CLI[@]}" skills run pars
 run_ok "fixture parse_ip_prefix_list malformed prefixes" "${CLI[@]}" skills run parse_ip_prefix_list --input-file "$FIXTURES_ROOT/ip-prefixes/malformed-prefixes.txt" --format pretty
 run_ok_require_output_pattern "parse_ip_prefix_list pretty output includes IPv6 count" 'IPv6 entries: 2' "${CLI[@]}" skills run parse_ip_prefix_list --input-file "$FIXTURES_ROOT/ip-prefixes/mixed-prefixes.txt" --format pretty
 run_ok_require_output_pattern "parse_ip_prefix_list pretty output includes duplicate summary" 'Duplicate entries: 1' "${CLI[@]}" skills run parse_ip_prefix_list --input-file "$FIXTURES_ROOT/ip-prefixes/mixed-prefixes.txt" --format pretty
+run_ok "fixture parse_asn_list ASN list" "${CLI[@]}" skills run parse_asn_list --input-file "$FIXTURES_ROOT/asn/asn-list.txt" --format pretty
+run_ok "fixture parse_asn_list malformed ASN list" "${CLI[@]}" skills run parse_asn_list --input-file "$FIXTURES_ROOT/asn/malformed-asn-list.txt" --format pretty
+run_ok_require_output_pattern "parse_asn_list pretty output includes unique ASN count" 'Unique ASNs: 3' "${CLI[@]}" skills run parse_asn_list --input-file "$FIXTURES_ROOT/asn/asn-list.txt" --format pretty
+run_ok_require_output_pattern "parse_asn_list pretty output includes duplicate summary" 'Duplicate entries: 1' "${CLI[@]}" skills run parse_asn_list --input-file "$FIXTURES_ROOT/asn/asn-list.txt" --format pretty
+run_ok "fixture parse_asn_allow_deny_list policy list" "${CLI[@]}" skills run parse_asn_allow_deny_list --input-file "$FIXTURES_ROOT/asn/asn-allow-deny-list.txt" --format pretty
+run_ok "fixture parse_asn_allow_deny_list malformed policy list" "${CLI[@]}" skills run parse_asn_allow_deny_list --input-file "$FIXTURES_ROOT/asn/malformed-asn-allow-deny-list.txt" --format pretty
+run_ok_require_output_pattern "parse_asn_allow_deny_list pretty output includes conflict summary" 'Conflicting entries: 1' "${CLI[@]}" skills run parse_asn_allow_deny_list --input-file "$FIXTURES_ROOT/asn/asn-allow-deny-list.txt" --format pretty
+run_ok_require_output_pattern "parse_asn_allow_deny_list pretty output includes deny count" 'Deny entries: 2' "${CLI[@]}" skills run parse_asn_allow_deny_list --input-file "$FIXTURES_ROOT/asn/asn-allow-deny-list.txt" --format pretty
+run_ok "fixture parse_asn_observations observations" "${CLI[@]}" skills run parse_asn_observations --input-file "$FIXTURES_ROOT/asn/asn-observations.txt" --format pretty
+run_ok "fixture parse_asn_observations malformed observations" "${CLI[@]}" skills run parse_asn_observations --input-file "$FIXTURES_ROOT/asn/malformed-asn-observations.txt" --format pretty
+run_ok_require_output_pattern "parse_asn_observations pretty output includes repeated summary" 'Repeated ASNs: 1' "${CLI[@]}" skills run parse_asn_observations --input-file "$FIXTURES_ROOT/asn/asn-observations.txt" --format pretty
+run_ok_require_output_pattern "parse_asn_observations pretty output includes source summary" 'With indicator/source/timestamp: 4/3/1' "${CLI[@]}" skills run parse_asn_observations --input-file "$FIXTURES_ROOT/asn/asn-observations.txt" --format pretty
+run_ok "fixture parse_bgp_prefix_table prefix table" "${CLI[@]}" skills run parse_bgp_prefix_table --input-file "$FIXTURES_ROOT/asn/bgp-prefix-table.txt" --format pretty
+run_ok "fixture parse_bgp_prefix_table malformed prefix table" "${CLI[@]}" skills run parse_bgp_prefix_table --input-file "$FIXTURES_ROOT/asn/malformed-bgp-prefix-table.txt" --format pretty
+run_ok_require_output_pattern "parse_bgp_prefix_table pretty output includes conflict summary" 'Conflicting prefixes: 1' "${CLI[@]}" skills run parse_bgp_prefix_table --input-file "$FIXTURES_ROOT/asn/bgp-prefix-table.txt" --format pretty
+run_ok_require_output_pattern "parse_bgp_prefix_table pretty output includes IPv6 count" 'IPv6 prefixes: 1' "${CLI[@]}" skills run parse_bgp_prefix_table --input-file "$FIXTURES_ROOT/asn/bgp-prefix-table.txt" --format pretty
 run_ok "fixture extract_iocs mixed" "${CLI[@]}" skills run extract_iocs --input-file "$FIXTURES_ROOT/iocs/mixed-iocs.txt" --format pretty
 
 run_ok_require_output_pattern "extract_iocs pretty output defangs URLs" 'hxxps://evil\[.\]example\[.\]com/path' "${CLI[@]}" skills run extract_iocs --input-file "$FIXTURES_ROOT/iocs/mixed-iocs.txt" --format pretty
@@ -621,7 +641,31 @@ run_ok "skills describe parse_browser_extension_manifest --format table" \
 run_ok "skills describe parse_ip_prefix_list --format table" \
   pnpm --filter @security-workbench/cli start skills describe parse_ip_prefix_list --format table
 
+run_ok "skills describe parse_asn_list --format table" \
+  pnpm --filter @security-workbench/cli start skills describe parse_asn_list --format table
+
+run_ok "skills describe parse_asn_allow_deny_list --format table" \
+  pnpm --filter @security-workbench/cli start skills describe parse_asn_allow_deny_list --format table
+
+run_ok "skills describe parse_asn_observations --format table" \
+  pnpm --filter @security-workbench/cli start skills describe parse_asn_observations --format table
+
+run_ok "skills describe parse_bgp_prefix_table --format table" \
+  pnpm --filter @security-workbench/cli start skills describe parse_bgp_prefix_table --format table
+
 run_ok_require_output_pattern "parser list includes parse_ip_prefix_list" '^parse_ip_prefix_list[[:space:]]' \
+  pnpm --filter @security-workbench/cli start skills list --category parser --format tsv
+
+run_ok_require_output_pattern "parser list includes parse_asn_list" '^parse_asn_list[[:space:]]' \
+  pnpm --filter @security-workbench/cli start skills list --category parser --format tsv
+
+run_ok_require_output_pattern "parser list includes parse_asn_allow_deny_list" '^parse_asn_allow_deny_list[[:space:]]' \
+  pnpm --filter @security-workbench/cli start skills list --category parser --format tsv
+
+run_ok_require_output_pattern "parser list includes parse_asn_observations" '^parse_asn_observations[[:space:]]' \
+  pnpm --filter @security-workbench/cli start skills list --category parser --format tsv
+
+run_ok_require_output_pattern "parser list includes parse_bgp_prefix_table" '^parse_bgp_prefix_table[[:space:]]' \
   pnpm --filter @security-workbench/cli start skills list --category parser --format tsv
 
 run_ok_require_output_pattern "parser list includes parse_browser_extension_manifest" '^parse_browser_extension_manifest[[:space:]]' \

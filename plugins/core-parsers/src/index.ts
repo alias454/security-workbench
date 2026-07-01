@@ -8,6 +8,10 @@ import { parseGithubActionsWorkflowSkill } from "./parseGithubActionsWorkflow.js
 import { parseTrufflehogNdjsonSkill } from "./parseTrufflehogNdjson.js";
 import { parseSarifSkill } from "./parseSarif.js";
 import { parseIpPrefixListSkill } from "./parseIpPrefixList.js";
+import { parseAsnListSkill } from "./parseAsnList.js";
+import { parseAsnAllowDenyListSkill } from "./parseAsnAllowDenyList.js";
+import { parseAsnObservationsSkill } from "./parseAsnObservations.js";
+import { parseBgpPrefixTableSkill } from "./parseBgpPrefixTable.js";
 
 export { parsePackageJson, parsePackageJsonSkill } from "./parsePackageJson.js";
 export { parseHttpHeaders, parseHttpHeadersSkill } from "./parseHttpHeaders.js";
@@ -16,6 +20,10 @@ export { parseGithubActionsWorkflow, parseGithubActionsWorkflowSkill } from "./p
 export { parseTrufflehogNdjson, parseTrufflehogNdjsonSkill } from "./parseTrufflehogNdjson.js";
 export { parseSarif, parseSarifSkill } from "./parseSarif.js";
 export { parseIpPrefixList, parseIpPrefixListSkill } from "./parseIpPrefixList.js";
+export { parseAsnList, parseAsnListSkill } from "./parseAsnList.js";
+export { parseAsnAllowDenyList, parseAsnAllowDenyListSkill } from "./parseAsnAllowDenyList.js";
+export { parseAsnObservations, parseAsnObservationsSkill } from "./parseAsnObservations.js";
+export { parseBgpPrefixTable, parseBgpPrefixTableSkill } from "./parseBgpPrefixTable.js";
 export type { ParsedHttpHeaderField, ParseHttpHeadersOutput } from "./parseHttpHeaders.js";
 export type {
   ParseSarifOutput,
@@ -24,6 +32,33 @@ export type {
   SarifRuleObservation,
   SarifRunObservation,
 } from "./parseSarif.js";
+export type {
+  BgpPrefixDuplicateEntry,
+  BgpPrefixOriginConflict,
+  BgpPrefixTableEntry,
+  BgpPrefixTableInvalidLine,
+  ParseBgpPrefixTableOutput,
+} from "./parseBgpPrefixTable.js";
+export type {
+  AsnObservationEntry,
+  AsnObservationInvalidLine,
+  AsnRepeatedObservation,
+  ParseAsnObservationsOutput,
+} from "./parseAsnObservations.js";
+export type {
+  AsnAllowDenyEntry,
+  AsnAllowDenyInvalidLine,
+  AsnPolicyAction,
+  AsnPolicyConflictEntry,
+  AsnPolicyDuplicateEntry,
+  ParseAsnAllowDenyListOutput,
+} from "./parseAsnAllowDenyList.js";
+export type {
+  AsnListDuplicateEntry,
+  AsnListEntry,
+  AsnListInvalidLine,
+  ParseAsnListOutput,
+} from "./parseAsnList.js";
 export type {
   IpAddressVersion,
   IpPrefixEntryKind,
@@ -75,6 +110,10 @@ export const skills = [
   parseTrufflehogNdjsonSkill,
   parseSarifSkill,
   parseIpPrefixListSkill,
+  parseAsnListSkill,
+  parseAsnAllowDenyListSkill,
+  parseAsnObservationsSkill,
+  parseBgpPrefixTableSkill,
   parsePackageJsonSkill,
   parseCsvSkill,
   parseYamlSkill,

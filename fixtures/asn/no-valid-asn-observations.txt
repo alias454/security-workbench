@@ -1,0 +1,3 @@
+# no valid observations
+ASnotvalid source=feed
+example.net source=feed

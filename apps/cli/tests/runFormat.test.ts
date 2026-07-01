@@ -521,4 +521,183 @@ describe("formatSkillRunResult", () => {
     expect(output).toContain("999[.]1[.]1[.]1 - invalid IP address");
   });
 
+
+  it("renders ASN list observations in pretty output", () => {
+    const output = formatSkillRunResult(
+      result({
+        skill: { name: "parse_asn_list", version: "0.1.0" },
+        output: {
+          artifact: { id: "artifact_asn_list", type: "asn_list" },
+          observed: {
+            line_ending: "lf",
+            physical_line_count: 5,
+            blank_line_count: 0,
+            comment_line_count: 1,
+            nonempty_line_count: 5,
+            inline_comment_count: 1,
+            valid_entry_count: 3,
+            malformed_line_count: 1,
+            duplicate_entry_count: 1,
+            unique_asn_count: 2,
+            normalized_asns: ["AS13335", "AS15169", "AS13335"],
+            duplicate_entries: [
+              { normalized_asn: "AS13335", first_line: 2, duplicate_line: 4, occurrences: 2 },
+            ],
+            entries: [
+              { line: 2, normalized_asn: "AS13335", note: null },
+              { line: 3, normalized_asn: "AS15169", note: "Google example" },
+              { line: 4, normalized_asn: "AS13335", note: null },
+            ],
+            invalid_lines: [{ line: 5, value: "ASnotvalid", reason: "missing valid ASN token" }],
+          },
+          warnings: [],
+        },
+      }),
+      { format: "pretty" }
+    );
+
+    expect(output).toContain("ASN List");
+    expect(output).toContain("Valid entries: 3");
+    expect(output).toContain("Unique ASNs: 2");
+    expect(output).toContain("Duplicate entries: 1");
+    expect(output).toContain("AS13335");
+    expect(output).toContain("ASnotvalid - missing valid ASN token");
+  });
+
+
+  it("renders ASN allow/deny list observations in pretty output", () => {
+    const output = formatSkillRunResult(
+      result({
+        skill: { name: "parse_asn_allow_deny_list", version: "0.1.0" },
+        output: {
+          artifact: { id: "artifact_asn_allow_deny_list", type: "asn_allow_deny_list" },
+          observed: {
+            line_ending: "lf",
+            physical_line_count: 5,
+            blank_line_count: 0,
+            comment_line_count: 1,
+            nonempty_line_count: 5,
+            inline_comment_count: 1,
+            valid_entry_count: 4,
+            allow_entry_count: 2,
+            deny_entry_count: 2,
+            unique_asn_count: 3,
+            malformed_line_count: 1,
+            duplicate_entry_count: 1,
+            conflict_entry_count: 1,
+            duplicate_entries: [
+              { action: "deny", normalized_asn: "AS15169", first_line: 3, duplicate_line: 5, occurrences: 2 },
+            ],
+            conflicting_entries: [{ normalized_asn: "AS15169", allow_lines: [6], deny_lines: [3, 5] }],
+            entries: [
+              { line: 2, action: "allow", normalized_asn: "AS13335", reason: null },
+              { line: 3, action: "deny", normalized_asn: "AS15169", reason: "suspicious concentration" },
+            ],
+            invalid_lines: [{ line: 7, value: "ASnotvalid", reason: "missing valid ASN token" }],
+          },
+          warnings: [],
+        },
+      }),
+      { format: "pretty" }
+    );
+
+    expect(output).toContain("ASN Allow/Deny List");
+    expect(output).toContain("Allow entries: 2");
+    expect(output).toContain("Deny entries: 2");
+    expect(output).toContain("Conflicting entries: 1");
+    expect(output).toContain("deny AS15169");
+    expect(output).toContain("ASnotvalid - missing valid ASN token");
+  });
+
+
+  it("renders ASN observations in pretty output", () => {
+    const output = formatSkillRunResult(
+      result({
+        skill: { name: "parse_asn_observations", version: "0.1.0" },
+        output: {
+          artifact: { id: "artifact_asn_observations", type: "asn_observations" },
+          observed: {
+            line_ending: "lf",
+            physical_line_count: 5,
+            blank_line_count: 0,
+            comment_line_count: 1,
+            nonempty_line_count: 5,
+            inline_comment_count: 1,
+            valid_observation_count: 3,
+            malformed_line_count: 1,
+            unique_asn_count: 2,
+            observations_with_indicator_count: 3,
+            observations_with_source_count: 2,
+            observations_with_timestamp_count: 1,
+            repeated_asn_count: 1,
+            entries: [
+              { line: 2, normalized_asn: "AS13335", indicator: "evil.example", source: "feed-a" },
+              { line: 3, normalized_asn: "AS15169", indicator: "198.51.100.10", source: "proxy" },
+            ],
+            repeated_asns: [{ normalized_asn: "AS13335", count: 2, first_line: 2, lines: [2, 4] }],
+            invalid_lines: [{ line: 5, value: "ASnotvalid source=feed", reason: "missing valid ASN token" }],
+          },
+          warnings: [],
+        },
+      }),
+      { format: "pretty" }
+    );
+
+    expect(output).toContain("ASN Observations");
+    expect(output).toContain("Valid observations: 3");
+    expect(output).toContain("Repeated ASNs: 1");
+    expect(output).toContain("evil[.]example");
+    expect(output).toContain("ASnotvalid source=feed - missing valid ASN token");
+  });
+
+
+  it("renders BGP prefix table observations in pretty output", () => {
+    const output = formatSkillRunResult(
+      result({
+        skill: { name: "parse_bgp_prefix_table", version: "0.1.0" },
+        output: {
+          artifact: { id: "artifact_bgp_prefix_table", type: "bgp_prefix_table" },
+          observed: {
+            line_ending: "lf",
+            physical_line_count: 5,
+            blank_line_count: 0,
+            comment_line_count: 1,
+            nonempty_line_count: 5,
+            inline_comment_count: 0,
+            valid_entry_count: 4,
+            malformed_line_count: 1,
+            ipv4_prefix_count: 3,
+            ipv6_prefix_count: 1,
+            unique_prefix_count: 2,
+            unique_origin_asn_count: 2,
+            duplicate_entry_count: 1,
+            conflicting_prefix_count: 1,
+            prefix_lengths: { "12": 3, "32": 1 },
+            entries: [
+              { line: 2, normalized_prefix: "104.16.0.0/12", origin_asn: "AS13335", ip_version: "ipv4" },
+              { line: 3, normalized_prefix: "2001:4860::/32", origin_asn: "AS15169", ip_version: "ipv6" },
+            ],
+            duplicate_entries: [
+              { normalized_prefix: "104.16.0.0/12", origin_asn: "AS13335", first_line: 2, duplicate_line: 5, occurrences: 2 },
+            ],
+            conflicting_prefixes: [
+              { normalized_prefix: "104.16.0.0/12", origin_asns: ["AS13335", "AS15169"], lines: [2, 5, 6] },
+            ],
+            invalid_lines: [{ line: 7, value: "198.51.100.10 AS64512", reason: "missing valid CIDR prefix token" }],
+          },
+          warnings: [],
+        },
+      }),
+      { format: "pretty" }
+    );
+
+    expect(output).toContain("BGP Prefix Table");
+    expect(output).toContain("Valid entries: 4");
+    expect(output).toContain("IPv6 prefixes: 1");
+    expect(output).toContain("Conflicting prefixes: 1");
+    expect(output).toContain("104[.]16[.]0[.]0/12");
+    expect(output).toContain("198[.]51[.]100[.]10 AS64512 - missing valid CIDR prefix token");
+  });
+
+
 });

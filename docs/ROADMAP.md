@@ -38,6 +38,10 @@ parse_csv
 parse_yaml
 parse_browser_extension_manifest
 parse_ip_prefix_list
+parse_asn_list
+parse_asn_allow_deny_list
+parse_asn_observations
+parse_bgp_prefix_table
 ```
 
 Core utility parser-category skills:
@@ -95,11 +99,10 @@ parse_browser_extension_manifest
 
 ## Next work
 
-Recommended next infrastructure parsers:
+Recommended next infrastructure parser:
 
 ```text
-parse_asn_list
-parse_asn_allow_deny_list
+parse_rir_whois_text
 ```
 
 Generic output/export candidates remain future work:
@@ -145,7 +148,7 @@ parse_oui_registry
 Boundary:
 
 ```text
-Parsers normalize local artifacts only. `parse_ip_prefix_list` is implemented as the first infrastructure parser.
+Parsers normalize local artifacts only. `parse_ip_prefix_list`, `parse_asn_list`, `parse_asn_allow_deny_list`, `parse_asn_observations`, and `parse_bgp_prefix_table` are implemented infrastructure parsers. `parse_rir_whois_text` remains future work.
 No live ASN/BGP/RIR/RDAP/DNS/MAC vendor lookups in parsers.
 No reputation claims.
 No malicious/benign ASN conclusions.

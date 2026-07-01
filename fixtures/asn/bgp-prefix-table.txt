@@ -1,0 +1,6 @@
+# prefix origin table
+104.16.0.0/12 AS13335 Cloudflare example
+AS15169 2001:4860::/32 Google example
+203.0.113.0/24 AS64512 lab prefix
+104.16.0.0/12 AS13335 duplicate
+104.16.0.0/12 AS15169 conflicting-origin
