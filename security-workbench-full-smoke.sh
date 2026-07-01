@@ -477,6 +477,8 @@ run_ok "skills list --category transform --format table" "${CLI[@]}" skills list
 run_ok "skills list --category transform --format tsv" "${CLI[@]}" skills list --category transform --format tsv
 run_ok_require_output_pattern "transform list includes normalize_scanner_results" '^normalize_scanner_results[[:space:]]' "${CLI[@]}" skills list --category transform --format tsv
 run_ok_require_output_pattern "transform list includes dedupe_scanner_results" '^dedupe_scanner_results[[:space:]]' "${CLI[@]}" skills list --category transform --format tsv
+run_ok_require_output_pattern "transform list includes scanner_summary" '^scanner_summary[[:space:]]' "${CLI[@]}" skills list --category transform --format tsv
+run_ok_require_output_pattern "transform list includes merge_scanner_results" '^merge_scanner_results[[:space:]]' "${CLI[@]}" skills list --category transform --format tsv
 
 run_ok "workflows list" "${CLI[@]}" workflows list
 run_ok "workflows list --format table" "${CLI[@]}" workflows list --format table
@@ -506,6 +508,8 @@ run_ok "skills describe parse_pem_certificate --format table" "${CLI[@]}" skills
 run_ok "skills describe parse_lockfiles --format table" "${CLI[@]}" skills describe parse_lockfiles --format table
 run_ok "skills describe normalize_scanner_results --format table" "${CLI[@]}" skills describe normalize_scanner_results --format table
 run_ok "skills describe dedupe_scanner_results --format table" "${CLI[@]}" skills describe dedupe_scanner_results --format table
+run_ok "skills describe scanner_summary --format table" "${CLI[@]}" skills describe scanner_summary --format table
+run_ok "skills describe merge_scanner_results --format table" "${CLI[@]}" skills describe merge_scanner_results --format table
 run_ok "skills describe review_static_analysis_results --format table" "${CLI[@]}" skills describe review_static_analysis_results --format table
 run_ok "skills describe score_static_analysis_attention --format table" "${CLI[@]}" skills describe score_static_analysis_attention --format table
 run_ok "skills describe generate_static_analysis_triage_summary --format table" "${CLI[@]}" skills describe generate_static_analysis_triage_summary --format table
@@ -646,6 +650,8 @@ run_ok_require_output_pattern "parse_grype_json pretty output includes match cou
 
 SCANNER_NORMALIZE_INPUT="$TMP_ROOT/semgrep.parsed.json"
 SCANNER_DEDUPE_INPUT="$TMP_ROOT/semgrep.normalized.json"
+SCANNER_SUMMARY_INPUT="$TMP_ROOT/semgrep.deduped.json"
+SCANNER_MERGE_INPUT="$TMP_ROOT/scanner.merge-input.json"
 SCANNER_DEDUPE_SCRIPT="$TMP_ROOT/scanner-normalize-dedupe.sh"
 cat >"$SCANNER_DEDUPE_SCRIPT" <<SCRIPT
 #!/usr/bin/env bash
@@ -653,13 +659,19 @@ set -euo pipefail
 pnpm --filter @security-workbench/cli start skills run parse_semgrep_json --input-file "$FIXTURES_ROOT/scanners/semgrep-results.json" > "$SCANNER_NORMALIZE_INPUT"
 pnpm --filter @security-workbench/cli start skills run normalize_scanner_results --input-file "$SCANNER_NORMALIZE_INPUT" --format pretty
 pnpm --filter @security-workbench/cli start skills run normalize_scanner_results --input-file "$SCANNER_NORMALIZE_INPUT" > "$SCANNER_DEDUPE_INPUT"
+pnpm --filter @security-workbench/cli start skills run dedupe_scanner_results --input-file "$SCANNER_DEDUPE_INPUT" > "$SCANNER_SUMMARY_INPUT"
 pnpm --filter @security-workbench/cli start skills run dedupe_scanner_results --input-file "$SCANNER_DEDUPE_INPUT" --format pretty
+pnpm --filter @security-workbench/cli start skills run scanner_summary --input-file "$SCANNER_SUMMARY_INPUT" --format pretty
+node -e 'const fs=require("node:fs"); const value=JSON.parse(fs.readFileSync(process.argv[1], "utf8")); fs.writeFileSync(process.argv[2], JSON.stringify({ inputs: [value, value] }));' "$SCANNER_SUMMARY_INPUT" "$SCANNER_MERGE_INPUT"
+pnpm --filter @security-workbench/cli start skills run merge_scanner_results --input-file "$SCANNER_MERGE_INPUT" --format pretty
 SCRIPT
 chmod +x "$SCANNER_DEDUPE_SCRIPT"
 
 run_ok "fixture normalize/dedupe scanner results" "$SCANNER_DEDUPE_SCRIPT"
 run_ok_require_output_pattern "normalize_scanner_results pretty output includes normalized count" '"normalized_result_count": 2' "$SCANNER_DEDUPE_SCRIPT"
 run_ok_require_output_pattern "dedupe_scanner_results pretty output includes unique count" '"unique_result_count": 2' "$SCANNER_DEDUPE_SCRIPT"
+run_ok_require_output_pattern "scanner_summary pretty output includes summarized count" '"summarized_result_count": 2' "$SCANNER_DEDUPE_SCRIPT"
+run_ok_require_output_pattern "merge_scanner_results pretty output includes merged count" '"merged_result_count": 2' "$SCANNER_DEDUPE_SCRIPT"
 run_ok "fixture parse_pem_certificate example cert" "${CLI[@]}" skills run parse_pem_certificate --input-file "$FIXTURES_ROOT/certificates/example-cert.pem" --format pretty
 run_ok_require_output_pattern "parse_pem_certificate pretty output includes certificate count" '"valid_certificate_count": 1' "${CLI[@]}" skills run parse_pem_certificate --input-file "$FIXTURES_ROOT/certificates/example-cert.pem" --format pretty
 run_ok "fixture parse_lockfiles package lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/package-lock.json" --format pretty

@@ -34,10 +34,10 @@ pnpm typecheck:test
 ## Active sequence
 
 ```text
-1. Add scanner summary and merge helpers.
-2. Expand static-analysis triage beyond SARIF.
-3. Add certificate review.
-4. Add package review.
+1. Expand static-analysis triage beyond SARIF.
+2. Add certificate review.
+3. Add package review.
+4. Add SBOM parsing and review.
 ```
 
 Sequence rule:
@@ -67,8 +67,6 @@ Later pipeline support should add broader skill input/output schema validation, 
 These are candidates for the next small PR stack after the active sequence starts.
 
 ```text
-scanner_summary
-merge_scanner_results
 certificate_review
 package_review
 parse_sbom
@@ -90,8 +88,6 @@ domain_security_review
 security_headers_review
 typosquat_review
 vulnerability_prioritization
-scanner_summary
-merge_scanner_results
 ioc_cleanup
 extract_defang_urls
 asn_cluster_iocs
@@ -104,13 +100,11 @@ notion_export_markdown
 
 ## Scanner/static-analysis lane
 
-Purpose: normalize scanner output into deduplicated, evidence-backed triage summaries.
+Purpose: connect normalized scanner output to evidence-backed triage flows without scanner-specific review/finding forks.
 
 Candidate work:
 
 ```text
-summarize scanner results
-merge scanner results
 expand static-analysis triage across scanner-native formats
 ```
 
