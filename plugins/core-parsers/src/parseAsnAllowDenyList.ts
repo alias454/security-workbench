@@ -93,39 +93,64 @@ function parsePolicyLine(value: string): { entry: Omit<AsnAllowDenyEntry, "line"
     return { entry: null, reason: "missing action and ASN" };
   }
 
-  const asnCandidates = tokens
-    .map((token, index) => ({ token, index, parsed: parseAsnToken(token) }))
-    .filter((candidate): candidate is { token: string; index: number; parsed: NonNullable<ReturnType<typeof parseAsnToken>> } => candidate.parsed !== null);
-  const actionCandidates = tokens
-    .map((token, index) => ({ token, index, action: parseActionToken(token) }))
-    .filter((candidate): candidate is { token: string; index: number; action: AsnPolicyAction } => candidate.action !== null);
+  const firstTokenAction = parseActionToken(tokens[0] ?? "");
+  const firstTokenAsn = parseAsnToken(tokens[0] ?? "");
+  const secondTokenAction = parseActionToken(tokens[1] ?? "");
+  const secondTokenAsn = parseAsnToken(tokens[1] ?? "");
 
-  if (asnCandidates.length === 0) {
-    return { entry: null, reason: "missing valid ASN token" };
+  let actionToken: string | null = null;
+  let action: AsnPolicyAction | null = null;
+  let asnToken: ReturnType<typeof parseAsnToken> = null;
+  let reasonTokens: string[] = [];
+
+  if (firstTokenAction !== null && secondTokenAsn !== null) {
+    actionToken = tokens[0] ?? null;
+    action = firstTokenAction;
+    asnToken = secondTokenAsn;
+    reasonTokens = tokens.slice(2);
+  } else if (firstTokenAsn !== null && secondTokenAction !== null) {
+    actionToken = tokens[1] ?? null;
+    action = secondTokenAction;
+    asnToken = firstTokenAsn;
+    reasonTokens = tokens.slice(2);
+  } else {
+    const asnCandidates = tokens
+      .map((token, index) => ({ token, index, parsed: parseAsnToken(token) }))
+      .filter((candidate): candidate is { token: string; index: number; parsed: NonNullable<ReturnType<typeof parseAsnToken>> } => candidate.parsed !== null);
+    const actionCandidates = tokens
+      .map((token, index) => ({ token, index, action: parseActionToken(token) }))
+      .filter((candidate): candidate is { token: string; index: number; action: AsnPolicyAction } => candidate.action !== null);
+
+    if (asnCandidates.length === 0) {
+      return { entry: null, reason: "missing valid ASN token" };
+    }
+
+    if (asnCandidates.length > 1) {
+      return { entry: null, reason: "line must contain exactly one ASN token" };
+    }
+
+    if (actionCandidates.length === 0) {
+      return { entry: null, reason: "missing allow or deny action" };
+    }
+
+    return { entry: null, reason: "line must use action-first or ASN-first format" };
   }
 
-  if (asnCandidates.length > 1) {
-    return { entry: null, reason: "line must contain exactly one ASN token" };
+  if (actionToken === null || action === null || asnToken === null) {
+    return { entry: null, reason: "invalid ASN policy row" };
   }
 
-  if (actionCandidates.length === 0) {
-    return { entry: null, reason: "missing allow or deny action" };
-  }
-
-  if (actionCandidates.length > 1) {
+  const reasonActionTokens = reasonTokens.filter((token) => parseActionToken(token) !== null);
+  if (reasonActionTokens.length > 0 && reasonActionTokens.length === reasonTokens.length) {
     return { entry: null, reason: "line must contain exactly one allow or deny action" };
   }
 
-  const asnCandidate = asnCandidates[0];
-  const actionCandidate = actionCandidates[0];
-  const reasonTokens = tokens.filter((_, index) => index !== asnCandidate.index && index !== actionCandidate.index);
-
   return {
     entry: {
-      action: actionCandidate.action,
-      action_token: actionCandidate.token,
-      normalized_asn: asnCandidate.parsed.normalized_asn,
-      asn_number: asnCandidate.parsed.asn_number,
+      action,
+      action_token: actionToken,
+      normalized_asn: asnToken.normalized_asn,
+      asn_number: asnToken.asn_number,
       reason: reasonTokens.length > 0 ? reasonTokens.join(" ") : null,
     },
     reason: null,

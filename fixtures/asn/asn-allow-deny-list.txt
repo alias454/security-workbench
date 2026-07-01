@@ -3,3 +3,4 @@ allow AS13335 # vendor allow
 AS15169 deny suspicious concentration
 permit, 64512, lab allow
 block AS15169 # duplicate deny alias
+allow AS15169 # conflict with deny
