@@ -22,13 +22,17 @@ strict CLI argument parsing
 bounded --input-file handling
 runtime input size limits
 structured completed/failed/refused statuses
+registered skill runner
+registered workflow runner
+workflow definition validation
 network disabled by default
 persistence disabled by default
 external binaries refused
 skill permission metadata
 redaction enabled by default
 safe JSON parsing helpers
-local transform/parser skills only
+local transform/parser/reviewer/scoring/output skills
+generic draft finding and export helpers
 fixture-backed smoke coverage
 source audit in full smoke
 ```
@@ -42,8 +46,8 @@ REST API
 MCP
 plugin loader
 plugin install
-workflow runner
-runtime schema validation
+general pipeline/DAG execution
+full skill input/output schema validation
 local storage
 external enrichment
 model-assisted analysis
@@ -73,6 +77,7 @@ user --input string → runtime
 user --input-file path → CLI bounded file reader
 bounded string → runtime
 runtime → plugin skill
+runtime → registered workflow steps
 plugin output → runtime redaction
 runtime result → terminal
 ```
@@ -302,13 +307,14 @@ user/policy disclosure before network calls
 
 ### Unsupported findings
 
-The tool must not emit authoritative conclusions from weak evidence.
+The tool must not emit authoritative conclusions from weak evidence. Draft findings and exports are supported, but they must remain evidence-linked and conservative.
 
 ```text
-finding generation not implemented
 parsers do not score risk
 reviewers must separate observed and inferred fields
-findings must cite evidence
+scorers must explain deterministic prioritization
+findings must cite evidence or source outputs
+exports must not invent unsupported conclusions
 ```
 
 ## Pre-API/MCP/plugin gate
@@ -318,7 +324,7 @@ This checklist blocks API, MCP, hosted mode, plugin loading, third-party plugins
 Runtime/schema gates:
 
 ```text
-runtime input/output schema validation
+broader runtime input/output schema validation
 clear skill permission enforcement
 structured audit metadata
 bounded input and output sizes

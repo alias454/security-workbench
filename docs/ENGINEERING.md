@@ -27,11 +27,14 @@ Current capability:
 
 ```text
 single-skill registry and runner
+registered workflow registry and runner
+workflow definition validation
 runtime policy enforcement
 input size enforcement
 redaction helpers
 safe bounded CLI --input-file handling
 CLI skills list / describe / run
+CLI workflows list / run
 JSON, table, TSV, and pretty output where supported
 fixture-backed smoke coverage
 source audit in full smoke script
@@ -73,7 +76,7 @@ Artifact → Skill → Signal → Evidence → Risk Score → Finding / Export
 
 The same analysis path should be reused by the CLI, future workflow runner, REST API, local web UI, and MCP adapters. Adapters acquire input and render output; skills and workflows own analysis behavior.
 
-Current implementation covers local transform, parser, initial reviewer, initial scoring, and initial output skills. Generic export plugins, workflow runner, web/API/MCP adapters, persistence, and enrichment are future work.
+Current implementation covers local transform, parser, reviewer, scoring, output/export skills, registered workflows, and workflow definition validation. General pipeline/DAG execution, web/API/MCP adapters, persistence, and enrichment are future work.
 
 Design rule:
 
@@ -175,7 +178,7 @@ review pipeline: parse, preserve evidence, review, score, finding/export
 enrichment pipeline: parse, approve disclosure, enrich, review, score, export
 ```
 
-Start with narrow registered workflows before general DAG support. Candidate workflows and implementation order are tracked in `docs/ROADMAP.md`.
+Keep narrow registered workflows until the first local CLI product shape is stable. Candidate workflows and implementation order are tracked in `docs/ROADMAP.md`.
 
 ## Future adapters
 

@@ -48,9 +48,9 @@ workflow CLI before REST/web/MCP adapters
 local-only workflows before network enrichment
 ```
 
-## Workflow runner lite
+## Workflow runner
 
-The current runner supports narrow registered workflows, not general pipeline execution.
+The current runner supports narrow registered workflows, not general pipeline/DAG execution.
 
 Current registered workflows:
 
@@ -59,7 +59,7 @@ browser_extension_review
 static_analysis_triage
 ```
 
-Later pipeline support should add broader skill input/output schema validation and more fixture-backed golden-output coverage.
+Later pipeline support should add broader skill input/output schema validation, additional workflow fixtures, and more golden-output coverage.
 
 ## Near-term candidates
 
