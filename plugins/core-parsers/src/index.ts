@@ -10,6 +10,7 @@ import { parseSarifSkill } from "./parseSarif.js";
 import { parseIpPrefixListSkill } from "./parseIpPrefixList.js";
 import { parseAsnListSkill } from "./parseAsnList.js";
 import { parseAsnAllowDenyListSkill } from "./parseAsnAllowDenyList.js";
+import { parseAsnObservationsSkill } from "./parseAsnObservations.js";
 
 export { parsePackageJson, parsePackageJsonSkill } from "./parsePackageJson.js";
 export { parseHttpHeaders, parseHttpHeadersSkill } from "./parseHttpHeaders.js";
@@ -20,6 +21,7 @@ export { parseSarif, parseSarifSkill } from "./parseSarif.js";
 export { parseIpPrefixList, parseIpPrefixListSkill } from "./parseIpPrefixList.js";
 export { parseAsnList, parseAsnListSkill } from "./parseAsnList.js";
 export { parseAsnAllowDenyList, parseAsnAllowDenyListSkill } from "./parseAsnAllowDenyList.js";
+export { parseAsnObservations, parseAsnObservationsSkill } from "./parseAsnObservations.js";
 export type { ParsedHttpHeaderField, ParseHttpHeadersOutput } from "./parseHttpHeaders.js";
 export type {
   ParseSarifOutput,
@@ -28,6 +30,12 @@ export type {
   SarifRuleObservation,
   SarifRunObservation,
 } from "./parseSarif.js";
+export type {
+  AsnObservationEntry,
+  AsnObservationInvalidLine,
+  AsnRepeatedObservation,
+  ParseAsnObservationsOutput,
+} from "./parseAsnObservations.js";
 export type {
   AsnAllowDenyEntry,
   AsnAllowDenyInvalidLine,
@@ -95,6 +103,7 @@ export const skills = [
   parseIpPrefixListSkill,
   parseAsnListSkill,
   parseAsnAllowDenyListSkill,
+  parseAsnObservationsSkill,
   parsePackageJsonSkill,
   parseCsvSkill,
   parseYamlSkill,

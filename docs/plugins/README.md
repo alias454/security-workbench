@@ -102,6 +102,7 @@ parse_browser_extension_manifest
 parse_ip_prefix_list
 parse_asn_list
 parse_asn_allow_deny_list
+parse_asn_observations
 ```
 
 ## core-reviewers inventory

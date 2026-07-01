@@ -46,6 +46,7 @@ no findings
 | `parse_ip_prefix_list` | newline-oriented IP/prefix list | IPv4/IPv6 hosts and CIDR prefixes, comments, duplicates, malformed lines, prefix lengths |
 | `parse_asn_list` | newline-oriented ASN list | AS-prefixed and bare ASNs, comments, optional notes, duplicates, malformed lines |
 | `parse_asn_allow_deny_list` | ASN allow/deny policy list | allow/deny action, ASN, optional reasons, duplicate entries, conflicting actions |
+| `parse_asn_observations` | ASN observation list | observed ASN rows with optional indicators, sources, timestamps, repeated ASN summaries |
 
 ## Planned parser candidates
 
@@ -59,7 +60,6 @@ parse_cyclonedx_sbom
 parse_spdx_sbom
 parse_csp
 parse_set_cookie_headers
-parse_asn_observations
 parse_bgp_prefix_table
 parse_rir_whois_text
 parse_mac_address_list
@@ -181,4 +181,5 @@ parse_sarif                     → scanner normalization/code scanning review
 parse_ip_prefix_list            → infrastructure/local-registry/prefix-membership workflows
 parse_asn_list                  → ASN/local-registry/infrastructure-clustering workflows
 parse_asn_allow_deny_list       → ASN policy review and local membership workflows
+parse_asn_observations           → ASN concentration/reuse review workflows
 ```

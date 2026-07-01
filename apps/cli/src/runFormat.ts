@@ -415,6 +415,49 @@ function renderAsnAllowDenyList(record: Record<string, unknown>, options: Displa
   ]);
 }
 
+function renderAsnObservations(record: Record<string, unknown>, options: DisplayOptions): string[] | undefined {
+  const observed = recordValue(record, "observed");
+  if (!observed) {
+    return undefined;
+  }
+
+  const entries = recordArray(observed, "entries");
+  const repeatedAsns = recordArray(observed, "repeated_asns");
+  const invalidLines = recordArray(observed, "invalid_lines");
+  const entryLines = entries.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const normalizedAsn = String(entry.normalized_asn ?? "unknown");
+    const indicator = typeof entry.indicator === "string" ? ` indicator=${displayString(entry.indicator, options)}` : "";
+    const source = typeof entry.source === "string" ? ` source=${displayString(entry.source, options)}` : "";
+    return `line ${line}: ${displayString(normalizedAsn, options)}${indicator}${source}`;
+  });
+  const repeatedAsnLines = repeatedAsns.slice(0, 20).map((entry) => {
+    const normalizedAsn = String(entry.normalized_asn ?? "unknown");
+    const lines = Array.isArray(entry.lines) ? entry.lines.join(",") : "?";
+    return `${displayString(normalizedAsn, options)} count=${String(entry.count ?? "?")} lines=${lines}`;
+  });
+  const invalidLineSummaries = invalidLines.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const value = String(entry.value ?? "unknown");
+    const reason = String(entry.reason ?? "invalid");
+    return `line ${line}: ${displayString(value, options)} - ${reason}`;
+  });
+
+  return section("ASN Observations", [
+    `Physical lines: ${numberValue(observed, "physical_line_count") ?? "unknown"}`,
+    `Line ending: ${typeof observed.line_ending === "string" ? observed.line_ending : "unknown"}`,
+    `Valid observations: ${numberValue(observed, "valid_observation_count") ?? entries.length}`,
+    `Unique ASNs: ${numberValue(observed, "unique_asn_count") ?? "unknown"}`,
+    `Repeated ASNs: ${numberValue(observed, "repeated_asn_count") ?? repeatedAsns.length}`,
+    `With indicator/source/timestamp: ${String(numberValue(observed, "observations_with_indicator_count") ?? "unknown")}/${String(numberValue(observed, "observations_with_source_count") ?? "unknown")}/${String(numberValue(observed, "observations_with_timestamp_count") ?? "unknown")}`,
+    `Malformed lines: ${numberValue(observed, "malformed_line_count") ?? invalidLines.length}`,
+    `Blank/comment/inline-comment lines: ${String(numberValue(observed, "blank_line_count") ?? "unknown")}/${String(numberValue(observed, "comment_line_count") ?? "unknown")}/${String(numberValue(observed, "inline_comment_count") ?? "unknown")}`,
+    ...namedList("Observations", entryLines, options),
+    ...namedList("Repeated ASNs", repeatedAsnLines, options),
+    ...namedList("Invalid lines", invalidLineSummaries, options),
+  ]);
+}
+
 function renderBrowserExtensionPermissionReview(
   record: Record<string, unknown>,
   options: DisplayOptions
@@ -930,6 +973,8 @@ function renderSkillAwareOutput(
       return renderAsnList(record, options);
     case "parse_asn_allow_deny_list":
       return renderAsnAllowDenyList(record, options);
+    case "parse_asn_observations":
+      return renderAsnObservations(record, options);
     case "parse_http_headers":
       return renderHttpHeaders(record, options);
     default:

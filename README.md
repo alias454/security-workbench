@@ -78,6 +78,7 @@ pnpm --filter @security-workbench/cli start skills run parse_browser_extension_m
 pnpm --filter @security-workbench/cli start skills run parse_ip_prefix_list --input-file "$PWD/fixtures/ip-prefixes/mixed-prefixes.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_asn_list --input-file "$PWD/fixtures/asn/asn-list.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_asn_allow_deny_list --input-file "$PWD/fixtures/asn/asn-allow-deny-list.txt" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_asn_observations --input-file "$PWD/fixtures/asn/asn-observations.txt" --format pretty
 ```
 
 ## Validation

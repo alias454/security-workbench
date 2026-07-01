@@ -610,4 +610,45 @@ describe("formatSkillRunResult", () => {
   });
 
 
+  it("renders ASN observations in pretty output", () => {
+    const output = formatSkillRunResult(
+      result({
+        skill: { name: "parse_asn_observations", version: "0.1.0" },
+        output: {
+          artifact: { id: "artifact_asn_observations", type: "asn_observations" },
+          observed: {
+            line_ending: "lf",
+            physical_line_count: 5,
+            blank_line_count: 0,
+            comment_line_count: 1,
+            nonempty_line_count: 5,
+            inline_comment_count: 1,
+            valid_observation_count: 3,
+            malformed_line_count: 1,
+            unique_asn_count: 2,
+            observations_with_indicator_count: 3,
+            observations_with_source_count: 2,
+            observations_with_timestamp_count: 1,
+            repeated_asn_count: 1,
+            entries: [
+              { line: 2, normalized_asn: "AS13335", indicator: "evil.example", source: "feed-a" },
+              { line: 3, normalized_asn: "AS15169", indicator: "198.51.100.10", source: "proxy" },
+            ],
+            repeated_asns: [{ normalized_asn: "AS13335", count: 2, first_line: 2, lines: [2, 4] }],
+            invalid_lines: [{ line: 5, value: "ASnotvalid source=feed", reason: "missing valid ASN token" }],
+          },
+          warnings: [],
+        },
+      }),
+      { format: "pretty" }
+    );
+
+    expect(output).toContain("ASN Observations");
+    expect(output).toContain("Valid observations: 3");
+    expect(output).toContain("Repeated ASNs: 1");
+    expect(output).toContain("evil[.]example");
+    expect(output).toContain("ASnotvalid source=feed - missing valid ASN token");
+  });
+
+
 });

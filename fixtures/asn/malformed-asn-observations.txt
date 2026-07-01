@@ -1,0 +1,4 @@
+AS13335 evil.example
+ASnotvalid source=feed
+AS15169 AS13335 duplicate-asn-row
+asn=AS64512 source=proxy
