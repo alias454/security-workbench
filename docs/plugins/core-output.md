@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 2
+Implemented skills: 5
 ```
 
 ## Boundary
@@ -32,6 +32,9 @@ Output skills must remain evidence-linked. They may format or publish structured
 |---|---|---|
 | `generate_browser_extension_finding` | `score_browser_extension_risk` output or JSON run result | draft finding record plus Markdown summary |
 | `generate_static_analysis_triage_summary` | `score_static_analysis_attention` output or JSON run result | draft static-analysis triage finding plus Markdown summary |
+| `generate_finding` | existing `FindingRecord`, finding-bearing output, or analysis output | generic draft finding record |
+| `export_markdown` | Markdown-bearing output, finding-bearing output, or JSON-compatible value | Markdown export object |
+| `export_json` | JSON-compatible value or JSON run result | deterministic pretty-printed JSON export object |
 
 ## `generate_browser_extension_finding`
 
@@ -139,4 +142,33 @@ persist findings
 pnpm --filter @security-workbench/cli start workflows run static_analysis_triage \
   --input-file "$PWD/fixtures/sarif/codeql-results.sarif" \
   --format pretty
+```
+
+
+## Generic output helpers
+
+`generate_finding`, `export_markdown`, and `export_json` provide small generic output helpers for workflow outputs.
+
+They intentionally do not:
+
+```text
+publish findings
+write tickets
+persist exports
+perform enrichment
+verify true-positive or false-positive status
+assign ownership
+```
+
+Example:
+
+```bash
+pnpm --filter @security-workbench/cli build
+REPO_ROOT="$(pwd)"
+
+(cd apps/cli && node dist/main.js workflows run static_analysis_triage   --input-file "$REPO_ROOT/fixtures/sarif/codeql-results.sarif")   > /tmp/static-analysis.workflow.json
+
+(cd apps/cli && node dist/main.js skills run export_markdown   --input-file /tmp/static-analysis.workflow.json   --format pretty)
+
+(cd apps/cli && node dist/main.js skills run export_json   --input-file /tmp/static-analysis.workflow.json   --format pretty)
 ```

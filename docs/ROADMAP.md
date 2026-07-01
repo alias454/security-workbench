@@ -34,8 +34,6 @@ pnpm typecheck:test
 
 ```text
 1. Add minimal schema validation for stable workflow inputs and outputs.
-2. Add generic Markdown and JSON export helpers.
-3. Add generic finding output now that at least two workflows need it.
 ```
 
 Sequence rule:
@@ -65,9 +63,6 @@ Later pipeline support should add stronger input/output validation and more fixt
 These are candidates for the next small PR stack after the active sequence starts.
 
 ```text
-export_markdown
-export_json
-generate_finding
 parse_semgrep_json
 parse_checkov_json
 parse_grype_json

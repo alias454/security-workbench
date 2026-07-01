@@ -754,6 +754,20 @@ run_ok "skills describe generate_browser_extension_finding --format table" \
 run_ok_require_output_pattern "output list includes generate_browser_extension_finding" '^generate_browser_extension_finding[[:space:]]' \
   pnpm --filter @security-workbench/cli start skills list --category output --format tsv
 
+run_ok_require_output_pattern "output list includes generate_finding" '^generate_finding[[:space:]]' \
+  pnpm --filter @security-workbench/cli start skills list --category output --format tsv
+run_ok_require_output_pattern "output list includes export_markdown" '^export_markdown[[:space:]]' \
+  pnpm --filter @security-workbench/cli start skills list --category output --format tsv
+run_ok_require_output_pattern "output list includes export_json" '^export_json[[:space:]]' \
+  pnpm --filter @security-workbench/cli start skills list --category output --format tsv
+
+run_ok "skills describe generate_finding --format table" \
+  pnpm --filter @security-workbench/cli start skills describe generate_finding --format table
+run_ok "skills describe export_markdown --format table" \
+  pnpm --filter @security-workbench/cli start skills describe export_markdown --format table
+run_ok "skills describe export_json --format table" \
+  pnpm --filter @security-workbench/cli start skills describe export_json --format table
+
 run_expect_fail "generate_browser_extension_finding rejects raw manifest" \
   pnpm --filter @security-workbench/cli start skills run generate_browser_extension_finding --input '{"manifest_version":3,"name":"Raw"}'
 
@@ -773,6 +787,23 @@ run_ok "fixture generate_browser_extension_finding v2 broad hosts" "$BROWSER_EXT
 run_ok_require_output_pattern "generate_browser_extension_finding pretty output includes finding" 'Browser Extension Finding' "$BROWSER_EXT_FINDING_SCRIPT"
 run_ok_require_output_pattern "generate_browser_extension_finding pretty output includes score" 'Score: [0-9]+/100' "$BROWSER_EXT_FINDING_SCRIPT"
 run_ok_require_output_pattern "generate_browser_extension_finding pretty output includes finding id" 'finding_browser_extension_permission_review' "$BROWSER_EXT_FINDING_SCRIPT"
+
+STATIC_WORKFLOW_EXPORT_INPUT="$TMP_ROOT/static-analysis.workflow.json"
+STATIC_EXPORT_SCRIPT="$TMP_ROOT/static-analysis-generic-exports.sh"
+cat >"$STATIC_EXPORT_SCRIPT" <<SCRIPT
+#!/usr/bin/env bash
+set -euo pipefail
+pnpm --filter @security-workbench/cli start workflows run static_analysis_triage --input-file "$FIXTURES_ROOT/sarif/codeql-results.sarif" > "$STATIC_WORKFLOW_EXPORT_INPUT"
+pnpm --filter @security-workbench/cli start skills run generate_finding --input-file "$STATIC_WORKFLOW_EXPORT_INPUT" --format pretty
+pnpm --filter @security-workbench/cli start skills run export_markdown --input-file "$STATIC_WORKFLOW_EXPORT_INPUT" --format pretty
+pnpm --filter @security-workbench/cli start skills run export_json --input-file "$STATIC_WORKFLOW_EXPORT_INPUT" --format pretty
+SCRIPT
+chmod +x "$STATIC_EXPORT_SCRIPT"
+
+run_ok "fixture generic output helpers static-analysis workflow" "$STATIC_EXPORT_SCRIPT"
+run_ok_require_output_pattern "generate_finding/export_markdown/export_json output includes generic finding" 'generic_finding' "$STATIC_EXPORT_SCRIPT"
+run_ok_require_output_pattern "export_markdown output includes markdown export" 'markdown_export' "$STATIC_EXPORT_SCRIPT"
+run_ok_require_output_pattern "export_json output includes json export" 'json_export' "$STATIC_EXPORT_SCRIPT"
 
 run_ok "fixture parse_jwt alg none" "${CLI[@]}" skills run parse_jwt --input-file "$FIXTURES_ROOT/jwt/alg-none.jwt" --format pretty
 

@@ -50,7 +50,6 @@ Not implemented yet:
 ```text
 plugin manifest loader
 plugin install commands
-generic output/export plugins
 external enrichment
 REST API
 web UI
