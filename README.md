@@ -66,6 +66,17 @@ pnpm install
 
 ## Common commands
 
+Discovery:
+
+```bash
+pnpm --filter @security-workbench/cli start help
+pnpm --filter @security-workbench/cli start list
+pnpm --filter @security-workbench/cli start skills help
+pnpm --filter @security-workbench/cli start workflows help
+```
+
+Skills and workflows:
+
 ```bash
 pnpm --filter @security-workbench/cli start skills list
 pnpm --filter @security-workbench/cli start skills describe parse_sarif

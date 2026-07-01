@@ -5,6 +5,56 @@ import { describe, expect, it } from "vitest";
 import { parseCliArgs, readBoundedUtf8File } from "../src/args.js";
 
 describe("parseCliArgs", () => {
+  it("parses no args as top-level help", () => {
+    expect(parseCliArgs([])).toEqual({ kind: "help" });
+  });
+
+  it("parses help as top-level help", () => {
+    expect(parseCliArgs(["help"])).toEqual({ kind: "help" });
+  });
+
+  it("parses top-level list", () => {
+    expect(parseCliArgs(["list"])).toEqual({ kind: "list" });
+  });
+
+  it("parses list skills as the default skills list", () => {
+    expect(parseCliArgs(["list", "skills"])).toEqual({
+      kind: "skills_list",
+      options: { format: "tsv", category: undefined },
+    });
+  });
+
+  it("parses list workflows as the default workflows list", () => {
+    expect(parseCliArgs(["list", "workflows"])).toEqual({
+      kind: "workflows_list",
+      options: { format: "tsv" },
+    });
+  });
+
+  it("rejects unknown list targets", () => {
+    expect(() => parseCliArgs(["list", "plugins"])).toThrow(
+      "Unknown list target: plugins"
+    );
+  });
+
+  it("parses skills as skills help", () => {
+    expect(parseCliArgs(["skills"])).toEqual({ kind: "skills_help" });
+  });
+
+  it("parses skills help", () => {
+    expect(parseCliArgs(["skills", "help"])).toEqual({ kind: "skills_help" });
+  });
+
+  it("parses workflows as workflows help", () => {
+    expect(parseCliArgs(["workflows"])).toEqual({ kind: "workflows_help" });
+  });
+
+  it("parses workflows help", () => {
+    expect(parseCliArgs(["workflows", "help"])).toEqual({
+      kind: "workflows_help",
+    });
+  });
+
   it("parses skills list with default TSV format", () => {
     expect(parseCliArgs(["skills", "list"])).toEqual({
       kind: "skills_list",

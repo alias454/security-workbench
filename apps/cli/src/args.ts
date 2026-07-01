@@ -41,6 +41,8 @@ export type CliInputSource =
 
 export type CliCommand =
   | { kind: "help" }
+  | { kind: "list" }
+  | { kind: "skills_help" }
   | { kind: "skills_list"; options: CliSkillsListOptions }
   | { kind: "skills_describe"; skillName: string; options: CliSkillsDescribeOptions }
   | {
@@ -49,6 +51,7 @@ export type CliCommand =
       input_source: CliInputSource;
       options: CliSkillsRunOptions;
     }
+  | { kind: "workflows_help" }
   | { kind: "workflows_list"; options: CliWorkflowsListOptions }
   | {
       kind: "workflows_run";
@@ -383,6 +386,40 @@ function parseWorkflowsRunArgs(argv: string[]): CliCommand {
   };
 }
 
+function defaultSkillsListCommand(): CliCommand {
+  return { kind: "skills_list", options: { format: "tsv", category: undefined } };
+}
+
+function defaultWorkflowsListCommand(): CliCommand {
+  return { kind: "workflows_list", options: { format: "tsv" } };
+}
+
+function parseTopLevelListArgs(argv: string[]): CliCommand {
+  const target = argv[1];
+
+  if (target === undefined) {
+    return { kind: "list" };
+  }
+
+  if (target === "skills") {
+    if (argv.length > 2) {
+      throw new UsageError("Usage: list skills");
+    }
+
+    return defaultSkillsListCommand();
+  }
+
+  if (target === "workflows") {
+    if (argv.length > 2) {
+      throw new UsageError("Usage: list workflows");
+    }
+
+    return defaultWorkflowsListCommand();
+  }
+
+  throw new UsageError(`Unknown list target: ${target}`);
+}
+
 export function parseCliArgs(argv: string[]): CliCommand {
   if (argv.length === 0 || argv[0] === "--help" || argv[0] === "-h") {
     return { kind: "help" };
@@ -390,7 +427,32 @@ export function parseCliArgs(argv: string[]): CliCommand {
 
   const [command, subcommand] = argv;
 
+  if (command === "help") {
+    if (argv.length > 1) {
+      throw new UsageError("Usage: help");
+    }
+
+    return { kind: "help" };
+  }
+
+  if (command === "list") {
+    return parseTopLevelListArgs(argv);
+  }
+
   if (command === "workflows") {
+    if (
+      subcommand === undefined ||
+      subcommand === "help" ||
+      subcommand === "--help" ||
+      subcommand === "-h"
+    ) {
+      if (argv.length > 2) {
+        throw new UsageError("Usage: workflows help");
+      }
+
+      return { kind: "workflows_help" };
+    }
+
     if (subcommand === "list") {
       return parseWorkflowsListArgs(argv);
     }
@@ -404,6 +466,19 @@ export function parseCliArgs(argv: string[]): CliCommand {
 
   if (command !== "skills") {
     throw new UsageError(`Unknown command: ${command}`);
+  }
+
+  if (
+    subcommand === undefined ||
+    subcommand === "help" ||
+    subcommand === "--help" ||
+    subcommand === "-h"
+  ) {
+    if (argv.length > 2) {
+      throw new UsageError("Usage: skills help");
+    }
+
+    return { kind: "skills_help" };
   }
 
   if (subcommand === "list") {

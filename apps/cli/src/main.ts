@@ -11,6 +11,11 @@ import { skills as parserSkills } from "@security-workbench/core-parsers";
 import { skills as reviewerSkills } from "@security-workbench/core-reviewers";
 import { skills as scoringSkills } from "@security-workbench/core-scoring";
 import { skills as utilitySkills } from "@security-workbench/core-utilities";
+import {
+  skillCategoryValues,
+  type Skill,
+  type WorkflowDefinition,
+} from "@security-workbench/schemas";
 import { parseCliArgs, readBoundedUtf8File } from "./args.js";
 import { formatSkillDescription } from "./describeFormat.js";
 import { formatSkillList } from "./listFormat.js";
@@ -21,18 +26,72 @@ import { formatWorkflowRunResult } from "./workflowRunFormat.js";
 
 const DEFAULT_MAX_INPUT_FILE_BYTES = 10 * 1024 * 1024;
 
-function usage(): string {
+function topLevelHelp(): string {
   return [
-    "Security Workbench CLI",
+    "Security Workbench",
     "",
     "Usage:",
-    "  skills list [--category <category>] [--format table|json|tsv]",
-    "  skills describe <skill_name> [--format table|json|tsv]",
-    "  skills run <skill_name> --input <value> [--format json|pretty] [--unsafe]",
-    "  skills run <skill_name> --input-file <path> [--format json|pretty] [--unsafe]",
-    "  workflows list [--format table|json|tsv]",
-    "  workflows run <workflow_name> --input <value> [--format json|pretty] [--unsafe]",
-    "  workflows run <workflow_name> --input-file <path> [--format json|pretty] [--unsafe]",
+    "  security-workbench help",
+    "  security-workbench list",
+    "  security-workbench skills <command>",
+    "  security-workbench workflows <command>",
+    "",
+    "Commands:",
+    "  list        Show available skills and workflows",
+    "  skills      Run or inspect skills",
+    "  workflows   Run or inspect workflows",
+    "",
+    "Use:",
+    "  security-workbench skills help",
+    "  security-workbench workflows help",
+  ].join("\n");
+}
+
+function skillsHelp(): string {
+  return [
+    "Security Workbench skills",
+    "",
+    "Usage:",
+    "  security-workbench skills list",
+    "  security-workbench skills describe <skill>",
+    "  security-workbench skills run <skill> --input <text>",
+    "  security-workbench skills run <skill> --input-file <path>",
+  ].join("\n");
+}
+
+function workflowsHelp(): string {
+  return [
+    "Security Workbench workflows",
+    "",
+    "Usage:",
+    "  security-workbench workflows list",
+    "  security-workbench workflows run <workflow> --input-file <path>",
+  ].join("\n");
+}
+
+function discoverySummary(
+  skills: readonly Skill<unknown, unknown>[],
+  workflowDefinitions: readonly WorkflowDefinition[]
+): string {
+  const observedCategories = new Set(
+    skills.map((skill) => skill.metadata.category)
+  );
+  const categories = skillCategoryValues.filter((category) =>
+    observedCategories.has(category)
+  );
+
+  return [
+    "Security Workbench",
+    "",
+    "Workflows:",
+    ...workflowDefinitions.map((workflow) => `  ${workflow.name}`),
+    "",
+    "Skill categories:",
+    ...categories.map((category) => `  ${category}`),
+    "",
+    "Use:",
+    "  security-workbench skills list",
+    "  security-workbench workflows list",
   ].join("\n");
 }
 
@@ -91,11 +150,27 @@ async function resolveInput(command: ReturnType<typeof parseCliArgs>): Promise<s
 export async function main(argv = process.argv.slice(2)): Promise<number> {
   try {
     const command = parseCliArgs(argv);
+
+    if (command.kind === "help") {
+      console.log(topLevelHelp());
+      return 0;
+    }
+
+    if (command.kind === "skills_help") {
+      console.log(skillsHelp());
+      return 0;
+    }
+
+    if (command.kind === "workflows_help") {
+      console.log(workflowsHelp());
+      return 0;
+    }
+
     const skillRegistry = buildSkillRegistry();
     const workflowRegistry = buildWorkflowRegistry(skillRegistry);
 
-    if (command.kind === "help") {
-      console.log(usage());
+    if (command.kind === "list") {
+      console.log(discoverySummary(skillRegistry.list(), workflowRegistry.list()));
       return 0;
     }
 
