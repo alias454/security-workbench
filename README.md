@@ -94,6 +94,10 @@ pnpm --filter @security-workbench/cli start skills run parse_trufflehog_ndjson -
 pnpm --filter @security-workbench/cli start skills run parse_semgrep_json --input-file "$PWD/fixtures/scanners/semgrep-results.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_checkov_json --input-file "$PWD/fixtures/scanners/checkov-results.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_grype_json --input-file "$PWD/fixtures/scanners/grype-results.json" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_semgrep_json --input-file "$PWD/fixtures/scanners/semgrep-results.json" > /tmp/semgrep.parsed.json
+pnpm --filter @security-workbench/cli start skills run normalize_scanner_results --input-file /tmp/semgrep.parsed.json --format pretty
+pnpm --filter @security-workbench/cli start skills run normalize_scanner_results --input-file /tmp/semgrep.parsed.json > /tmp/semgrep.normalized.json
+pnpm --filter @security-workbench/cli start skills run dedupe_scanner_results --input-file /tmp/semgrep.normalized.json --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_pem_certificate --input-file "$PWD/fixtures/certificates/example-cert.pem" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_lockfiles --input-file "$PWD/fixtures/lockfiles/package-lock.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_browser_extension_manifest --input-file "$PWD/fixtures/browser-extension/manifest-v3-basic.json" --format pretty

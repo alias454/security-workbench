@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 19
+Implemented skills: 21
 ```
 
 ## Purpose
@@ -42,6 +42,8 @@ no findings
 | `parse_semgrep_json` | Semgrep native JSON | results, paths, severities, metadata, skipped paths, and errors |
 | `parse_checkov_json` | Checkov native JSON | failed/passed/skipped checks, resources, paths, severities, and parsing errors |
 | `parse_grype_json` | Grype native JSON | vulnerability matches, packages, source/distro metadata, and matcher details |
+| `normalize_scanner_results` | parsed Semgrep/Checkov/Grype output | common scanner-result observations, severities, statuses, paths/resources, package/vulnerability identifiers |
+| `dedupe_scanner_results` | normalized scanner results | unique scanner results, duplicate groups, source result references, and dedupe counts |
 | `parse_pem_certificate` | PEM certificate text | X.509 subjects, issuers, validity dates, fingerprints, SANs, and public key metadata |
 | `parse_lockfiles` | npm/pnpm/yarn lockfiles | package names, versions, dependency edges, importer names, and root dependency sections |
 | `parse_package_json` | package.json | package metadata, scripts, dependencies, repository/bin/workspaces |
@@ -140,6 +142,8 @@ plugins/core-parsers/src/
   parseGrypeJson.ts
   parsePemCertificate.ts
   parseLockfiles.ts
+  normalizeScannerResults.ts
+  dedupeScannerResults.ts
   parseIpPrefixList.ts
   parseAsnList.ts
   parseAsnAllowDenyList.ts
@@ -161,6 +165,10 @@ pnpm --filter @security-workbench/cli start skills run parse_trufflehog_ndjson -
 pnpm --filter @security-workbench/cli start skills run parse_semgrep_json --input-file "$PWD/fixtures/scanners/semgrep-results.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_checkov_json --input-file "$PWD/fixtures/scanners/checkov-results.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_grype_json --input-file "$PWD/fixtures/scanners/grype-results.json" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_semgrep_json --input-file "$PWD/fixtures/scanners/semgrep-results.json" > /tmp/semgrep.parsed.json
+pnpm --filter @security-workbench/cli start skills run normalize_scanner_results --input-file /tmp/semgrep.parsed.json --format pretty
+pnpm --filter @security-workbench/cli start skills run normalize_scanner_results --input-file /tmp/semgrep.parsed.json > /tmp/semgrep.normalized.json
+pnpm --filter @security-workbench/cli start skills run dedupe_scanner_results --input-file /tmp/semgrep.normalized.json --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_pem_certificate --input-file "$PWD/fixtures/certificates/example-cert.pem" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_lockfiles --input-file "$PWD/fixtures/lockfiles/package-lock.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_github_actions_workflow --input-file "$PWD/fixtures/github-actions/basic-workflow.yml" --format pretty
