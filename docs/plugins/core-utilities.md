@@ -99,6 +99,8 @@ pnpm --filter @security-workbench/cli start skills list --category transform --f
 pnpm --filter @security-workbench/cli start skills list --category parser --format table
 pnpm --filter @security-workbench/cli start skills run extract_iocs --input-file "$PWD/fixtures/iocs/mixed-iocs.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_jwt --input-file "$PWD/fixtures/jwt/alg-none.jwt" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_jwt --input-file "$PWD/fixtures/jwt/alg-none.jwt" > /tmp/jwt.parsed.json
+pnpm --filter @security-workbench/cli start skills run review_jwt --input-file /tmp/jwt.parsed.json --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_email_headers --input-file "$PWD/fixtures/email/sample-headers.txt" --format pretty
 ```
 

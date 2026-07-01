@@ -39,7 +39,7 @@ fixtures/ip-prefixes/         parse_ip_prefix_list
 fixtures/asn/                 ASN parser fixtures
 fixtures/identifiers/         extract_cves, extract_uuids
 fixtures/iocs/                extract_iocs and fang/refang helpers
-fixtures/jwt/                 parse_jwt
+fixtures/jwt/                 parse_jwt, review_jwt
 fixtures/lockfiles/           parse_lockfiles
 fixtures/package-json/        parse_package_json
 fixtures/sarif/               parse_sarif
@@ -72,6 +72,8 @@ pnpm --filter @security-workbench/cli start skills run parse_asn_allow_deny_list
 pnpm --filter @security-workbench/cli start skills run parse_asn_observations --input-file "$PWD/fixtures/asn/asn-observations.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_bgp_prefix_table --input-file "$PWD/fixtures/asn/bgp-prefix-table.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_jwt --input-file "$PWD/fixtures/jwt/alg-none.jwt" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_jwt --input-file "$PWD/fixtures/jwt/alg-none.jwt" > /tmp/jwt.parsed.json
+pnpm --filter @security-workbench/cli start skills run review_jwt --input-file /tmp/jwt.parsed.json --format pretty
 pnpm --filter @security-workbench/cli start skills run extract_iocs --input-file "$PWD/fixtures/iocs/mixed-iocs.txt" --format pretty
 ```
 

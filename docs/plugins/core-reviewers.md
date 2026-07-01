@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 3
+Implemented skills: 4
 ```
 
 ## Purpose
@@ -39,6 +39,7 @@ no findings
 | `review_browser_extension_permissions` | `parse_browser_extension_manifest` output or JSON run result | evidence-backed signals for extension permission and exposure surfaces |
 | `review_static_analysis_results` | `parse_sarif` output or JSON run result | evidence-backed signals for SARIF static-analysis result triage |
 | `review_certificate` | `parse_pem_certificate` output or JSON run result | evidence-backed signals for parsed X.509 certificate metadata |
+| `review_jwt` | `parse_jwt` output or JSON run result | evidence-backed signals for parsed JWT header and claim metadata |
 
 ## `review_browser_extension_permissions`
 
@@ -226,5 +227,61 @@ pnpm --filter @security-workbench/cli start skills run parse_pem_certificate \
 
 pnpm --filter @security-workbench/cli start skills run review_certificate \
   --input-file /tmp/certificate.parsed.json \
+  --format pretty
+```
+
+
+## `review_jwt`
+
+Reviews parsed JWT header and claim observations from `parse_jwt`.
+
+Input must be one of:
+
+```text
+parse_jwt output object
+JSON string containing parse_jwt output
+JSON string containing a full skill run result whose output is parse_jwt output
+```
+
+It reports:
+
+```text
+source parser and warning count
+algorithm and type
+signature presence and parser verification state
+header parameter names
+claim names and registered claim presence
+temporal claim presence
+encoded exp/iat validity-window length when both claims are numeric
+sensitive-looking claim names by path, without copying values
+remote key-reference header presence
+evidence records
+signal records
+explicit limitations
+```
+
+It does not:
+
+```text
+verify JWT signatures
+validate issuers, audiences, keys, JWKS, JKU, X5U, or embedded JWK trust
+use current time to classify exp, nbf, or iat as currently valid, expired, or not-yet-valid
+perform token introspection
+perform network lookups
+score risk
+generate findings
+```
+
+## JWT review example
+
+Run from repo root:
+
+```bash
+pnpm --filter @security-workbench/cli start skills run parse_jwt \
+  --input-file "$PWD/fixtures/jwt/alg-none.jwt" \
+  > /tmp/jwt.parsed.json
+
+pnpm --filter @security-workbench/cli start skills run review_jwt \
+  --input-file /tmp/jwt.parsed.json \
   --format pretty
 ```

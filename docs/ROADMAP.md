@@ -34,9 +34,9 @@ pnpm typecheck:test
 ## Active sequence
 
 ```text
-1. Add package review.
-2. Add SBOM parsing and review.
-3. Add JWT, email, IOC, and URL review lanes.
+1. Add SBOM parsing and review.
+2. Add package review.
+3. Add email, IOC, and URL review lanes.
 ```
 
 Sequence rule:
@@ -76,7 +76,6 @@ parse_sbom
 url_review
 phishing_review
 email_header_review
-jwt_review
 browser_extension_review
 package_review
 sbom_review

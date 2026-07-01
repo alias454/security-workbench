@@ -26,7 +26,7 @@ http-headers/        parse_http_headers
 ip-prefixes/         parse_ip_prefix_list
 identifiers/         extract_cves, extract_uuids
 iocs/                extract_iocs and fang/refang helpers
-jwt/                 parse_jwt
+jwt/                 parse_jwt, review_jwt
 lockfiles/           parse_lockfiles
 package-json/        parse_package_json
 sarif/               parse_sarif
