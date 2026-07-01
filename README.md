@@ -76,6 +76,7 @@ pnpm --filter @security-workbench/cli start skills run parse_sarif --input-file 
 pnpm --filter @security-workbench/cli start skills run parse_trufflehog_ndjson --input-file "$PWD/fixtures/trufflehog/git-results.ndjson" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_browser_extension_manifest --input-file "$PWD/fixtures/browser-extension/manifest-v3-basic.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_ip_prefix_list --input-file "$PWD/fixtures/ip-prefixes/mixed-prefixes.txt" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_asn_list --input-file "$PWD/fixtures/asn/asn-list.txt" --format pretty
 ```
 
 ## Validation

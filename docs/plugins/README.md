@@ -100,6 +100,7 @@ parse_csv
 parse_yaml
 parse_browser_extension_manifest
 parse_ip_prefix_list
+parse_asn_list
 ```
 
 ## core-reviewers inventory

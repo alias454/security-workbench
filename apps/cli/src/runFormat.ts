@@ -321,6 +321,47 @@ function renderIpPrefixList(record: Record<string, unknown>, options: DisplayOpt
   ]);
 }
 
+function renderAsnList(record: Record<string, unknown>, options: DisplayOptions): string[] | undefined {
+  const observed = recordValue(record, "observed");
+  if (!observed) {
+    return undefined;
+  }
+
+  const entries = recordArray(observed, "entries");
+  const invalidLines = recordArray(observed, "invalid_lines");
+  const duplicateEntries = recordArray(observed, "duplicate_entries");
+  const entryLines = entries.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const normalizedAsn = String(entry.normalized_asn ?? "unknown");
+    const note = typeof entry.note === "string" && entry.note.length > 0 ? ` note=${displayString(entry.note, options)}` : "";
+    return `line ${line}: ${displayString(normalizedAsn, options)}${note}`;
+  });
+  const invalidLineSummaries = invalidLines.slice(0, 20).map((entry) => {
+    const line = String(entry.line ?? "?");
+    const value = String(entry.value ?? "unknown");
+    const reason = String(entry.reason ?? "invalid");
+    return `line ${line}: ${displayString(value, options)} - ${reason}`;
+  });
+  const duplicateLineSummaries = duplicateEntries.slice(0, 20).map((entry) => {
+    const value = String(entry.normalized_asn ?? "unknown");
+    return `${displayString(value, options)} first_line=${String(entry.first_line ?? "?")} duplicate_line=${String(entry.duplicate_line ?? "?")} occurrences=${String(entry.occurrences ?? "?")}`;
+  });
+
+  return section("ASN List", [
+    `Physical lines: ${numberValue(observed, "physical_line_count") ?? "unknown"}`,
+    `Line ending: ${typeof observed.line_ending === "string" ? observed.line_ending : "unknown"}`,
+    `Valid entries: ${numberValue(observed, "valid_entry_count") ?? entries.length}`,
+    `Unique ASNs: ${numberValue(observed, "unique_asn_count") ?? "unknown"}`,
+    `Malformed lines: ${numberValue(observed, "malformed_line_count") ?? invalidLines.length}`,
+    `Duplicate entries: ${numberValue(observed, "duplicate_entry_count") ?? duplicateEntries.length}`,
+    `Blank/comment/inline-comment lines: ${String(numberValue(observed, "blank_line_count") ?? "unknown")}/${String(numberValue(observed, "comment_line_count") ?? "unknown")}/${String(numberValue(observed, "inline_comment_count") ?? "unknown")}`,
+    ...namedList("ASNs", stringArray(observed, "normalized_asns"), options),
+    ...namedList("Entries", entryLines, options),
+    ...namedList("Duplicates", duplicateLineSummaries, options),
+    ...namedList("Invalid lines", invalidLineSummaries, options),
+  ]);
+}
+
 function renderBrowserExtensionPermissionReview(
   record: Record<string, unknown>,
   options: DisplayOptions
@@ -832,6 +873,8 @@ function renderSkillAwareOutput(
       return renderSarif(record, options);
     case "parse_ip_prefix_list":
       return renderIpPrefixList(record, options);
+    case "parse_asn_list":
+      return renderAsnList(record, options);
     case "parse_http_headers":
       return renderHttpHeaders(record, options);
     default:

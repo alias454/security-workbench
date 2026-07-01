@@ -521,4 +521,48 @@ describe("formatSkillRunResult", () => {
     expect(output).toContain("999[.]1[.]1[.]1 - invalid IP address");
   });
 
+
+  it("renders ASN list observations in pretty output", () => {
+    const output = formatSkillRunResult(
+      result({
+        skill: { name: "parse_asn_list", version: "0.1.0" },
+        output: {
+          artifact: { id: "artifact_asn_list", type: "asn_list" },
+          observed: {
+            line_ending: "lf",
+            physical_line_count: 5,
+            blank_line_count: 0,
+            comment_line_count: 1,
+            nonempty_line_count: 5,
+            inline_comment_count: 1,
+            valid_entry_count: 3,
+            malformed_line_count: 1,
+            duplicate_entry_count: 1,
+            unique_asn_count: 2,
+            normalized_asns: ["AS13335", "AS15169", "AS13335"],
+            duplicate_entries: [
+              { normalized_asn: "AS13335", first_line: 2, duplicate_line: 4, occurrences: 2 },
+            ],
+            entries: [
+              { line: 2, normalized_asn: "AS13335", note: null },
+              { line: 3, normalized_asn: "AS15169", note: "Google example" },
+              { line: 4, normalized_asn: "AS13335", note: null },
+            ],
+            invalid_lines: [{ line: 5, value: "ASnotvalid", reason: "missing valid ASN token" }],
+          },
+          warnings: [],
+        },
+      }),
+      { format: "pretty" }
+    );
+
+    expect(output).toContain("ASN List");
+    expect(output).toContain("Valid entries: 3");
+    expect(output).toContain("Unique ASNs: 2");
+    expect(output).toContain("Duplicate entries: 1");
+    expect(output).toContain("AS13335");
+    expect(output).toContain("ASnotvalid - missing valid ASN token");
+  });
+
+
 });
