@@ -34,10 +34,9 @@ pnpm typecheck:test
 ## Active sequence
 
 ```text
-1. Expand static-analysis triage beyond SARIF.
-2. Add certificate review.
-3. Add package review.
-4. Add SBOM parsing and review.
+1. Add package review.
+2. Add SBOM parsing and review.
+3. Add JWT, email, IOC, and URL review lanes.
 ```
 
 Sequence rule:
@@ -67,7 +66,6 @@ Later pipeline support should add broader skill input/output schema validation, 
 These are candidates for the next small PR stack after the active sequence starts.
 
 ```text
-certificate_review
 package_review
 parse_sbom
 ```
@@ -79,7 +77,6 @@ url_review
 phishing_review
 email_header_review
 jwt_review
-certificate_review
 browser_extension_review
 package_review
 sbom_review

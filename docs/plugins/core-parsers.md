@@ -208,7 +208,7 @@ parse_sarif                     → scanner normalization/code scanning review
 parse_semgrep_json              → scanner native-output parsing/normalization/summary
 parse_checkov_json              → scanner native-output parsing/normalization
 parse_grype_json                → scanner native-output parsing/normalization
-parse_pem_certificate           → certificate_review
+parse_pem_certificate           → review_certificate
 parse_lockfiles                 → package_review
 parse_ip_prefix_list            → infrastructure/local-registry/prefix-membership workflows
 parse_asn_list                  → ASN/local-registry/infrastructure-clustering workflows

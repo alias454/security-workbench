@@ -674,6 +674,23 @@ run_ok_require_output_pattern "scanner_summary pretty output includes summarized
 run_ok_require_output_pattern "merge_scanner_results pretty output includes merged count" '"merged_result_count": 2' "$SCANNER_DEDUPE_SCRIPT"
 run_ok "fixture parse_pem_certificate example cert" "${CLI[@]}" skills run parse_pem_certificate --input-file "$FIXTURES_ROOT/certificates/example-cert.pem" --format pretty
 run_ok_require_output_pattern "parse_pem_certificate pretty output includes certificate count" '"valid_certificate_count": 1' "${CLI[@]}" skills run parse_pem_certificate --input-file "$FIXTURES_ROOT/certificates/example-cert.pem" --format pretty
+
+run_ok "skills describe review_certificate --format table" "${CLI[@]}" skills describe review_certificate --format table
+run_ok_require_output_pattern "reviewer list includes review_certificate" '^review_certificate[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
+run_expect_fail "review_certificate rejects raw certificate-like object" "${CLI[@]}" skills run review_certificate --input '{"subject":"CN=raw"}'
+
+CERT_REVIEW_INPUT="$TMP_ROOT/certificate.parsed.json"
+CERT_REVIEW_SCRIPT="$TMP_ROOT/review-certificate.sh"
+cat >"$CERT_REVIEW_SCRIPT" <<SCRIPT
+#!/usr/bin/env bash
+set -euo pipefail
+pnpm --filter @security-workbench/cli start skills run parse_pem_certificate --input-file "$FIXTURES_ROOT/certificates/example-cert.pem" > "$CERT_REVIEW_INPUT"
+pnpm --filter @security-workbench/cli start skills run review_certificate --input-file "$CERT_REVIEW_INPUT" --format pretty
+SCRIPT
+chmod +x "$CERT_REVIEW_SCRIPT"
+
+run_ok "fixture review_certificate example cert" "$CERT_REVIEW_SCRIPT"
+run_ok_require_output_pattern "review_certificate pretty output includes CA certificate signal" 'certificate\.ca_certificate_present' "$CERT_REVIEW_SCRIPT"
 run_ok "fixture parse_lockfiles package lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/package-lock.json" --format pretty
 run_ok "fixture parse_lockfiles pnpm lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/pnpm-lock.yaml" --format pretty
 run_ok "fixture parse_lockfiles yarn lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/yarn.lock" --format pretty

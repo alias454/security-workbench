@@ -24,10 +24,10 @@ CLI only
 Current registered skills:
 
 ```text
-71 total
+72 total
 39 core-utilities
 23 core-parsers
-2 core-reviewers
+3 core-reviewers
 2 core-scoring
 5 core-output
 transform, parser, reviewer, scoring, and output categories
@@ -120,6 +120,7 @@ parse_bgp_prefix_table
 ```text
 review_browser_extension_permissions
 review_static_analysis_results
+review_certificate
 ```
 
 ## core-scoring inventory
