@@ -26,6 +26,7 @@ describe("core-utilities skill registry", () => {
       "json_parse",
       "extract_iocs",
       "extract_urls",
+      "extract_defanged_urls",
       "extract_domains",
       "extract_emails",
       "extract_ipv4",
