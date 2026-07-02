@@ -25,7 +25,7 @@ github-actions/      parse_github_actions_workflow
 http-headers/        parse_http_headers
 ip-prefixes/         parse_ip_prefix_list
 identifiers/         extract_cves, extract_uuids
-iocs/                extract_iocs, normalize_indicators, extract_defanged_urls, and fang/refang helpers
+iocs/                extract_iocs, normalize_indicators, extract_defanged_urls, review_url, and fang/refang helpers
 jwt/                 parse_jwt, review_jwt
 lockfiles/           parse_lockfiles
 package-json/        parse_package_json

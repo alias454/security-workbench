@@ -34,8 +34,8 @@ pnpm typecheck:test
 ## Active sequence
 
 ```text
-1. Add remaining URL review lane primitives.
-2. Assess whether additional workflow output helpers are needed after more review chains land.
+1. Run manual/lightly automated QA against real artifacts.
+2. Assess whether additional workflow output helpers are needed after URL/email review chains land.
 ```
 
 Sequence rule:
@@ -70,7 +70,6 @@ Later pipeline support should add broader skill input/output schema validation, 
 These are candidates for the next small PR stack after the active sequence starts.
 
 ```text
-url_review
 phishing_review
 typosquat_review
 ```

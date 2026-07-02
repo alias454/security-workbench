@@ -520,6 +520,7 @@ run_ok "skills describe parse_email_headers --format table" "${CLI[@]}" skills d
 run_ok "skills describe review_email_header --format table" "${CLI[@]}" skills describe review_email_header --format table
 run_ok "skills describe parse_http_headers --format table" "${CLI[@]}" skills describe parse_http_headers --format table
 run_ok "skills describe review_security_headers --format table" "${CLI[@]}" skills describe review_security_headers --format table
+run_ok "skills describe review_url --format table" "${CLI[@]}" skills describe review_url --format table
 run_ok "skills describe parse_dockerfile --format table" "${CLI[@]}" skills describe parse_dockerfile --format table
 run_ok "skills describe parse_github_actions_workflow --format table" "${CLI[@]}" skills describe parse_github_actions_workflow --format table
 run_ok "skills describe parse_trufflehog_ndjson --format table" "${CLI[@]}" skills describe parse_trufflehog_ndjson --format table
@@ -713,12 +714,14 @@ run_ok "skills describe review_package --format table" "${CLI[@]}" skills descri
 run_ok_require_output_pattern "reviewer list includes review_package" '^review_package[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
 run_ok_require_output_pattern "reviewer list includes review_email_header" '^review_email_header[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
 run_ok_require_output_pattern "reviewer list includes review_security_headers" '^review_security_headers[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
+run_ok_require_output_pattern "reviewer list includes review_url" '^review_url[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
 run_expect_fail "review_certificate rejects raw certificate-like object" "${CLI[@]}" skills run review_certificate --input '{"subject":"CN=raw"}'
 run_expect_fail "review_jwt rejects raw claim-like object" "${CLI[@]}" skills run review_jwt --input '{"sub":"123"}'
 run_expect_fail "review_sbom rejects raw package-like object" "${CLI[@]}" skills run review_sbom --input '{"name":"raw-package"}'
 run_expect_fail "review_package rejects raw package-like object" "${CLI[@]}" skills run review_package --input '{"name":"raw-package"}'
 run_expect_fail "review_email_header rejects raw header-like object" "${CLI[@]}" skills run review_email_header --input '{"from":"alerts@example.com"}'
 run_expect_fail "review_security_headers rejects raw header-like object" "${CLI[@]}" skills run review_security_headers --input '{"server":"example"}'
+run_expect_fail "review_url rejects raw url-like object" "${CLI[@]}" skills run review_url --input '{"url":"https://example.com"}'
 
 CERT_REVIEW_INPUT="$TMP_ROOT/certificate.parsed.json"
 CERT_REVIEW_SCRIPT="$TMP_ROOT/review-certificate.sh"
@@ -850,6 +853,19 @@ run_ok "fixture normalize_indicators defanged" "${CLI[@]}" skills run normalize_
 run_ok_require_output_pattern "normalize_indicators fixture output includes email type" 'email_address' "${CLI[@]}" skills run normalize_indicators --input-file "$FIXTURES_ROOT/iocs/defanged-indicators.txt" --format pretty
 run_ok "fixture extract_defanged_urls defanged" "${CLI[@]}" skills run extract_defanged_urls --input-file "$FIXTURES_ROOT/iocs/defanged-indicators.txt" --format pretty
 run_ok_require_output_pattern "extract_defanged_urls fixture output includes artifact type" 'defanged_url_extraction' "${CLI[@]}" skills run extract_defanged_urls --input-file "$FIXTURES_ROOT/iocs/defanged-indicators.txt" --format pretty
+
+URL_REVIEW_INPUT="$TMP_ROOT/defanged-urls.parsed.json"
+URL_REVIEW_SCRIPT="$TMP_ROOT/review-url.sh"
+cat >"$URL_REVIEW_SCRIPT" <<SCRIPT
+#!/usr/bin/env bash
+set -euo pipefail
+pnpm --filter @security-workbench/cli start skills run extract_defanged_urls --input-file "$FIXTURES_ROOT/iocs/defanged-indicators.txt" > "$URL_REVIEW_INPUT"
+pnpm --filter @security-workbench/cli start skills run review_url --input-file "$URL_REVIEW_INPUT" --format pretty
+SCRIPT
+chmod +x "$URL_REVIEW_SCRIPT"
+
+run_ok "fixture review_url defanged URLs" "$URL_REVIEW_SCRIPT"
+run_ok_require_output_pattern "review_url pretty output includes query parameter signal" 'url\.query_parameters_observed' "$URL_REVIEW_SCRIPT"
 
 run_ok_require_output_pattern "extract_iocs pretty output defangs URLs" 'hxxps://evil\[.\]example\[.\]com/path' "${CLI[@]}" skills run extract_iocs --input-file "$FIXTURES_ROOT/iocs/mixed-iocs.txt" --format pretty
 run_ok_reject_output_pattern "extract_iocs pretty output hides raw URLs" 'https://evil\.example\.com/path' "${CLI[@]}" skills run extract_iocs --input-file "$FIXTURES_ROOT/iocs/mixed-iocs.txt" --format pretty
