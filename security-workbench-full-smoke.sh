@@ -683,9 +683,12 @@ run_ok "skills describe review_jwt --format table" "${CLI[@]}" skills describe r
 run_ok_require_output_pattern "reviewer list includes review_jwt" '^review_jwt[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
 run_ok "skills describe review_sbom --format table" "${CLI[@]}" skills describe review_sbom --format table
 run_ok_require_output_pattern "reviewer list includes review_sbom" '^review_sbom[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
+run_ok "skills describe review_package --format table" "${CLI[@]}" skills describe review_package --format table
+run_ok_require_output_pattern "reviewer list includes review_package" '^review_package[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
 run_expect_fail "review_certificate rejects raw certificate-like object" "${CLI[@]}" skills run review_certificate --input '{"subject":"CN=raw"}'
 run_expect_fail "review_jwt rejects raw claim-like object" "${CLI[@]}" skills run review_jwt --input '{"sub":"123"}'
 run_expect_fail "review_sbom rejects raw package-like object" "${CLI[@]}" skills run review_sbom --input '{"name":"raw-package"}'
+run_expect_fail "review_package rejects raw package-like object" "${CLI[@]}" skills run review_package --input '{"name":"raw-package"}'
 
 CERT_REVIEW_INPUT="$TMP_ROOT/certificate.parsed.json"
 CERT_REVIEW_SCRIPT="$TMP_ROOT/review-certificate.sh"
@@ -733,6 +736,31 @@ run_ok "fixture parse_lockfiles package lock" "${CLI[@]}" skills run parse_lockf
 run_ok "fixture parse_lockfiles pnpm lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/pnpm-lock.yaml" --format pretty
 run_ok "fixture parse_lockfiles yarn lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/yarn.lock" --format pretty
 run_ok_require_output_pattern "parse_lockfiles pretty output includes package count" '"package_count": 2' "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/package-lock.json" --format pretty
+
+PACKAGE_REVIEW_MANIFEST_INPUT="$TMP_ROOT/package.parsed.json"
+PACKAGE_REVIEW_LOCKFILE_INPUT="$TMP_ROOT/lockfile.parsed.json"
+PACKAGE_REVIEW_MANIFEST_SCRIPT="$TMP_ROOT/review-package-manifest.sh"
+PACKAGE_REVIEW_LOCKFILE_SCRIPT="$TMP_ROOT/review-package-lockfile.sh"
+cat >"$PACKAGE_REVIEW_MANIFEST_SCRIPT" <<SCRIPT
+#!/usr/bin/env bash
+set -euo pipefail
+pnpm --filter @security-workbench/cli start skills run parse_package_json --input-file "$FIXTURES_ROOT/package-json/basic-package.json" > "$PACKAGE_REVIEW_MANIFEST_INPUT"
+pnpm --filter @security-workbench/cli start skills run review_package --input-file "$PACKAGE_REVIEW_MANIFEST_INPUT" --format pretty
+SCRIPT
+chmod +x "$PACKAGE_REVIEW_MANIFEST_SCRIPT"
+
+cat >"$PACKAGE_REVIEW_LOCKFILE_SCRIPT" <<SCRIPT
+#!/usr/bin/env bash
+set -euo pipefail
+pnpm --filter @security-workbench/cli start skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/package-lock.json" > "$PACKAGE_REVIEW_LOCKFILE_INPUT"
+pnpm --filter @security-workbench/cli start skills run review_package --input-file "$PACKAGE_REVIEW_LOCKFILE_INPUT" --format pretty
+SCRIPT
+chmod +x "$PACKAGE_REVIEW_LOCKFILE_SCRIPT"
+
+run_ok "fixture review_package package manifest" "$PACKAGE_REVIEW_MANIFEST_SCRIPT"
+run_ok_require_output_pattern "review_package manifest pretty output includes package manager signal" 'package\.package_manager_not_observed' "$PACKAGE_REVIEW_MANIFEST_SCRIPT"
+run_ok "fixture review_package package lockfile" "$PACKAGE_REVIEW_LOCKFILE_SCRIPT"
+run_ok_require_output_pattern "review_package lockfile pretty output includes dependency graph signal" 'package\.lockfile_dependency_graph_observed' "$PACKAGE_REVIEW_LOCKFILE_SCRIPT"
 run_ok "fixture parse_http_headers duplicate headers" "${CLI[@]}" skills run parse_http_headers --input-file "$FIXTURES_ROOT/http-headers/duplicate-headers.txt" --format pretty
 run_ok "fixture parse_http_headers malformed headers" "${CLI[@]}" skills run parse_http_headers --input-file "$FIXTURES_ROOT/http-headers/malformed-headers.txt" --format pretty
 run_ok "fixture parse_email_headers sample" "${CLI[@]}" skills run parse_email_headers --input-file "$FIXTURES_ROOT/email/sample-headers.txt" --format pretty

@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 5
+Implemented skills: 6
 ```
 
 ## Purpose
@@ -41,6 +41,7 @@ no findings
 | `review_certificate` | `parse_pem_certificate` output or JSON run result | evidence-backed signals for parsed X.509 certificate metadata |
 | `review_jwt` | `parse_jwt` output or JSON run result | evidence-backed signals for parsed JWT header and claim metadata |
 | `review_sbom` | `parse_sbom` output or JSON run result | evidence-backed SBOM inventory-quality signals without vulnerability lookup |
+| `review_package` | `parse_package_json` or `parse_lockfiles` output, or JSON run result | evidence-backed package manifest and lockfile review signals without package installation or vulnerability lookup |
 
 ## `review_browser_extension_permissions`
 
@@ -121,6 +122,50 @@ generate findings
 ```bash
 pnpm --filter @security-workbench/cli start skills run parse_sbom --input-file "$PWD/fixtures/sbom/cyclonedx.json" > /tmp/sbom.parsed.json
 pnpm --filter @security-workbench/cli start skills run review_sbom --input-file /tmp/sbom.parsed.json --format pretty
+```
+
+
+## `review_package`
+
+Reviews parsed package manifest or lockfile observations from `parse_package_json` and `parse_lockfiles`.
+
+It reports:
+
+```text
+source parser and warning count
+manifest script and lifecycle-script counts
+dependency section counts
+lockfile package and dependency-edge counts
+missing observed manifest metadata
+lockfile package records without observed versions
+root dev/optional/peer dependency observations
+evidence records
+signal records
+explicit limitations
+```
+
+It does not:
+
+```text
+install packages
+execute package scripts
+inspect package tarballs
+perform vulnerability lookup
+resolve package reputation or maintainer trust
+perform registry enrichment
+infer maliciousness, exploitability, or dependency reachability
+score risk
+generate findings
+```
+
+## Package review examples
+
+```bash
+pnpm --filter @security-workbench/cli start skills run parse_package_json --input-file "$PWD/fixtures/package-json/basic-package.json" > /tmp/package.parsed.json
+pnpm --filter @security-workbench/cli start skills run review_package --input-file /tmp/package.parsed.json --format pretty
+
+pnpm --filter @security-workbench/cli start skills run parse_lockfiles --input-file "$PWD/fixtures/lockfiles/package-lock.json" > /tmp/lockfile.parsed.json
+pnpm --filter @security-workbench/cli start skills run review_package --input-file /tmp/lockfile.parsed.json --format pretty
 ```
 
 ## Permission declaration
