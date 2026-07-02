@@ -102,6 +102,8 @@ pnpm --filter @security-workbench/cli start skills list --category parser --form
 pnpm --filter @security-workbench/cli start skills run extract_iocs --input-file "$PWD/fixtures/iocs/mixed-iocs.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run normalize_indicators --input-file "$PWD/fixtures/iocs/defanged-indicators.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run extract_defanged_urls --input-file "$PWD/fixtures/iocs/defanged-indicators.txt" --format pretty
+pnpm --filter @security-workbench/cli start skills run extract_defanged_urls --input-file "$PWD/fixtures/iocs/defanged-indicators.txt" > /tmp/urls.extracted.json
+pnpm --filter @security-workbench/cli start skills run review_url --input-file /tmp/urls.extracted.json --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_jwt --input-file "$PWD/fixtures/jwt/alg-none.jwt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_jwt --input-file "$PWD/fixtures/jwt/alg-none.jwt" > /tmp/jwt.parsed.json
 pnpm --filter @security-workbench/cli start skills run review_jwt --input-file /tmp/jwt.parsed.json --format pretty
@@ -135,7 +137,7 @@ Core utilities are the substrate. Domain plugins should reuse these primitives i
 Examples:
 
 ```text
-plugin-url-triage      → parse_url, url_decode, normalize_indicators, extract_defanged_urls, extract_urls, defang_iocs
+plugin-url-triage      → parse_url, url_decode, normalize_indicators, extract_defanged_urls, review_url, extract_urls, defang_iocs
 plugin-email           → parse_email_headers, normalize_indicators, extract_defanged_urls, extract_urls, extract_emails
 jwt_review             → parse_jwt
 plugin-scanner-normalize → json_parse, extract_cves, line utilities

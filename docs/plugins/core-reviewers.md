@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 8
+Implemented skills: 9
 ```
 
 ## Purpose
@@ -44,6 +44,7 @@ no findings
 | `review_package` | `parse_package_json` or `parse_lockfiles` output, or JSON run result | evidence-backed package manifest and lockfile review signals without package installation or vulnerability lookup |
 | `review_email_header` | `parse_email_headers` output or JSON run result | evidence-backed email header routing, authentication-result, and identity-mismatch observations without DNS validation or phishing verdicts |
 | `review_security_headers` | `parse_http_headers` output or JSON run result | evidence-backed HTTP security header and cookie attribute observations without live endpoint checks or scoring |
+| `review_url` | `extract_defanged_urls` output or JSON run result | evidence-backed URL structure observations without fetching, enrichment, scoring, or verdicts |
 
 ## `review_browser_extension_permissions`
 
@@ -243,6 +244,65 @@ pnpm --filter @security-workbench/cli start skills run parse_http_headers \
 
 pnpm --filter @security-workbench/cli start skills run review_security_headers \
   --input-file /tmp/http-headers.parsed.json \
+  --format pretty
+```
+
+## `review_url`
+
+Reviews extracted URL observations from `extract_defanged_urls`.
+
+Input must be one of:
+
+```text
+extract_defanged_urls output object
+JSON string containing extract_defanged_urls output
+JSON string containing a full skill run result whose output is extract_defanged_urls output
+```
+
+It reports:
+
+```text
+source parser and warning count
+reviewed URL count
+plain HTTP observations
+userinfo presence with upstream redaction expectation
+IP-literal host observations
+non-default port observations
+punycode host observations
+long hostname and long URL observations
+subdomain-label count observations
+query parameter, fragment, and redirect-like parameter observations
+script/executable-like file-extension observations
+evidence records
+signal records
+explicit limitations
+```
+
+It does not:
+
+```text
+perform DNS lookup
+fetch URLs
+follow redirects
+perform reputation checks
+inspect landing-page content
+perform typosquat or brand-impersonation analysis
+classify a URL as phishing, spam, malicious, benign, safe, or unsafe
+score risk
+generate findings
+```
+
+## URL review example
+
+Run the manual skill chain from repo root:
+
+```bash
+pnpm --filter @security-workbench/cli start skills run extract_defanged_urls \
+  --input-file "$PWD/fixtures/iocs/defanged-indicators.txt" \
+  > /tmp/urls.extracted.json
+
+pnpm --filter @security-workbench/cli start skills run review_url \
+  --input-file /tmp/urls.extracted.json \
   --format pretty
 ```
 

@@ -1,4 +1,4 @@
-hxxps://evil[.]example/login
+hxxps://evil[.]example/login?next=hxxps%3A%2F%2Ftarget[.]example
 admin<at>evil<dot>example
 billing at secure-payments dot example
 bad-domain[.]test:8443

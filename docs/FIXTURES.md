@@ -38,7 +38,7 @@ fixtures/http-headers/        parse_http_headers
 fixtures/ip-prefixes/         parse_ip_prefix_list
 fixtures/asn/                 ASN parser fixtures
 fixtures/identifiers/         extract_cves, extract_uuids
-fixtures/iocs/                extract_iocs, normalize_indicators, extract_defanged_urls, and fang/refang helpers
+fixtures/iocs/                extract_iocs, normalize_indicators, extract_defanged_urls, review_url, and fang/refang helpers
 fixtures/jwt/                 parse_jwt, review_jwt
 fixtures/lockfiles/           parse_lockfiles
 fixtures/sbom/                parse_sbom, review_sbom
