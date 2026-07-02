@@ -34,7 +34,7 @@ no findings
 
 | Skill | Input | Output summary |
 |---|---|---|
-| `parse_http_headers` | HTTP header text | status line, normalized headers, duplicates, malformed/folded lines |
+| `parse_http_headers` | HTTP header text | status line, normalized headers, duplicates, malformed/folded lines; feeds `review_security_headers` |
 | `parse_dockerfile` | Dockerfile text | stages, instructions, base images, ENV/ARG keys, COPY/ADD, runtime surfaces |
 | `parse_github_actions_workflow` | workflow YAML | triggers, permissions, jobs, steps, action uses, contexts, redacted run steps |
 | `parse_trufflehog_ndjson` | TruffleHog NDJSON | detectors, sources, verification counts, redacted secret metadata |
@@ -180,6 +180,8 @@ pnpm --filter @security-workbench/cli start skills run parse_sbom --input-file "
 pnpm --filter @security-workbench/cli start skills run parse_github_actions_workflow --input-file "$PWD/fixtures/github-actions/basic-workflow.yml" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_dockerfile --input-file "$PWD/fixtures/dockerfile/multi-stage.Dockerfile" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_http_headers --input-file "$PWD/fixtures/http-headers/security-headers.txt" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_http_headers --input-file "$PWD/fixtures/http-headers/security-headers.txt" > /tmp/http-headers.parsed.json
+pnpm --filter @security-workbench/cli start skills run review_security_headers --input-file /tmp/http-headers.parsed.json --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_browser_extension_manifest --input-file "$PWD/fixtures/browser-extension/manifest-v3-basic.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_ip_prefix_list --input-file "$PWD/fixtures/ip-prefixes/mixed-prefixes.txt" --format pretty
 ```

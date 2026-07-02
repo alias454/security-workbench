@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 7
+Implemented skills: 8
 ```
 
 ## Purpose
@@ -43,6 +43,7 @@ no findings
 | `review_sbom` | `parse_sbom` output or JSON run result | evidence-backed SBOM inventory-quality signals without vulnerability lookup |
 | `review_package` | `parse_package_json` or `parse_lockfiles` output, or JSON run result | evidence-backed package manifest and lockfile review signals without package installation or vulnerability lookup |
 | `review_email_header` | `parse_email_headers` output or JSON run result | evidence-backed email header routing, authentication-result, and identity-mismatch observations without DNS validation or phishing verdicts |
+| `review_security_headers` | `parse_http_headers` output or JSON run result | evidence-backed HTTP security header and cookie attribute observations without live endpoint checks or scoring |
 
 ## `review_browser_extension_permissions`
 
@@ -187,6 +188,61 @@ pnpm --filter @security-workbench/cli start skills run parse_email_headers \
 
 pnpm --filter @security-workbench/cli start skills run review_email_header \
   --input-file /tmp/email-headers.parsed.json \
+  --format pretty
+```
+
+
+## `review_security_headers`
+
+Reviews normalized HTTP response/header observations from `parse_http_headers`.
+
+Input must be one of:
+
+```text
+parse_http_headers output object
+JSON string containing parse_http_headers output
+JSON string containing a full skill run result whose output is parse_http_headers output
+```
+
+It reports:
+
+```text
+source parser and warning count
+status/header counts
+duplicate header names
+Content-Security-Policy presence and simple source-token observations
+Strict-Transport-Security max-age and includeSubDomains observations
+frame-protection presence from X-Frame-Options or CSP frame-ancestors
+X-Content-Type-Options, Referrer-Policy, and Permissions-Policy presence
+Set-Cookie Secure, HttpOnly, and SameSite attribute observations
+evidence records
+signal records
+explicit limitations
+```
+
+It does not:
+
+```text
+perform HTTP requests
+validate browser policy behavior
+validate TLS, DNS, redirects, or live endpoint state
+perform reputation checks
+classify an endpoint as secure, insecure, exploitable, malicious, benign, compliant, or non-compliant
+score risk
+generate findings
+```
+
+## Security headers review example
+
+Run the manual skill chain from repo root:
+
+```bash
+pnpm --filter @security-workbench/cli start skills run parse_http_headers \
+  --input-file "$PWD/fixtures/http-headers/security-headers.txt" \
+  > /tmp/http-headers.parsed.json
+
+pnpm --filter @security-workbench/cli start skills run review_security_headers \
+  --input-file /tmp/http-headers.parsed.json \
   --format pretty
 ```
 
