@@ -105,10 +105,46 @@ export const sbomReviewWorkflow: WorkflowDefinition = {
   ],
 };
 
+export const packageManifestReviewWorkflow: WorkflowDefinition = {
+  name: "package_manifest_review",
+  version: "0.1.0",
+  description: "Parse a package.json manifest and review observed package metadata.",
+  steps: [
+    {
+      id: "parse",
+      skill: "parse_package_json",
+    },
+    {
+      id: "review",
+      skill: "review_package",
+      input_from: "parse",
+    },
+  ],
+};
+
+export const lockfileReviewWorkflow: WorkflowDefinition = {
+  name: "lockfile_review",
+  version: "0.1.0",
+  description: "Parse a package lockfile and review observed lockfile inventory metadata.",
+  steps: [
+    {
+      id: "parse",
+      skill: "parse_lockfiles",
+    },
+    {
+      id: "review",
+      skill: "review_package",
+      input_from: "parse",
+    },
+  ],
+};
+
 export const workflows = [
   browserExtensionReviewWorkflow,
   staticAnalysisTriageWorkflow,
   certificateReviewWorkflow,
   jwtReviewWorkflow,
   sbomReviewWorkflow,
+  packageManifestReviewWorkflow,
+  lockfileReviewWorkflow,
 ] as const;
