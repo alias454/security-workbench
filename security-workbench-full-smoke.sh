@@ -517,6 +517,7 @@ run_ok "skills describe parse_jwt --format tsv" "${CLI[@]}" skills describe pars
 run_ok "skills describe parse_email_headers --format table" "${CLI[@]}" skills describe parse_email_headers --format table
 run_ok "skills describe review_email_header --format table" "${CLI[@]}" skills describe review_email_header --format table
 run_ok "skills describe parse_http_headers --format table" "${CLI[@]}" skills describe parse_http_headers --format table
+run_ok "skills describe review_security_headers --format table" "${CLI[@]}" skills describe review_security_headers --format table
 run_ok "skills describe parse_dockerfile --format table" "${CLI[@]}" skills describe parse_dockerfile --format table
 run_ok "skills describe parse_github_actions_workflow --format table" "${CLI[@]}" skills describe parse_github_actions_workflow --format table
 run_ok "skills describe parse_trufflehog_ndjson --format table" "${CLI[@]}" skills describe parse_trufflehog_ndjson --format table
@@ -705,11 +706,13 @@ run_ok_require_output_pattern "reviewer list includes review_sbom" '^review_sbom
 run_ok "skills describe review_package --format table" "${CLI[@]}" skills describe review_package --format table
 run_ok_require_output_pattern "reviewer list includes review_package" '^review_package[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
 run_ok_require_output_pattern "reviewer list includes review_email_header" '^review_email_header[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
+run_ok_require_output_pattern "reviewer list includes review_security_headers" '^review_security_headers[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
 run_expect_fail "review_certificate rejects raw certificate-like object" "${CLI[@]}" skills run review_certificate --input '{"subject":"CN=raw"}'
 run_expect_fail "review_jwt rejects raw claim-like object" "${CLI[@]}" skills run review_jwt --input '{"sub":"123"}'
 run_expect_fail "review_sbom rejects raw package-like object" "${CLI[@]}" skills run review_sbom --input '{"name":"raw-package"}'
 run_expect_fail "review_package rejects raw package-like object" "${CLI[@]}" skills run review_package --input '{"name":"raw-package"}'
 run_expect_fail "review_email_header rejects raw header-like object" "${CLI[@]}" skills run review_email_header --input '{"from":"alerts@example.com"}'
+run_expect_fail "review_security_headers rejects raw header-like object" "${CLI[@]}" skills run review_security_headers --input '{"server":"example"}'
 
 CERT_REVIEW_INPUT="$TMP_ROOT/certificate.parsed.json"
 CERT_REVIEW_SCRIPT="$TMP_ROOT/review-certificate.sh"
@@ -784,6 +787,19 @@ run_ok "fixture review_package package lockfile" "$PACKAGE_REVIEW_LOCKFILE_SCRIP
 run_ok_require_output_pattern "review_package lockfile pretty output includes dependency graph signal" 'package\.lockfile_dependency_graph_observed' "$PACKAGE_REVIEW_LOCKFILE_SCRIPT"
 run_ok "fixture parse_http_headers duplicate headers" "${CLI[@]}" skills run parse_http_headers --input-file "$FIXTURES_ROOT/http-headers/duplicate-headers.txt" --format pretty
 run_ok "fixture parse_http_headers malformed headers" "${CLI[@]}" skills run parse_http_headers --input-file "$FIXTURES_ROOT/http-headers/malformed-headers.txt" --format pretty
+
+SECURITY_HEADERS_REVIEW_INPUT="$TMP_ROOT/security-headers.parsed.json"
+SECURITY_HEADERS_REVIEW_SCRIPT="$TMP_ROOT/review-security-headers.sh"
+cat >"$SECURITY_HEADERS_REVIEW_SCRIPT" <<SCRIPT
+#!/usr/bin/env bash
+set -euo pipefail
+pnpm --filter @security-workbench/cli start skills run parse_http_headers --input-file "$FIXTURES_ROOT/http-headers/security-headers.txt" > "$SECURITY_HEADERS_REVIEW_INPUT"
+pnpm --filter @security-workbench/cli start skills run review_security_headers --input-file "$SECURITY_HEADERS_REVIEW_INPUT" --format pretty
+SCRIPT
+chmod +x "$SECURITY_HEADERS_REVIEW_SCRIPT"
+
+run_ok "fixture review_security_headers security headers" "$SECURITY_HEADERS_REVIEW_SCRIPT"
+run_ok_require_output_pattern "review_security_headers pretty output includes cookie secure signal" 'security_headers\.cookie_secure_attribute_not_observed' "$SECURITY_HEADERS_REVIEW_SCRIPT"
 run_ok "fixture parse_email_headers sample" "${CLI[@]}" skills run parse_email_headers --input-file "$FIXTURES_ROOT/email/sample-headers.txt" --format pretty
 
 EMAIL_HEADER_REVIEW_INPUT="$TMP_ROOT/email-headers.parsed.json"
