@@ -35,6 +35,8 @@ local transform/parser/reviewer/scoring/output skills
 generic draft finding and export helpers
 fixture-backed smoke coverage
 source audit in full smoke
+Semgrep public baseline validation
+pnpm supply-chain install policy
 ```
 
 Not implemented:
@@ -398,19 +400,64 @@ pnpm typecheck:test
 ./security-workbench-full-smoke.sh
 ```
 
-Optional local SAST validation:
+Optional public Semgrep baseline:
+
+```bash
+semgrep scan --config auto
+```
+
+Stricter JSON gate form:
 
 ```bash
 mkdir -p scan-results
-semgrep scan . --metrics=off --config p/default --config p/typescript --config p/javascript --exclude-rule package_managers.pnpm.pnpm-block-exotic-sub-dependencies.pnpm-block-exotic-sub-dependencies --exclude-rule package_managers.pnpm.pnpm-missing-minimum-release-age.pnpm-minimum-release-age --exclude-rule package_managers.pnpm.pnpm-trust-policy.pnpm-trust-policy --json-output scan-results/semgrep-public-baseline.json --sarif-output scan-results/semgrep-public-baseline.sarif
+semgrep scan \
+  --config auto \
+  --severity ERROR \
+  --severity WARNING \
+  --error \
+  --exclude node_modules \
+  --exclude dist \
+  --exclude coverage \
+  --json \
+  --output scan-results/semgrep-public-baseline.json
 ```
 
-Expected local SAST baseline:
+Expected public baseline:
 
 ```text
 0 findings
 ```
 
-The Semgrep baseline focuses on implementation SAST findings. It intentionally excludes pnpm workspace hardening rules from this gate because package-manager install policy should be changed and reviewed separately from source scanning.
+The Semgrep public baseline uses Semgrep OSS `--config auto` so first-time contributors and public reviewers can reproduce the scan without private rules. This baseline covers implementation SAST checks and package-manager hardening checks that Semgrep OSS reports for the repository.
+
+Current pnpm workspace supply-chain policy:
+
+```yaml
+minimumReleaseAge: 10080
+trustPolicy: no-downgrade
+blockExoticSubdeps: true
+trustPolicyExclude:
+  - "vite@5.4.21"
+```
+
+The `vite@5.4.21` trust-policy exception is a narrow migration exception for the current lockfile. Revisit it during dependency maintenance and remove it after updating or refreshing the affected dependency trust state.
+
+Optional maintainer-local Semgrep rules:
+
+```bash
+mkdir -p scan-results
+semgrep scan \
+  --config ../semgrep-rules \
+  --severity ERROR \
+  --severity WARNING \
+  --error \
+  --exclude node_modules \
+  --exclude dist \
+  --exclude coverage \
+  --json \
+  --output scan-results/semgrep-local-rules.json
+```
+
+The local rules path is optional and is not required for external contributors because it depends on a maintainer-local `../semgrep-rules` checkout.
 
 The repository also uses `.semgrepignore` to exclude dependency/build/cache outputs, local scanner outputs, smoke artifacts, fixtures, and tests. Fixtures and tests intentionally contain malformed, synthetic, attacker-shaped, or security-shaped inputs that are expected to trigger generic scanner rules.

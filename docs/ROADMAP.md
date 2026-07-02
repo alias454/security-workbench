@@ -35,7 +35,8 @@ pnpm typecheck:test
 
 ```text
 1. Run manual/lightly automated QA against real artifacts.
-2. Assess whether additional workflow output helpers are needed after URL/email review chains land.
+2. Decide whether URL, email-header, and security-header manual chains need registered workflows or output helpers.
+3. Defer smoke selectors until full smoke approaches the 9-10 minute threshold.
 ```
 
 Sequence rule:
@@ -65,6 +66,8 @@ lockfile_review
 
 Later pipeline support should add broader skill input/output schema validation, additional workflow fixtures, and more golden-output coverage.
 
+Manual review chains also exist for URL structure review, email header review, and HTTP security header review. They remain recipe-level chains until a registered workflow or output helper is needed.
+
 ## Near-term candidates
 
 These are candidates for the next small PR stack after the active sequence starts.
@@ -77,11 +80,7 @@ typosquat_review
 ## Workflow backlog
 
 ```text
-url_review
 phishing_review
-browser_extension_review
-package_manifest_review
-lockfile_review
 ai_workflow_review
 domain_security_review
 typosquat_review
