@@ -156,6 +156,8 @@ Registered workflows are runtime definitions that chain existing skills. Workflo
 | `certificate_review` | `parse_pem_certificate` → `review_certificate` | Review parsed PEM certificate metadata. |
 | `jwt_review` | `parse_jwt` → `review_jwt` | Review parsed JWT header, claim, and signature metadata. |
 | `sbom_review` | `parse_sbom` → `review_sbom` | Review parsed CycloneDX or SPDX SBOM inventory quality. |
+| `package_manifest_review` | `parse_package_json` → `review_package` | Review parsed package manifest metadata. |
+| `lockfile_review` | `parse_lockfiles` → `review_package` | Review parsed package lockfile inventory metadata. |
 
 ## Ownership rules
 

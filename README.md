@@ -87,6 +87,8 @@ pnpm --filter @security-workbench/cli start workflows run static_analysis_triage
 pnpm --filter @security-workbench/cli start workflows run certificate_review --input-file "$PWD/fixtures/certificates/example-cert.pem" --format pretty
 pnpm --filter @security-workbench/cli start workflows run jwt_review --input-file "$PWD/fixtures/jwt/alg-none.jwt" --format pretty
 pnpm --filter @security-workbench/cli start workflows run sbom_review --input-file "$PWD/fixtures/sbom/cyclonedx.json" --format pretty
+pnpm --filter @security-workbench/cli start workflows run package_manifest_review --input-file "$PWD/fixtures/package-json/basic-package.json" --format pretty
+pnpm --filter @security-workbench/cli start workflows run lockfile_review --input-file "$PWD/fixtures/lockfiles/package-lock.json" --format pretty
 ```
 
 Fixture examples use `$PWD` from the repo root:
@@ -152,9 +154,13 @@ parse_jwt
 
 parse_sbom
   → review_sbom
-```
 
-`package_review` is documented as a manual recipe for now because it has two valid parser entry points: `parse_package_json` and `parse_lockfiles`.
+parse_package_json
+  → review_package
+
+parse_lockfiles
+  → review_package
+```
 
 Detailed behavior lives in the core parser, reviewer, scoring, and output plugin docs.
 
