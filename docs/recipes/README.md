@@ -14,6 +14,9 @@ Recipes document the intended sequence, inputs, outputs, and limits for repeatab
 | [JWT review](jwt-review.md) | Parse a JWT and review observed header, claim, and signature metadata. |
 | [SBOM review](sbom-review.md) | Parse CycloneDX or SPDX SBOM JSON and review observed inventory quality. |
 | [Package review](package-review.md) | Run package manifest or lockfile review through explicit package review workflow variants. |
+| [URL review](url-review.md) | Normalize candidate indicators, extract defanged URL candidates, and review URL structure. |
+| [Email header review](email-header-review.md) | Parse email headers and review routing, authentication-result, and identity-mismatch observations. |
+| [Security headers review](security-headers-review.md) | Parse HTTP response headers and review security-header and cookie-attribute observations. |
 
 ## Recipe rules
 
