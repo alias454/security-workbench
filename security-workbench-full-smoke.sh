@@ -489,6 +489,8 @@ run_ok_require_output_pattern "workflows list includes static_analysis_triage" "
 run_ok_require_output_pattern "workflows list includes certificate_review" "^certificate_review[[:space:]]" "${CLI[@]}" workflows list --format tsv
 run_ok_require_output_pattern "workflows list includes jwt_review" "^jwt_review[[:space:]]" "${CLI[@]}" workflows list --format tsv
 run_ok_require_output_pattern "workflows list includes sbom_review" "^sbom_review[[:space:]]" "${CLI[@]}" workflows list --format tsv
+run_ok_require_output_pattern "workflows list includes package_manifest_review" "^package_manifest_review[[:space:]]" "${CLI[@]}" workflows list --format tsv
+run_ok_require_output_pattern "workflows list includes lockfile_review" "^lockfile_review[[:space:]]" "${CLI[@]}" workflows list --format tsv
 run_ok "workflow browser_extension_review fixture" "${CLI[@]}" workflows run browser_extension_review --input-file "$FIXTURES_ROOT/browser-extension/manifest-v2-broad-hosts.json" --format pretty
 run_ok_require_output_pattern "workflow browser_extension_review output includes finding" "Browser Extension Finding" "${CLI[@]}" workflows run browser_extension_review --input-file "$FIXTURES_ROOT/browser-extension/manifest-v2-broad-hosts.json" --format pretty
 run_ok "workflow static_analysis_triage fixture" "${CLI[@]}" workflows run static_analysis_triage --input-file "$FIXTURES_ROOT/sarif/codeql-results.sarif" --format pretty
@@ -500,7 +502,13 @@ run_ok "workflow jwt_review fixture" "${CLI[@]}" workflows run jwt_review --inpu
 run_ok_require_output_pattern "workflow jwt_review output includes alg none signal" 'jwt\.unsecured_algorithm_observed' "${CLI[@]}" workflows run jwt_review --input-file "$FIXTURES_ROOT/jwt/alg-none.jwt" --format pretty
 run_ok "workflow sbom_review fixture" "${CLI[@]}" workflows run sbom_review --input-file "$FIXTURES_ROOT/sbom/cyclonedx.json" --format pretty
 run_ok_require_output_pattern "workflow sbom_review output includes missing version signal" 'sbom\.component_version_not_observed' "${CLI[@]}" workflows run sbom_review --input-file "$FIXTURES_ROOT/sbom/cyclonedx.json" --format pretty
+run_ok "workflow package_manifest_review fixture" "${CLI[@]}" workflows run package_manifest_review --input-file "$FIXTURES_ROOT/package-json/basic-package.json" --format pretty
+run_ok_require_output_pattern "workflow package_manifest_review output includes package manager signal" 'package\.package_manager_not_observed' "${CLI[@]}" workflows run package_manifest_review --input-file "$FIXTURES_ROOT/package-json/basic-package.json" --format pretty
+run_ok "workflow lockfile_review fixture" "${CLI[@]}" workflows run lockfile_review --input-file "$FIXTURES_ROOT/lockfiles/package-lock.json" --format pretty
+run_ok_require_output_pattern "workflow lockfile_review output includes dependency graph signal" 'package\.lockfile_dependency_graph_observed' "${CLI[@]}" workflows run lockfile_review --input-file "$FIXTURES_ROOT/lockfiles/package-lock.json" --format pretty
 run_ok_require_output_pattern "workflow jwt_review json includes step count" '"step_count": 2' "${CLI[@]}" workflows run jwt_review --input-file "$FIXTURES_ROOT/jwt/alg-none.jwt" --format json
+run_ok_require_output_pattern "workflow package_manifest_review json includes step count" '"step_count": 2' "${CLI[@]}" workflows run package_manifest_review --input-file "$FIXTURES_ROOT/package-json/basic-package.json" --format json
+run_ok_require_output_pattern "workflow lockfile_review json includes step count" '"step_count": 2' "${CLI[@]}" workflows run lockfile_review --input-file "$FIXTURES_ROOT/lockfiles/package-lock.json" --format json
 
 run_ok "skills describe parse_jwt" "${CLI[@]}" skills describe parse_jwt
 run_ok "skills describe parse_jwt --format table" "${CLI[@]}" skills describe parse_jwt --format table

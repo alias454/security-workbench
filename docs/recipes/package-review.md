@@ -2,7 +2,7 @@
 
 Review parsed package manifest or lockfile artifacts for observed package metadata and inventory-quality signals.
 
-This recipe documents the manual `review_package` skill chains. It is not a registered workflow yet because package review has two valid parser entry points.
+This recipe documents two registered workflow variants because `review_package` has two valid parser entry points.
 
 ## Goal
 
@@ -33,7 +33,7 @@ fixtures/lockfiles/pnpm-lock.yaml
 fixtures/lockfiles/yarn.lock
 ```
 
-## Run the package manifest chain
+## Run the package manifest workflow
 
 Build the CLI once and capture the repo root for stable paths:
 
@@ -41,6 +41,28 @@ Build the CLI once and capture the repo root for stable paths:
 pnpm --filter @security-workbench/cli build
 REPO_ROOT="$(pwd)"
 ```
+
+Run the explicit `package_manifest_review` workflow:
+
+```bash
+(cd apps/cli && node dist/main.js workflows run package_manifest_review \
+  --input-file "$REPO_ROOT/fixtures/package-json/basic-package.json" \
+  --format pretty)
+```
+
+## Run the lockfile workflow
+
+Run the explicit `lockfile_review` workflow:
+
+```bash
+(cd apps/cli && node dist/main.js workflows run lockfile_review \
+  --input-file "$REPO_ROOT/fixtures/lockfiles/package-lock.json" \
+  --format pretty)
+```
+
+## Manual skill chains
+
+Use the manual chain when inspecting intermediate parser output.
 
 Parse `package.json`:
 
@@ -58,41 +80,17 @@ Review parsed package metadata:
   --format pretty)
 ```
 
-## Run the lockfile chain
-
-Parse a lockfile:
+Parse and review a lockfile:
 
 ```bash
 (cd apps/cli && node dist/main.js skills run parse_lockfiles \
   --input-file "$REPO_ROOT/fixtures/lockfiles/package-lock.json") \
   > /tmp/security-workbench-lockfile.parsed.json
-```
 
-Review parsed lockfile inventory:
-
-```bash
 (cd apps/cli && node dist/main.js skills run review_package \
   --input-file /tmp/security-workbench-lockfile.parsed.json \
   --format pretty)
 ```
-
-## Why this is not a registered workflow yet
-
-`review_package` supports more than one parser output:
-
-```text
-parse_package_json output
-parse_lockfiles output
-```
-
-A registered workflow should avoid ambiguous input routing. Future work can add explicit workflow variants such as:
-
-```text
-package_manifest_review
-lockfile_review
-```
-
-or add safe workflow input routing after repeated need proves it is worth the extra abstraction.
 
 ## Expected output
 

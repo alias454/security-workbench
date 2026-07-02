@@ -13,7 +13,7 @@ Recipes document the intended sequence, inputs, outputs, and limits for repeatab
 | [Certificate review](certificate-review.md) | Parse a PEM certificate artifact and review observed certificate metadata. |
 | [JWT review](jwt-review.md) | Parse a JWT and review observed header, claim, and signature metadata. |
 | [SBOM review](sbom-review.md) | Parse CycloneDX or SPDX SBOM JSON and review observed inventory quality. |
-| [Package review](package-review.md) | Manually chain package manifest or lockfile parsing into package metadata review. |
+| [Package review](package-review.md) | Run package manifest or lockfile review through explicit package review workflow variants. |
 
 ## Recipe rules
 

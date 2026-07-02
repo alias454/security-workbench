@@ -170,6 +170,15 @@ generate findings
 
 ## Package review examples
 
+Run explicit registered workflows from repo root:
+
+```bash
+pnpm --filter @security-workbench/cli start workflows run package_manifest_review --input-file "$PWD/fixtures/package-json/basic-package.json" --format pretty
+pnpm --filter @security-workbench/cli start workflows run lockfile_review --input-file "$PWD/fixtures/lockfiles/package-lock.json" --format pretty
+```
+
+Or run manual skill chains when inspecting intermediate parser output:
+
 ```bash
 pnpm --filter @security-workbench/cli start skills run parse_package_json --input-file "$PWD/fixtures/package-json/basic-package.json" > /tmp/package.parsed.json
 pnpm --filter @security-workbench/cli start skills run review_package --input-file /tmp/package.parsed.json --format pretty

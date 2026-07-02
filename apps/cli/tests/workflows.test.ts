@@ -8,6 +8,8 @@ describe("registered workflows", () => {
     expect([...byName.keys()]).toContain("certificate_review");
     expect([...byName.keys()]).toContain("jwt_review");
     expect([...byName.keys()]).toContain("sbom_review");
+    expect([...byName.keys()]).toContain("package_manifest_review");
+    expect([...byName.keys()]).toContain("lockfile_review");
 
     expect(byName.get("certificate_review")?.steps).toEqual([
       { id: "parse", skill: "parse_pem_certificate" },
@@ -20,6 +22,14 @@ describe("registered workflows", () => {
     expect(byName.get("sbom_review")?.steps).toEqual([
       { id: "parse", skill: "parse_sbom" },
       { id: "review", skill: "review_sbom", input_from: "parse" },
+    ]);
+    expect(byName.get("package_manifest_review")?.steps).toEqual([
+      { id: "parse", skill: "parse_package_json" },
+      { id: "review", skill: "review_package", input_from: "parse" },
+    ]);
+    expect(byName.get("lockfile_review")?.steps).toEqual([
+      { id: "parse", skill: "parse_lockfiles" },
+      { id: "review", skill: "review_package", input_from: "parse" },
     ]);
   });
 });

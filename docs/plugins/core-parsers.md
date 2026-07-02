@@ -200,7 +200,7 @@ fixture-backed smoke coverage
 ## Role in workflows
 
 ```text
-parse_package_json              → review_package manual recipe
+parse_package_json              → package_manifest_review
 parse_csv                       → export/review helpers
 parse_yaml                      → IaC/config/detection-rule plugins
 parse_browser_extension_manifest → browser_extension_review
@@ -212,7 +212,7 @@ parse_semgrep_json              → scanner native-output parsing/normalization/
 parse_checkov_json              → scanner native-output parsing/normalization
 parse_grype_json                → scanner native-output parsing/normalization
 parse_pem_certificate           → certificate_review
-parse_lockfiles                 → review_package manual recipe
+parse_lockfiles                 → lockfile_review
 parse_sbom                      → sbom_review
 parse_ip_prefix_list            → infrastructure/local-registry/prefix-membership workflows
 parse_asn_list                  → ASN/local-registry/infrastructure-clustering workflows
