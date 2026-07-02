@@ -470,10 +470,11 @@ run_ok_require_output_pattern "parser list includes parse_yaml" '^parse_yaml[[:s
 run_ok_require_output_pattern "parser list includes identify_hash" '^identify_hash[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes json_parse" '^json_parse[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes extract_iocs" '^extract_iocs[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
+run_ok_require_output_pattern "parser list includes extract_defanged_urls" '^extract_defanged_urls[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes extract_hashes" '^extract_hashes[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes extract_cves" '^extract_cves[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes extract_uuids" '^extract_uuids[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
-run_ok_reject_output_pattern "transform list excludes parser-observation skills" '^(identify_hash|json_parse|extract_iocs|extract_urls|extract_domains|extract_emails|extract_ipv4|extract_hashes|extract_cves|extract_uuids)[[:space:]]' "${CLI[@]}" skills list --category transform --format tsv
+run_ok_reject_output_pattern "transform list excludes parser-observation skills" '^(identify_hash|json_parse|extract_iocs|extract_urls|extract_defanged_urls|extract_domains|extract_emails|extract_ipv4|extract_hashes|extract_cves|extract_uuids)[[:space:]]' "${CLI[@]}" skills list --category transform --format tsv
 run_ok "skills list --category transform --format table" "${CLI[@]}" skills list --category transform --format table
 run_ok "skills list --category transform --format tsv" "${CLI[@]}" skills list --category transform --format tsv
 run_ok_require_output_pattern "transform list includes normalize_scanner_results" '^normalize_scanner_results[[:space:]]' "${CLI[@]}" skills list --category transform --format tsv
@@ -596,6 +597,8 @@ run_ok "extract_iocs from file" "${CLI[@]}" skills run extract_iocs --input-file
 run_ok "normalize_indicators inline" "${CLI[@]}" skills run normalize_indicators --input "hxxps://evil[.]example/login admin<at>evil<dot>example"
 run_ok_require_output_pattern "normalize_indicators output includes candidate limitation" 'does not confirm IOC status' "${CLI[@]}" skills run normalize_indicators --input "hxxps://evil[.]example/login admin<at>evil<dot>example" --format pretty
 run_ok "extract_urls from file" "${CLI[@]}" skills run extract_urls --input-file "$TMP_ROOT/iocs.txt"
+run_ok "extract_defanged_urls inline" "${CLI[@]}" skills run extract_defanged_urls --input "hxxps://evil[.]example/login hxxp://mirror<dot>example(.)net/file"
+run_ok_require_output_pattern "extract_defanged_urls output includes normalized URL" 'https://evil\.example/login' "${CLI[@]}" skills run extract_defanged_urls --input "hxxps://evil[.]example/login" --format pretty --unsafe
 run_ok "extract_domains from file" "${CLI[@]}" skills run extract_domains --input-file "$TMP_ROOT/iocs.txt"
 run_ok "extract_emails from file" "${CLI[@]}" skills run extract_emails --input-file "$TMP_ROOT/iocs.txt"
 run_ok "extract_ipv4 from file" "${CLI[@]}" skills run extract_ipv4 --input-file "$TMP_ROOT/iocs.txt"
@@ -845,6 +848,8 @@ run_ok_require_output_pattern "parse_bgp_prefix_table pretty output includes IPv
 run_ok "fixture extract_iocs mixed" "${CLI[@]}" skills run extract_iocs --input-file "$FIXTURES_ROOT/iocs/mixed-iocs.txt" --format pretty
 run_ok "fixture normalize_indicators defanged" "${CLI[@]}" skills run normalize_indicators --input-file "$FIXTURES_ROOT/iocs/defanged-indicators.txt" --format pretty
 run_ok_require_output_pattern "normalize_indicators fixture output includes email type" 'email_address' "${CLI[@]}" skills run normalize_indicators --input-file "$FIXTURES_ROOT/iocs/defanged-indicators.txt" --format pretty
+run_ok "fixture extract_defanged_urls defanged" "${CLI[@]}" skills run extract_defanged_urls --input-file "$FIXTURES_ROOT/iocs/defanged-indicators.txt" --format pretty
+run_ok_require_output_pattern "extract_defanged_urls fixture output includes artifact type" 'defanged_url_extraction' "${CLI[@]}" skills run extract_defanged_urls --input-file "$FIXTURES_ROOT/iocs/defanged-indicators.txt" --format pretty
 
 run_ok_require_output_pattern "extract_iocs pretty output defangs URLs" 'hxxps://evil\[.\]example\[.\]com/path' "${CLI[@]}" skills run extract_iocs --input-file "$FIXTURES_ROOT/iocs/mixed-iocs.txt" --format pretty
 run_ok_reject_output_pattern "extract_iocs pretty output hides raw URLs" 'https://evil\.example\.com/path' "${CLI[@]}" skills run extract_iocs --input-file "$FIXTURES_ROOT/iocs/mixed-iocs.txt" --format pretty

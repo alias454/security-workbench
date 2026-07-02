@@ -25,7 +25,7 @@ github-actions/      parse_github_actions_workflow
 http-headers/        parse_http_headers
 ip-prefixes/         parse_ip_prefix_list
 identifiers/         extract_cves, extract_uuids
-iocs/                extract_iocs and fang/refang helpers
+iocs/                extract_iocs, normalize_indicators, extract_defanged_urls, and fang/refang helpers
 jwt/                 parse_jwt, review_jwt
 lockfiles/           parse_lockfiles
 package-json/        parse_package_json
@@ -49,6 +49,7 @@ pnpm --filter @security-workbench/cli start skills run parse_lockfiles --input-f
 pnpm --filter @security-workbench/cli start skills run parse_sbom --input-file "$PWD/fixtures/sbom/cyclonedx.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_browser_extension_manifest --input-file "$PWD/fixtures/browser-extension/manifest-v3-basic.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run extract_iocs --input-file "$PWD/fixtures/iocs/mixed-iocs.txt" --format pretty
+pnpm --filter @security-workbench/cli start skills run extract_defanged_urls --input-file "$PWD/fixtures/iocs/defanged-indicators.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_ip_prefix_list --input-file "$PWD/fixtures/ip-prefixes/mixed-prefixes.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_asn_list --input-file "$PWD/fixtures/asn/asn-list.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_asn_allow_deny_list --input-file "$PWD/fixtures/asn/asn-allow-deny-list.txt" --format pretty
