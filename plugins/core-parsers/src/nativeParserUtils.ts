@@ -122,8 +122,23 @@ export function booleanValue(value: unknown): boolean | null {
   return null;
 }
 
+const blockedRecordPathKeys = new Set(["__proto__", "prototype", "constructor"]);
+
+function ownDataValue(record: JsonRecord, key: string): unknown {
+  if (blockedRecordPathKeys.has(key)) {
+    return undefined;
+  }
+
+  const descriptor = Object.getOwnPropertyDescriptor(record, key);
+  if (descriptor === undefined || !("value" in descriptor)) {
+    return undefined;
+  }
+
+  return descriptor.value;
+}
+
 export function recordValue(record: JsonRecord, key: string): JsonRecord | null {
-  const value = record[key];
+  const value = ownDataValue(record, key);
   return isRecord(value) ? value : null;
 }
 
@@ -163,7 +178,7 @@ export function nestedString(record: JsonRecord | null, path: readonly string[])
     if (!isRecord(current)) {
       return null;
     }
-    current = current[key];
+    current = ownDataValue(current, key);
   }
   return stringValue(current);
 }
@@ -174,7 +189,7 @@ export function nestedRecord(record: JsonRecord | null, path: readonly string[])
     if (!isRecord(current)) {
       return null;
     }
-    current = current[key];
+    current = ownDataValue(current, key);
   }
   return isRecord(current) ? current : null;
 }
