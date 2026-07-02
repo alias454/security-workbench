@@ -4,9 +4,11 @@ export { base64EncodeSkill } from "./base64Encode.js";
 export { calculateEntropySkill } from "./calculateEntropy.js";
 export { defangIocsSkill } from "./defangIocs.js";
 export { extractIocsSkill } from "./extractIocs.js";
+export { extractDefangedUrlsSkill } from "./extractDefangedUrls.js";
 export { extractDomainsSkill, extractEmailsSkill, extractHashesSkill, extractIpv4Skill, extractUrlsSkill } from "./extractSpecialized.js";
 export { extractCvesSkill, extractUuidsSkill } from "./extractIdentifiers.js";
 import { extractCvesSkill, extractUuidsSkill } from "./extractIdentifiers.js";
+import { extractDefangedUrlsSkill } from "./extractDefangedUrls.js";
 export { identifyHashSkill, md5HashSkill, sha1HashSkill, sha256HashSkill, sha512HashSkill } from "./hashValue.js";
 export { hexDecodeSkill } from "./hexDecode.js";
 export { hexEncodeSkill } from "./hexEncode.js";
@@ -71,6 +73,7 @@ export const skills = [
   defangIocsSkill,
   refangIocsSkill,
   normalizeIndicatorsSkill,
+  extractDefangedUrlsSkill,
   extractIocsSkill,
   htmlEntityDecodeSkill,
   unicodeEscapeDecodeSkill,

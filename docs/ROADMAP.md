@@ -34,7 +34,7 @@ pnpm typecheck:test
 ## Active sequence
 
 ```text
-1. Add remaining indicator and URL review lanes.
+1. Add remaining URL review lane primitives.
 2. Assess whether additional workflow output helpers are needed after more review chains land.
 ```
 
@@ -70,7 +70,6 @@ Later pipeline support should add broader skill input/output schema validation, 
 These are candidates for the next small PR stack after the active sequence starts.
 
 ```text
-extract_defang_urls
 url_review
 phishing_review
 typosquat_review
@@ -88,7 +87,6 @@ ai_workflow_review
 domain_security_review
 typosquat_review
 vulnerability_prioritization
-extract_defang_urls
 asn_cluster_iocs
 asn_denylist_review
 local_mac_vendor_lookup

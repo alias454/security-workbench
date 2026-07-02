@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 40
+Implemented skills: 41
 ```
 
 ## Purpose
@@ -41,7 +41,7 @@ lightweight parser-category utilities
 | Hashing/entropy | `identify_hash`, `md5_hash`, `sha1_hash`, `sha256_hash`, `sha512_hash`, `calculate_entropy` |
 | JSON | `json_parse`, `json_format` |
 | Normalization/lines | `string_normalize`, `trim_lines`, `remove_empty_lines`, `dedupe_lines`, `sort_lines`, `count_lines` |
-| Indicator helpers | `normalize_indicators`, `defang_iocs`, `refang_iocs`, `extract_iocs`, `extract_urls`, `extract_domains`, `extract_emails`, `extract_ipv4`, `extract_hashes`, `extract_cves`, `extract_uuids` |
+| Indicator helpers | `normalize_indicators`, `extract_defanged_urls`, `defang_iocs`, `refang_iocs`, `extract_iocs`, `extract_urls`, `extract_domains`, `extract_emails`, `extract_ipv4`, `extract_hashes`, `extract_cves`, `extract_uuids` |
 | Parser-lite | `parse_url`, `parse_jwt`, `parse_email_headers` |
 
 ## Boundary
@@ -81,11 +81,11 @@ text decoders do not execute decoded content
 calculate_entropy does not classify secrets
 string_normalize performs NFC only
 line utilities operate on one multiline string
-normalize_indicators and extractors are pattern-based, not intelligence lookups
+normalize_indicators, extract_defanged_urls, and extractors are pattern-based, not intelligence lookups
 parse_url redacts credentials
 parse_jwt does not verify signatures and does not expose the raw signature segment
 parse_email_headers performs no DNS/SPF/DKIM/DMARC/reputation checks
-normalize_indicators does not confirm IOC status or maliciousness
+normalize_indicators and extract_defanged_urls do not confirm IOC status or maliciousness
 ```
 
 CSV/YAML/artifact-aware parsing belongs in `core-parsers`, not here.
@@ -101,6 +101,7 @@ pnpm --filter @security-workbench/cli start skills list --category transform --f
 pnpm --filter @security-workbench/cli start skills list --category parser --format table
 pnpm --filter @security-workbench/cli start skills run extract_iocs --input-file "$PWD/fixtures/iocs/mixed-iocs.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run normalize_indicators --input-file "$PWD/fixtures/iocs/defanged-indicators.txt" --format pretty
+pnpm --filter @security-workbench/cli start skills run extract_defanged_urls --input-file "$PWD/fixtures/iocs/defanged-indicators.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_jwt --input-file "$PWD/fixtures/jwt/alg-none.jwt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_jwt --input-file "$PWD/fixtures/jwt/alg-none.jwt" > /tmp/jwt.parsed.json
 pnpm --filter @security-workbench/cli start skills run review_jwt --input-file /tmp/jwt.parsed.json --format pretty
@@ -122,7 +123,7 @@ local-only permission declarations
 index registration coverage
 redaction-sensitive URL/JWT behavior
 email header folding behavior
-indicator normalization, IOC extraction, and deduplication
+indicator normalization, defanged URL extraction, IOC extraction, and deduplication
 line utility behavior
 CLI input-file behavior through CLI tests
 ```
@@ -134,8 +135,8 @@ Core utilities are the substrate. Domain plugins should reuse these primitives i
 Examples:
 
 ```text
-plugin-url-triage      → parse_url, url_decode, normalize_indicators, extract_urls, defang_iocs
-plugin-email           → parse_email_headers, normalize_indicators, extract_urls, extract_emails
+plugin-url-triage      → parse_url, url_decode, normalize_indicators, extract_defanged_urls, extract_urls, defang_iocs
+plugin-email           → parse_email_headers, normalize_indicators, extract_defanged_urls, extract_urls, extract_emails
 jwt_review             → parse_jwt
 plugin-scanner-normalize → json_parse, extract_cves, line utilities
 plugin-browser-extension → json_parse, extract_domains
