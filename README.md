@@ -84,6 +84,9 @@ pnpm --filter @security-workbench/cli start skills run json_parse --input '{"ok"
 pnpm --filter @security-workbench/cli start workflows list --format table
 pnpm --filter @security-workbench/cli start workflows run browser_extension_review --input-file "$PWD/fixtures/browser-extension/manifest-v2-broad-hosts.json" --format pretty
 pnpm --filter @security-workbench/cli start workflows run static_analysis_triage --input-file "$PWD/fixtures/sarif/codeql-results.sarif" --format pretty
+pnpm --filter @security-workbench/cli start workflows run certificate_review --input-file "$PWD/fixtures/certificates/example-cert.pem" --format pretty
+pnpm --filter @security-workbench/cli start workflows run jwt_review --input-file "$PWD/fixtures/jwt/alg-none.jwt" --format pretty
+pnpm --filter @security-workbench/cli start workflows run sbom_review --input-file "$PWD/fixtures/sbom/cyclonedx.json" --format pretty
 ```
 
 Fixture examples use `$PWD` from the repo root:
@@ -137,6 +140,21 @@ parse_sarif
   → score_static_analysis_attention
   → generate_static_analysis_triage_summary
 ```
+
+Additional registered parser-to-reviewer workflows cover unambiguous local review chains:
+
+```text
+parse_pem_certificate
+  → review_certificate
+
+parse_jwt
+  → review_jwt
+
+parse_sbom
+  → review_sbom
+```
+
+`package_review` is documented as a manual recipe for now because it has two valid parser entry points: `parse_package_json` and `parse_lockfiles`.
 
 Detailed behavior lives in the core parser, reviewer, scoring, and output plugin docs.
 

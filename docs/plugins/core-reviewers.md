@@ -119,6 +119,16 @@ generate findings
 
 ## SBOM review example
 
+Run the registered workflow from repo root:
+
+```bash
+pnpm --filter @security-workbench/cli start workflows run sbom_review \
+  --input-file "$PWD/fixtures/sbom/cyclonedx.json" \
+  --format pretty
+```
+
+Or run the manual skill chain:
+
 ```bash
 pnpm --filter @security-workbench/cli start skills run parse_sbom --input-file "$PWD/fixtures/sbom/cyclonedx.json" > /tmp/sbom.parsed.json
 pnpm --filter @security-workbench/cli start skills run review_sbom --input-file /tmp/sbom.parsed.json --format pretty
@@ -300,7 +310,15 @@ generate findings
 
 ## Certificate review example
 
-Run from repo root:
+Run the registered workflow from repo root:
+
+```bash
+pnpm --filter @security-workbench/cli start workflows run certificate_review \
+  --input-file "$PWD/fixtures/certificates/example-cert.pem" \
+  --format pretty
+```
+
+Or run the manual skill chain:
 
 ```bash
 pnpm --filter @security-workbench/cli start skills run parse_pem_certificate \
@@ -356,7 +374,15 @@ generate findings
 
 ## JWT review example
 
-Run from repo root:
+Run the registered workflow from repo root:
+
+```bash
+pnpm --filter @security-workbench/cli start workflows run jwt_review \
+  --input-file "$PWD/fixtures/jwt/alg-none.jwt" \
+  --format pretty
+```
+
+Or run the manual skill chain:
 
 ```bash
 pnpm --filter @security-workbench/cli start skills run parse_jwt \
