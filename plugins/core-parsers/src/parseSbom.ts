@@ -179,7 +179,7 @@ function externalReference(value: unknown): SbomExternalReferenceObservation | n
   }
 
   return {
-    type: stringValue(value.type) ?? stringValue(value.referenceCategory) ?? stringValue(value.referenceType),
+    type: stringValue(value.type) ?? stringValue(value.referenceType) ?? stringValue(value.referenceCategory),
     url: stringValue(value.url) ?? stringValue(value.referenceLocator),
   };
 }
