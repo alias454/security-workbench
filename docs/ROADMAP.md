@@ -34,8 +34,7 @@ pnpm typecheck:test
 ## Active sequence
 
 ```text
-1. Add package review.
-2. Add email, IOC, and URL review lanes.
+1. Add email, IOC, and URL review lanes.
 ```
 
 Sequence rule:
@@ -65,7 +64,13 @@ Later pipeline support should add broader skill input/output schema validation, 
 These are candidates for the next small PR stack after the active sequence starts.
 
 ```text
-package_review
+email_header_review
+ioc_cleanup
+extract_defang_urls
+url_review
+phishing_review
+security_headers_review
+typosquat_review
 ```
 
 ## Workflow backlog
