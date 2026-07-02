@@ -6,6 +6,7 @@ import { reviewSbomSkill } from "./reviewSbom.js";
 import { reviewPackageSkill } from "./reviewPackage.js";
 import { reviewEmailHeaderSkill } from "./reviewEmailHeader.js";
 import { reviewSecurityHeadersSkill } from "./reviewSecurityHeaders.js";
+import { reviewUrlSkill } from "./reviewUrl.js";
 
 export {
   reviewBrowserExtensionPermissions,
@@ -27,6 +28,7 @@ export { reviewSbom, reviewSbomSkill } from "./reviewSbom.js";
 export { reviewPackage, reviewPackageSkill } from "./reviewPackage.js";
 export { reviewEmailHeader, reviewEmailHeaderSkill } from "./reviewEmailHeader.js";
 export { reviewSecurityHeaders, reviewSecurityHeadersSkill } from "./reviewSecurityHeaders.js";
+export { reviewUrl, reviewUrlSkill } from "./reviewUrl.js";
 export type {
   StaticAnalysisReviewOutput,
   StaticAnalysisReviewResultObservation,
@@ -38,6 +40,7 @@ export type {
 export type { JwtReviewOutput } from "./reviewJwt.js";
 export type { EmailAuthenticationResultObservation, EmailHeaderReviewOutput } from "./reviewEmailHeader.js";
 export type { SecurityHeaderCookieObservation, SecurityHeadersReviewOutput } from "./reviewSecurityHeaders.js";
+export type { UrlReviewOutput, UrlReviewUrlObservation } from "./reviewUrl.js";
 export type { SbomReviewComponentObservation, SbomReviewOutput } from "./reviewSbom.js";
 export type {
   PackageReviewDependencySectionObservation,
@@ -54,4 +57,5 @@ export const skills = [
   reviewPackageSkill,
   reviewEmailHeaderSkill,
   reviewSecurityHeadersSkill,
+  reviewUrlSkill,
 ] as const;
