@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 6
+Implemented skills: 7
 ```
 
 ## Purpose
@@ -42,6 +42,7 @@ no findings
 | `review_jwt` | `parse_jwt` output or JSON run result | evidence-backed signals for parsed JWT header and claim metadata |
 | `review_sbom` | `parse_sbom` output or JSON run result | evidence-backed SBOM inventory-quality signals without vulnerability lookup |
 | `review_package` | `parse_package_json` or `parse_lockfiles` output, or JSON run result | evidence-backed package manifest and lockfile review signals without package installation or vulnerability lookup |
+| `review_email_header` | `parse_email_headers` output or JSON run result | evidence-backed email header routing, authentication-result, and identity-mismatch observations without DNS validation or phishing verdicts |
 
 ## `review_browser_extension_permissions`
 
@@ -134,6 +135,60 @@ pnpm --filter @security-workbench/cli start skills run parse_sbom --input-file "
 pnpm --filter @security-workbench/cli start skills run review_sbom --input-file /tmp/sbom.parsed.json --format pretty
 ```
 
+
+## `review_email_header`
+
+Reviews normalized email header observations from `parse_email_headers`.
+
+Input must be one of:
+
+```text
+parse_email_headers output object
+JSON string containing parse_email_headers output
+JSON string containing a full skill run result whose output is parse_email_headers output
+```
+
+It reports:
+
+```text
+source parser and warning count
+header count
+duplicate header names
+Received header count
+Authentication-Results count
+observed From/To/Subject/Date/Message-ID presence
+Reply-To, Return-Path, and Sender domain observations
+Authentication-Results mechanisms and failed/error outcomes from header text
+evidence records
+signal records
+explicit limitations
+```
+
+It does not:
+
+```text
+perform DNS lookup
+validate SPF, DKIM, DMARC, ARC, or BIMI
+perform reputation checks
+inspect message body, attachments, links, or landing pages
+classify a message as phishing, spam, malicious, benign, delivered, or blocked
+score risk
+generate findings
+```
+
+## Email header review example
+
+Run the manual skill chain from repo root:
+
+```bash
+pnpm --filter @security-workbench/cli start skills run parse_email_headers \
+  --input-file "$PWD/fixtures/email/auth-results-headers.txt" \
+  > /tmp/email-headers.parsed.json
+
+pnpm --filter @security-workbench/cli start skills run review_email_header \
+  --input-file /tmp/email-headers.parsed.json \
+  --format pretty
+```
 
 ## `review_package`
 

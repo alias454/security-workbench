@@ -515,6 +515,7 @@ run_ok "skills describe parse_jwt --format table" "${CLI[@]}" skills describe pa
 run_ok "skills describe parse_jwt --format json" "${CLI[@]}" skills describe parse_jwt --format json
 run_ok "skills describe parse_jwt --format tsv" "${CLI[@]}" skills describe parse_jwt --format tsv
 run_ok "skills describe parse_email_headers --format table" "${CLI[@]}" skills describe parse_email_headers --format table
+run_ok "skills describe review_email_header --format table" "${CLI[@]}" skills describe review_email_header --format table
 run_ok "skills describe parse_http_headers --format table" "${CLI[@]}" skills describe parse_http_headers --format table
 run_ok "skills describe parse_dockerfile --format table" "${CLI[@]}" skills describe parse_dockerfile --format table
 run_ok "skills describe parse_github_actions_workflow --format table" "${CLI[@]}" skills describe parse_github_actions_workflow --format table
@@ -703,10 +704,12 @@ run_ok "skills describe review_sbom --format table" "${CLI[@]}" skills describe 
 run_ok_require_output_pattern "reviewer list includes review_sbom" '^review_sbom[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
 run_ok "skills describe review_package --format table" "${CLI[@]}" skills describe review_package --format table
 run_ok_require_output_pattern "reviewer list includes review_package" '^review_package[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
+run_ok_require_output_pattern "reviewer list includes review_email_header" '^review_email_header[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
 run_expect_fail "review_certificate rejects raw certificate-like object" "${CLI[@]}" skills run review_certificate --input '{"subject":"CN=raw"}'
 run_expect_fail "review_jwt rejects raw claim-like object" "${CLI[@]}" skills run review_jwt --input '{"sub":"123"}'
 run_expect_fail "review_sbom rejects raw package-like object" "${CLI[@]}" skills run review_sbom --input '{"name":"raw-package"}'
 run_expect_fail "review_package rejects raw package-like object" "${CLI[@]}" skills run review_package --input '{"name":"raw-package"}'
+run_expect_fail "review_email_header rejects raw header-like object" "${CLI[@]}" skills run review_email_header --input '{"from":"alerts@example.com"}'
 
 CERT_REVIEW_INPUT="$TMP_ROOT/certificate.parsed.json"
 CERT_REVIEW_SCRIPT="$TMP_ROOT/review-certificate.sh"
@@ -782,6 +785,19 @@ run_ok_require_output_pattern "review_package lockfile pretty output includes de
 run_ok "fixture parse_http_headers duplicate headers" "${CLI[@]}" skills run parse_http_headers --input-file "$FIXTURES_ROOT/http-headers/duplicate-headers.txt" --format pretty
 run_ok "fixture parse_http_headers malformed headers" "${CLI[@]}" skills run parse_http_headers --input-file "$FIXTURES_ROOT/http-headers/malformed-headers.txt" --format pretty
 run_ok "fixture parse_email_headers sample" "${CLI[@]}" skills run parse_email_headers --input-file "$FIXTURES_ROOT/email/sample-headers.txt" --format pretty
+
+EMAIL_HEADER_REVIEW_INPUT="$TMP_ROOT/email-headers.parsed.json"
+EMAIL_HEADER_REVIEW_SCRIPT="$TMP_ROOT/review-email-header.sh"
+cat >"$EMAIL_HEADER_REVIEW_SCRIPT" <<SCRIPT
+#!/usr/bin/env bash
+set -euo pipefail
+pnpm --filter @security-workbench/cli start skills run parse_email_headers --input-file "$FIXTURES_ROOT/email/sample-headers.txt" > "$EMAIL_HEADER_REVIEW_INPUT"
+pnpm --filter @security-workbench/cli start skills run review_email_header --input-file "$EMAIL_HEADER_REVIEW_INPUT" --format pretty
+SCRIPT
+chmod +x "$EMAIL_HEADER_REVIEW_SCRIPT"
+
+run_ok "fixture review_email_header sample" "$EMAIL_HEADER_REVIEW_SCRIPT"
+run_ok_require_output_pattern "review_email_header pretty output includes missing auth results signal" 'email_header\.authentication_results_not_observed' "$EMAIL_HEADER_REVIEW_SCRIPT"
 run_ok "fixture parse_csv assets" "${CLI[@]}" skills run parse_csv --input-file "$FIXTURES_ROOT/csv/assets.csv" --format pretty
 run_ok "fixture parse_csv irregular rows" "${CLI[@]}" skills run parse_csv --input-file "$FIXTURES_ROOT/csv/irregular-rows.csv" --format pretty
 run_ok "fixture parse_yaml app config" "${CLI[@]}" skills run parse_yaml --input-file "$FIXTURES_ROOT/yaml/app-config.yaml" --format pretty

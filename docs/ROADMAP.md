@@ -34,7 +34,7 @@ pnpm typecheck:test
 ## Active sequence
 
 ```text
-1. Add email, IOC, and URL review lanes.
+1. Add remaining header, IOC, and URL review lanes.
 2. Assess whether additional workflow output helpers are needed after more review chains land.
 ```
 
@@ -70,7 +70,6 @@ Later pipeline support should add broader skill input/output schema validation, 
 These are candidates for the next small PR stack after the active sequence starts.
 
 ```text
-email_header_review
 ioc_cleanup
 extract_defang_urls
 url_review
