@@ -24,10 +24,10 @@ CLI only
 Current registered skills:
 
 ```text
-78 total
-39 core-utilities
+81 total
+40 core-utilities
 24 core-parsers
-8 core-reviewers
+10 core-reviewers
 2 core-scoring
 5 core-output
 transform, parser, reviewer, scoring, and output categories
@@ -37,9 +37,9 @@ transform, parser, reviewer, scoring, and output categories
 
 | Package | Skills | Role |
 |---|---:|---|
-| `plugins/core-utilities` | 39 | deterministic transforms and lightweight parser-category utilities |
+| `plugins/core-utilities` | 40 | deterministic transforms and lightweight parser-category utilities |
 | `plugins/core-parsers` | 24 | richer local artifact/document parsers and scanner normalization transforms |
-| `plugins/core-reviewers` | 8 | deterministic local evidence-backed reviewer skills |
+| `plugins/core-reviewers` | 10 | deterministic local evidence-backed reviewer skills |
 | `plugins/core-scoring` | 2 | deterministic local evidence-linked prioritization skills |
 | `plugins/core-output` | 5 | deterministic local finding and export output skills |
 
@@ -69,6 +69,7 @@ unicode_escape_decode
 quoted_printable_decode
 defang_iocs
 refang_iocs
+normalize_indicators
 extract_iocs
 extract_urls
 extract_domains

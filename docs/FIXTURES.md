@@ -38,7 +38,7 @@ fixtures/http-headers/        parse_http_headers
 fixtures/ip-prefixes/         parse_ip_prefix_list
 fixtures/asn/                 ASN parser fixtures
 fixtures/identifiers/         extract_cves, extract_uuids
-fixtures/iocs/                extract_iocs and fang/refang helpers
+fixtures/iocs/                extract_iocs, normalize_indicators, and fang/refang helpers
 fixtures/jwt/                 parse_jwt, review_jwt
 fixtures/lockfiles/           parse_lockfiles
 fixtures/sbom/                parse_sbom, review_sbom
@@ -77,6 +77,7 @@ pnpm --filter @security-workbench/cli start skills run parse_jwt --input-file "$
 pnpm --filter @security-workbench/cli start skills run parse_jwt --input-file "$PWD/fixtures/jwt/alg-none.jwt" > /tmp/jwt.parsed.json
 pnpm --filter @security-workbench/cli start skills run review_jwt --input-file /tmp/jwt.parsed.json --format pretty
 pnpm --filter @security-workbench/cli start skills run extract_iocs --input-file "$PWD/fixtures/iocs/mixed-iocs.txt" --format pretty
+pnpm --filter @security-workbench/cli start skills run normalize_indicators --input-file "$PWD/fixtures/iocs/defanged-indicators.txt" --format pretty
 ```
 
 Use `$PWD/...` because `pnpm --filter` may run from package directories.

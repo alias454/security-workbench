@@ -119,6 +119,7 @@ pnpm --filter @security-workbench/cli start skills run parse_email_headers --inp
 pnpm --filter @security-workbench/cli start skills run review_email_header --input-file /tmp/email-headers.parsed.json --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_http_headers --input-file "$PWD/fixtures/http-headers/security-headers.txt" > /tmp/http-headers.parsed.json
 pnpm --filter @security-workbench/cli start skills run review_security_headers --input-file /tmp/http-headers.parsed.json --format pretty
+pnpm --filter @security-workbench/cli start skills run normalize_indicators --input-file "$PWD/fixtures/iocs/defanged-indicators.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_browser_extension_manifest --input-file "$PWD/fixtures/browser-extension/manifest-v3-basic.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_ip_prefix_list --input-file "$PWD/fixtures/ip-prefixes/mixed-prefixes.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_asn_list --input-file "$PWD/fixtures/asn/asn-list.txt" --format pretty
