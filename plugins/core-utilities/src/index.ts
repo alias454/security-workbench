@@ -19,6 +19,7 @@ export { parseJwtSkill } from "./parseJwt.js";
 export { parseUrlSkill } from "./parseUrl.js";
 export { quotedPrintableDecodeSkill } from "./quotedPrintableDecode.js";
 export { refangIocsSkill } from "./refangIocs.js";
+export { normalizeIndicatorsSkill } from "./normalizeIndicators.js";
 export { rot13Skill } from "./rot13.js";
 export { stringNormalizeSkill } from "./stringNormalize.js";
 export { unicodeEscapeDecodeSkill } from "./unicodeEscapeDecode.js";
@@ -44,6 +45,7 @@ import { parseJwtSkill } from "./parseJwt.js";
 import { parseUrlSkill } from "./parseUrl.js";
 import { quotedPrintableDecodeSkill } from "./quotedPrintableDecode.js";
 import { refangIocsSkill } from "./refangIocs.js";
+import { normalizeIndicatorsSkill } from "./normalizeIndicators.js";
 import { rot13Skill } from "./rot13.js";
 import { stringNormalizeSkill } from "./stringNormalize.js";
 import { unicodeEscapeDecodeSkill } from "./unicodeEscapeDecode.js";
@@ -68,6 +70,7 @@ export const skills = [
   stringNormalizeSkill,
   defangIocsSkill,
   refangIocsSkill,
+  normalizeIndicatorsSkill,
   extractIocsSkill,
   htmlEntityDecodeSkill,
   unicodeEscapeDecodeSkill,

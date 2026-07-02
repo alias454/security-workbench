@@ -36,7 +36,7 @@ describe("core-utilities skill registry", () => {
       expect(categories.get(parserName)).toBe("parser");
     }
 
-    for (const transformName of ["md5_hash", "sha1_hash", "sha256_hash", "sha512_hash", "json_format", "count_lines"]) {
+    for (const transformName of ["md5_hash", "sha1_hash", "sha256_hash", "sha512_hash", "json_format", "count_lines", "normalize_indicators"]) {
       expect(categories.get(transformName)).toBe("transform");
     }
   });
