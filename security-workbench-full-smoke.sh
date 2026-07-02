@@ -480,6 +480,7 @@ run_ok_require_output_pattern "transform list includes normalize_scanner_results
 run_ok_require_output_pattern "transform list includes dedupe_scanner_results" '^dedupe_scanner_results[[:space:]]' "${CLI[@]}" skills list --category transform --format tsv
 run_ok_require_output_pattern "transform list includes scanner_summary" '^scanner_summary[[:space:]]' "${CLI[@]}" skills list --category transform --format tsv
 run_ok_require_output_pattern "transform list includes merge_scanner_results" '^merge_scanner_results[[:space:]]' "${CLI[@]}" skills list --category transform --format tsv
+run_ok_require_output_pattern "transform list includes normalize_indicators" '^normalize_indicators[[:space:]]' "${CLI[@]}" skills list --category transform --format tsv
 
 run_ok "workflows list" "${CLI[@]}" workflows list
 run_ok "workflows list --format table" "${CLI[@]}" workflows list --format table
@@ -592,6 +593,8 @@ run_ok_reject_output_pattern "defang_iocs from file idempotency assertion" '\[\[
 run_ok "refang_iocs inline" "${CLI[@]}" skills run refang_iocs --input "hxxps://evil[.]example[.]com/path admin[@]example[.]com"
 run_ok "refang_iocs alternate forms" "${CLI[@]}" skills run refang_iocs --input "evil(dot)example[dot]com admin(at)example(.)com"
 run_ok "extract_iocs from file" "${CLI[@]}" skills run extract_iocs --input-file "$TMP_ROOT/iocs.txt"
+run_ok "normalize_indicators inline" "${CLI[@]}" skills run normalize_indicators --input "hxxps://evil[.]example/login admin<at>evil<dot>example"
+run_ok_require_output_pattern "normalize_indicators output includes candidate limitation" 'does not confirm IOC status' "${CLI[@]}" skills run normalize_indicators --input "hxxps://evil[.]example/login admin<at>evil<dot>example" --format pretty
 run_ok "extract_urls from file" "${CLI[@]}" skills run extract_urls --input-file "$TMP_ROOT/iocs.txt"
 run_ok "extract_domains from file" "${CLI[@]}" skills run extract_domains --input-file "$TMP_ROOT/iocs.txt"
 run_ok "extract_emails from file" "${CLI[@]}" skills run extract_emails --input-file "$TMP_ROOT/iocs.txt"
@@ -840,6 +843,8 @@ run_ok "fixture parse_bgp_prefix_table malformed prefix table" "${CLI[@]}" skill
 run_ok_require_output_pattern "parse_bgp_prefix_table pretty output includes conflict summary" 'Conflicting prefixes: 1' "${CLI[@]}" skills run parse_bgp_prefix_table --input-file "$FIXTURES_ROOT/asn/bgp-prefix-table.txt" --format pretty
 run_ok_require_output_pattern "parse_bgp_prefix_table pretty output includes IPv6 count" 'IPv6 prefixes: 1' "${CLI[@]}" skills run parse_bgp_prefix_table --input-file "$FIXTURES_ROOT/asn/bgp-prefix-table.txt" --format pretty
 run_ok "fixture extract_iocs mixed" "${CLI[@]}" skills run extract_iocs --input-file "$FIXTURES_ROOT/iocs/mixed-iocs.txt" --format pretty
+run_ok "fixture normalize_indicators defanged" "${CLI[@]}" skills run normalize_indicators --input-file "$FIXTURES_ROOT/iocs/defanged-indicators.txt" --format pretty
+run_ok_require_output_pattern "normalize_indicators fixture output includes email type" 'email_address' "${CLI[@]}" skills run normalize_indicators --input-file "$FIXTURES_ROOT/iocs/defanged-indicators.txt" --format pretty
 
 run_ok_require_output_pattern "extract_iocs pretty output defangs URLs" 'hxxps://evil\[.\]example\[.\]com/path' "${CLI[@]}" skills run extract_iocs --input-file "$FIXTURES_ROOT/iocs/mixed-iocs.txt" --format pretty
 run_ok_reject_output_pattern "extract_iocs pretty output hides raw URLs" 'https://evil\.example\.com/path' "${CLI[@]}" skills run extract_iocs --input-file "$FIXTURES_ROOT/iocs/mixed-iocs.txt" --format pretty
