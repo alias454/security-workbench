@@ -463,6 +463,7 @@ run_ok_require_output_pattern "parser list includes parse_checkov_json" '^parse_
 run_ok_require_output_pattern "parser list includes parse_grype_json" '^parse_grype_json[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes parse_pem_certificate" '^parse_pem_certificate[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes parse_lockfiles" '^parse_lockfiles[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
+run_ok_require_output_pattern "parser list includes parse_sbom" '^parse_sbom[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes parse_package_json" '^parse_package_json[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes parse_csv" '^parse_csv[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
 run_ok_require_output_pattern "parser list includes parse_yaml" '^parse_yaml[[:space:]]' "${CLI[@]}" skills list --category parser --format tsv
@@ -506,6 +507,7 @@ run_ok "skills describe parse_checkov_json --format table" "${CLI[@]}" skills de
 run_ok "skills describe parse_grype_json --format table" "${CLI[@]}" skills describe parse_grype_json --format table
 run_ok "skills describe parse_pem_certificate --format table" "${CLI[@]}" skills describe parse_pem_certificate --format table
 run_ok "skills describe parse_lockfiles --format table" "${CLI[@]}" skills describe parse_lockfiles --format table
+run_ok "skills describe parse_sbom --format table" "${CLI[@]}" skills describe parse_sbom --format table
 run_ok "skills describe normalize_scanner_results --format table" "${CLI[@]}" skills describe normalize_scanner_results --format table
 run_ok "skills describe dedupe_scanner_results --format table" "${CLI[@]}" skills describe dedupe_scanner_results --format table
 run_ok "skills describe scanner_summary --format table" "${CLI[@]}" skills describe scanner_summary --format table
@@ -679,8 +681,11 @@ run_ok "skills describe review_certificate --format table" "${CLI[@]}" skills de
 run_ok_require_output_pattern "reviewer list includes review_certificate" '^review_certificate[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
 run_ok "skills describe review_jwt --format table" "${CLI[@]}" skills describe review_jwt --format table
 run_ok_require_output_pattern "reviewer list includes review_jwt" '^review_jwt[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
+run_ok "skills describe review_sbom --format table" "${CLI[@]}" skills describe review_sbom --format table
+run_ok_require_output_pattern "reviewer list includes review_sbom" '^review_sbom[[:space:]]' "${CLI[@]}" skills list --category reviewer --format tsv
 run_expect_fail "review_certificate rejects raw certificate-like object" "${CLI[@]}" skills run review_certificate --input '{"subject":"CN=raw"}'
 run_expect_fail "review_jwt rejects raw claim-like object" "${CLI[@]}" skills run review_jwt --input '{"sub":"123"}'
+run_expect_fail "review_sbom rejects raw package-like object" "${CLI[@]}" skills run review_sbom --input '{"name":"raw-package"}'
 
 CERT_REVIEW_INPUT="$TMP_ROOT/certificate.parsed.json"
 CERT_REVIEW_SCRIPT="$TMP_ROOT/review-certificate.sh"
@@ -707,6 +712,23 @@ chmod +x "$JWT_REVIEW_SCRIPT"
 
 run_ok "fixture review_jwt alg none" "$JWT_REVIEW_SCRIPT"
 run_ok_require_output_pattern "review_jwt pretty output includes alg none signal" 'jwt\.unsecured_algorithm_observed' "$JWT_REVIEW_SCRIPT"
+
+SBOM_REVIEW_INPUT="$TMP_ROOT/sbom.parsed.json"
+SBOM_REVIEW_SCRIPT="$TMP_ROOT/review-sbom.sh"
+cat >"$SBOM_REVIEW_SCRIPT" <<SCRIPT
+#!/usr/bin/env bash
+set -euo pipefail
+pnpm --filter @security-workbench/cli start skills run parse_sbom --input-file "$FIXTURES_ROOT/sbom/cyclonedx.json" > "$SBOM_REVIEW_INPUT"
+pnpm --filter @security-workbench/cli start skills run review_sbom --input-file "$SBOM_REVIEW_INPUT" --format pretty
+SCRIPT
+chmod +x "$SBOM_REVIEW_SCRIPT"
+
+run_ok "fixture parse_sbom CycloneDX" "${CLI[@]}" skills run parse_sbom --input-file "$FIXTURES_ROOT/sbom/cyclonedx.json" --format pretty
+run_ok_require_output_pattern "parse_sbom CycloneDX pretty output includes component count" '"component_count": 3' "${CLI[@]}" skills run parse_sbom --input-file "$FIXTURES_ROOT/sbom/cyclonedx.json" --format pretty
+run_ok "fixture parse_sbom SPDX" "${CLI[@]}" skills run parse_sbom --input-file "$FIXTURES_ROOT/sbom/spdx.json" --format pretty
+run_ok_require_output_pattern "parse_sbom SPDX pretty output includes relationship count" '"relationship_count": 2' "${CLI[@]}" skills run parse_sbom --input-file "$FIXTURES_ROOT/sbom/spdx.json" --format pretty
+run_ok "fixture review_sbom CycloneDX" "$SBOM_REVIEW_SCRIPT"
+run_ok_require_output_pattern "review_sbom pretty output includes missing version signal" 'sbom\.component_version_not_observed' "$SBOM_REVIEW_SCRIPT"
 run_ok "fixture parse_lockfiles package lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/package-lock.json" --format pretty
 run_ok "fixture parse_lockfiles pnpm lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/pnpm-lock.yaml" --format pretty
 run_ok "fixture parse_lockfiles yarn lock" "${CLI[@]}" skills run parse_lockfiles --input-file "$FIXTURES_ROOT/lockfiles/yarn.lock" --format pretty

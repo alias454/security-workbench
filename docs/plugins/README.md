@@ -104,6 +104,7 @@ scanner_summary
 merge_scanner_results
 parse_pem_certificate
 parse_lockfiles
+parse_sbom
 parse_package_json
 parse_csv
 parse_yaml
@@ -122,6 +123,7 @@ review_browser_extension_permissions
 review_static_analysis_results
 review_certificate
 review_jwt
+review_sbom
 ```
 
 ## core-scoring inventory

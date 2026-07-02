@@ -12,7 +12,7 @@ Execution: local-only
 Network: none
 Persistence: none
 External binaries: none
-Implemented skills: 4
+Implemented skills: 5
 ```
 
 ## Purpose
@@ -40,6 +40,7 @@ no findings
 | `review_static_analysis_results` | `parse_sarif` output or JSON run result | evidence-backed signals for SARIF static-analysis result triage |
 | `review_certificate` | `parse_pem_certificate` output or JSON run result | evidence-backed signals for parsed X.509 certificate metadata |
 | `review_jwt` | `parse_jwt` output or JSON run result | evidence-backed signals for parsed JWT header and claim metadata |
+| `review_sbom` | `parse_sbom` output or JSON run result | evidence-backed SBOM inventory-quality signals without vulnerability lookup |
 
 ## `review_browser_extension_permissions`
 
@@ -84,6 +85,42 @@ contact browser stores
 resolve update URLs
 perform network lookups
 generate findings
+```
+
+## `review_sbom`
+
+Reviews parsed SBOM inventory observations from CycloneDX or SPDX JSON.
+
+It reports:
+
+```text
+component and package counts
+missing observed versions
+missing observed license metadata
+missing observed supplier metadata
+unresolved SPDX download-location markers
+external reference presence
+evidence records
+signal records
+explicit limitations
+```
+
+It does not:
+
+```text
+perform vulnerability lookup
+resolve package reputation or maintainer trust
+validate SBOM provenance or signatures
+perform network enrichment
+score risk
+generate findings
+```
+
+## SBOM review example
+
+```bash
+pnpm --filter @security-workbench/cli start skills run parse_sbom --input-file "$PWD/fixtures/sbom/cyclonedx.json" > /tmp/sbom.parsed.json
+pnpm --filter @security-workbench/cli start skills run review_sbom --input-file /tmp/sbom.parsed.json --format pretty
 ```
 
 ## Permission declaration
