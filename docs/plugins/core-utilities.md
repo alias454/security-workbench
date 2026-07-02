@@ -105,6 +105,8 @@ pnpm --filter @security-workbench/cli start workflows run jwt_review --input-fil
 pnpm --filter @security-workbench/cli start workflows run package_manifest_review --input-file "$PWD/fixtures/package-json/basic-package.json" --format pretty
 pnpm --filter @security-workbench/cli start workflows run lockfile_review --input-file "$PWD/fixtures/lockfiles/package-lock.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_email_headers --input-file "$PWD/fixtures/email/sample-headers.txt" --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_email_headers --input-file "$PWD/fixtures/email/auth-results-headers.txt" > /tmp/email-headers.parsed.json
+pnpm --filter @security-workbench/cli start skills run review_email_header --input-file /tmp/email-headers.parsed.json --format pretty
 ```
 
 ## Test themes

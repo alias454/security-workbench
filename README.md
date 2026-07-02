@@ -115,6 +115,8 @@ pnpm --filter @security-workbench/cli start skills run parse_lockfiles --input-f
 pnpm --filter @security-workbench/cli start skills run review_package --input-file /tmp/lockfile.parsed.json --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_package_json --input-file "$PWD/fixtures/package-json/basic-package.json" > /tmp/package.parsed.json
 pnpm --filter @security-workbench/cli start skills run review_package --input-file /tmp/package.parsed.json --format pretty
+pnpm --filter @security-workbench/cli start skills run parse_email_headers --input-file "$PWD/fixtures/email/auth-results-headers.txt" > /tmp/email-headers.parsed.json
+pnpm --filter @security-workbench/cli start skills run review_email_header --input-file /tmp/email-headers.parsed.json --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_browser_extension_manifest --input-file "$PWD/fixtures/browser-extension/manifest-v3-basic.json" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_ip_prefix_list --input-file "$PWD/fixtures/ip-prefixes/mixed-prefixes.txt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_asn_list --input-file "$PWD/fixtures/asn/asn-list.txt" --format pretty
