@@ -54,4 +54,61 @@ export const staticAnalysisTriageWorkflow: WorkflowDefinition = {
   ],
 };
 
-export const workflows = [browserExtensionReviewWorkflow, staticAnalysisTriageWorkflow] as const;
+export const certificateReviewWorkflow: WorkflowDefinition = {
+  name: "certificate_review",
+  version: "0.1.0",
+  description: "Parse a PEM certificate artifact and review observed certificate metadata.",
+  steps: [
+    {
+      id: "parse",
+      skill: "parse_pem_certificate",
+    },
+    {
+      id: "review",
+      skill: "review_certificate",
+      input_from: "parse",
+    },
+  ],
+};
+
+export const jwtReviewWorkflow: WorkflowDefinition = {
+  name: "jwt_review",
+  version: "0.1.0",
+  description: "Parse a JWT and review observed header, claim, and signature metadata.",
+  steps: [
+    {
+      id: "parse",
+      skill: "parse_jwt",
+    },
+    {
+      id: "review",
+      skill: "review_jwt",
+      input_from: "parse",
+    },
+  ],
+};
+
+export const sbomReviewWorkflow: WorkflowDefinition = {
+  name: "sbom_review",
+  version: "0.1.0",
+  description: "Parse a CycloneDX or SPDX SBOM and review observed inventory quality.",
+  steps: [
+    {
+      id: "parse",
+      skill: "parse_sbom",
+    },
+    {
+      id: "review",
+      skill: "review_sbom",
+      input_from: "parse",
+    },
+  ],
+};
+
+export const workflows = [
+  browserExtensionReviewWorkflow,
+  staticAnalysisTriageWorkflow,
+  certificateReviewWorkflow,
+  jwtReviewWorkflow,
+  sbomReviewWorkflow,
+] as const;

@@ -153,6 +153,9 @@ Registered workflows are runtime definitions that chain existing skills. Workflo
 |---|---|---|
 | `browser_extension_review` | `parse_browser_extension_manifest` → `review_browser_extension_permissions` → `score_browser_extension_risk` → `generate_browser_extension_finding` | Review a browser extension manifest and generate a draft permission finding. |
 | `static_analysis_triage` | `parse_sarif` → `review_static_analysis_results` → `score_static_analysis_attention` → `generate_static_analysis_triage_summary` | Review SARIF scanner output and generate a draft triage summary. |
+| `certificate_review` | `parse_pem_certificate` → `review_certificate` | Review parsed PEM certificate metadata. |
+| `jwt_review` | `parse_jwt` → `review_jwt` | Review parsed JWT header, claim, and signature metadata. |
+| `sbom_review` | `parse_sbom` → `review_sbom` | Review parsed CycloneDX or SPDX SBOM inventory quality. |
 
 ## Ownership rules
 

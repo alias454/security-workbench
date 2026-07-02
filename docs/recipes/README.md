@@ -10,6 +10,10 @@ Recipes document the intended sequence, inputs, outputs, and limits for repeatab
 |---|---|
 | [Browser extension review](browser-extension-review.md) | Parse a browser extension manifest, review permission surfaces, score review attention, and generate a draft finding. |
 | [Static-analysis triage](static-analysis-triage.md) | Parse SARIF scanner output, review results, score review attention, and generate a draft triage summary. |
+| [Certificate review](certificate-review.md) | Parse a PEM certificate artifact and review observed certificate metadata. |
+| [JWT review](jwt-review.md) | Parse a JWT and review observed header, claim, and signature metadata. |
+| [SBOM review](sbom-review.md) | Parse CycloneDX or SPDX SBOM JSON and review observed inventory quality. |
+| [Package review](package-review.md) | Manually chain package manifest or lockfile parsing into package metadata review. |
 
 ## Recipe rules
 

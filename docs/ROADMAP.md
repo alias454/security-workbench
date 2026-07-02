@@ -8,7 +8,7 @@ Current baseline:
 CLI skill and workflow runners
 local-only runtime policy and safe input handling
 core transform/parser/reviewer/scoring/output plugins
-registered browser-extension and static-analysis triage workflows
+registered browser-extension, static-analysis triage, certificate, JWT, and SBOM review workflows
 stable workflow definition validation
 full smoke, source audit, and Semgrep validation
 ```
@@ -34,7 +34,8 @@ pnpm typecheck:test
 ## Active sequence
 
 ```text
-1. Add email, IOC, and URL review lanes.
+1. Assess whether the new certificate, JWT, SBOM, and package recipes need additional workflow variants or output helpers.
+2. Add email, IOC, and URL review lanes.
 ```
 
 Sequence rule:
@@ -55,6 +56,9 @@ Current registered workflows:
 ```text
 browser_extension_review
 static_analysis_triage
+certificate_review
+jwt_review
+sbom_review
 ```
 
 Later pipeline support should add broader skill input/output schema validation, additional workflow fixtures, and more golden-output coverage.
@@ -81,7 +85,6 @@ phishing_review
 email_header_review
 browser_extension_review
 package_review
-sbom_review
 ai_workflow_review
 domain_security_review
 security_headers_review

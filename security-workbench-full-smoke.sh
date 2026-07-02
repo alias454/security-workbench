@@ -486,11 +486,21 @@ run_ok "workflows list --format table" "${CLI[@]}" workflows list --format table
 run_ok "workflows list --format json" "${CLI[@]}" workflows list --format json
 run_ok_require_output_pattern "workflows list includes browser_extension_review" "^browser_extension_review[[:space:]]" "${CLI[@]}" workflows list --format tsv
 run_ok_require_output_pattern "workflows list includes static_analysis_triage" "^static_analysis_triage[[:space:]]" "${CLI[@]}" workflows list --format tsv
+run_ok_require_output_pattern "workflows list includes certificate_review" "^certificate_review[[:space:]]" "${CLI[@]}" workflows list --format tsv
+run_ok_require_output_pattern "workflows list includes jwt_review" "^jwt_review[[:space:]]" "${CLI[@]}" workflows list --format tsv
+run_ok_require_output_pattern "workflows list includes sbom_review" "^sbom_review[[:space:]]" "${CLI[@]}" workflows list --format tsv
 run_ok "workflow browser_extension_review fixture" "${CLI[@]}" workflows run browser_extension_review --input-file "$FIXTURES_ROOT/browser-extension/manifest-v2-broad-hosts.json" --format pretty
 run_ok_require_output_pattern "workflow browser_extension_review output includes finding" "Browser Extension Finding" "${CLI[@]}" workflows run browser_extension_review --input-file "$FIXTURES_ROOT/browser-extension/manifest-v2-broad-hosts.json" --format pretty
 run_ok "workflow static_analysis_triage fixture" "${CLI[@]}" workflows run static_analysis_triage --input-file "$FIXTURES_ROOT/sarif/codeql-results.sarif" --format pretty
 run_ok_require_output_pattern "workflow static_analysis_triage output includes summary" "Static-analysis triage summary" "${CLI[@]}" workflows run static_analysis_triage --input-file "$FIXTURES_ROOT/sarif/codeql-results.sarif" --format pretty
 run_ok_require_output_pattern "workflow static_analysis_triage json includes step count" '"step_count": 4' "${CLI[@]}" workflows run static_analysis_triage --input-file "$FIXTURES_ROOT/sarif/codeql-results.sarif" --format json
+run_ok "workflow certificate_review fixture" "${CLI[@]}" workflows run certificate_review --input-file "$FIXTURES_ROOT/certificates/example-cert.pem" --format pretty
+run_ok_require_output_pattern "workflow certificate_review output includes certificate signal" 'certificate\.ca_certificate_present' "${CLI[@]}" workflows run certificate_review --input-file "$FIXTURES_ROOT/certificates/example-cert.pem" --format pretty
+run_ok "workflow jwt_review fixture" "${CLI[@]}" workflows run jwt_review --input-file "$FIXTURES_ROOT/jwt/alg-none.jwt" --format pretty
+run_ok_require_output_pattern "workflow jwt_review output includes alg none signal" 'jwt\.unsecured_algorithm_observed' "${CLI[@]}" workflows run jwt_review --input-file "$FIXTURES_ROOT/jwt/alg-none.jwt" --format pretty
+run_ok "workflow sbom_review fixture" "${CLI[@]}" workflows run sbom_review --input-file "$FIXTURES_ROOT/sbom/cyclonedx.json" --format pretty
+run_ok_require_output_pattern "workflow sbom_review output includes missing version signal" 'sbom\.component_version_not_observed' "${CLI[@]}" workflows run sbom_review --input-file "$FIXTURES_ROOT/sbom/cyclonedx.json" --format pretty
+run_ok_require_output_pattern "workflow jwt_review json includes step count" '"step_count": 2' "${CLI[@]}" workflows run jwt_review --input-file "$FIXTURES_ROOT/jwt/alg-none.jwt" --format json
 
 run_ok "skills describe parse_jwt" "${CLI[@]}" skills describe parse_jwt
 run_ok "skills describe parse_jwt --format table" "${CLI[@]}" skills describe parse_jwt --format table

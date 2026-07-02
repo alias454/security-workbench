@@ -101,6 +101,7 @@ pnpm --filter @security-workbench/cli start skills run extract_iocs --input-file
 pnpm --filter @security-workbench/cli start skills run parse_jwt --input-file "$PWD/fixtures/jwt/alg-none.jwt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_jwt --input-file "$PWD/fixtures/jwt/alg-none.jwt" > /tmp/jwt.parsed.json
 pnpm --filter @security-workbench/cli start skills run review_jwt --input-file /tmp/jwt.parsed.json --format pretty
+pnpm --filter @security-workbench/cli start workflows run jwt_review --input-file "$PWD/fixtures/jwt/alg-none.jwt" --format pretty
 pnpm --filter @security-workbench/cli start skills run parse_email_headers --input-file "$PWD/fixtures/email/sample-headers.txt" --format pretty
 ```
 
@@ -128,6 +129,7 @@ Examples:
 ```text
 plugin-url-triage      → parse_url, url_decode, extract_urls, defang_iocs
 plugin-email           → parse_email_headers, extract_urls, extract_emails
+jwt_review             → parse_jwt
 plugin-scanner-normalize → json_parse, extract_cves, line utilities
 plugin-browser-extension → json_parse, extract_domains
 ```
